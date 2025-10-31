@@ -60,3 +60,7 @@ Você pode visualizar o diagrama completo nos arquivos:
 1. Clone o repositório:
    ```bash
    git clone https://github.com/Emanuela-Azevedo/sistema-feedback-alunos.git
+
+    Veja este vídeo para mais detalhes: 
+
+https://youtu.be/XhIvYin3rxw?si=vprS7eI4_znwahUm
