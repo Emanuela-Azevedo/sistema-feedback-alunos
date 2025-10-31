@@ -63,4 +63,5 @@ Você pode visualizar o diagrama completo nos arquivos:
 
     Veja este vídeo para mais detalhes: 
 
+ Veja este vídeo para mais detalhes: 
 https://youtu.be/XhIvYin3rxw?si=vprS7eI4_znwahUm
