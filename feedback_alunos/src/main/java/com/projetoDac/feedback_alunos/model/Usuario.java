@@ -1,12 +1,13 @@
 package com.projetoDac.feedback_alunos.model;
 
-import com.projetoDac.feedback_alunos.model.enums.Role;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Set;
 
 @Data
 @NoArgsConstructor
@@ -15,8 +16,13 @@ import java.io.Serializable;
 @Table(name = "TB_usuario")
 public class Usuario implements Serializable {
 
-    private  static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
+
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id_usuario")
+    private Long idUsuario;
+
     @Column(name = "matricula", nullable = false, unique = true, length = 20)
     private String matricula;
 
@@ -26,7 +32,11 @@ public class Usuario implements Serializable {
     @Column(name = "senha", nullable = false, length = 200)
     private String senha;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "role", nullable = false, length = 50)
-    private Role role;
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "TB_usuario_perfil",
+            joinColumns = @JoinColumn(name = "id_usuario"),
+            inverseJoinColumns = @JoinColumn(name = "id_perfil")
+    )
+    private Set<Perfil> perfis = new HashSet<>();
 }

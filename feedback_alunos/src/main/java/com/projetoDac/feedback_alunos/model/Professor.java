@@ -1,19 +1,20 @@
 package com.projetoDac.feedback_alunos.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.PrimaryKeyJoinColumn;
-import jakarta.persistence.Table;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import jakarta.persistence.*;
+import lombok.*;
 
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-@EqualsAndHashCode(callSuper = true)
+import java.io.Serializable;
+
 @Entity
-@Table(name = "TB_Professor")
-@PrimaryKeyJoinColumn(name = "matricula")
-public class Professor extends Usuario{
+@Table(name = "TB_professor")
+public class Professor {
+
+    @Id
+    @Column(name = "id_professor")
+    private Long id;
+
+    @OneToOne(fetch = FetchType.LAZY, optional = false)
+    @MapsId
+    @JoinColumn(name = "id_usuario")
+    private Usuario usuario;
 }

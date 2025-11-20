@@ -2,58 +2,85 @@
 
 **Equipe:** Emanuela Azevedo e Luciana Farias
 
-## Descrição do Projeto
+##  Descrição do Projeto
 
-O Sistema de Avaliação de Disciplinas e Professores tem como objetivo oferecer uma plataforma onde os alunos possam avaliar as disciplinas cursadas e os professores responsáveis, contribuindo para o aprimoramento contínuo da qualidade do ensino.
+O Sistema de Avaliação de Disciplinas e Professores tem como objetivo disponibilizar uma plataforma na qual os alunos possam registrar avaliações sobre as disciplinas cursadas e os professores responsáveis, contribuindo para o aprimoramento contínuo da qualidade do ensino.
 
-A aplicação permite que os alunos realizem avaliações de forma simples e segura, fornecendo feedback sobre diversos aspectos, como metodologia de ensino, clareza nas explicações, cumprimento do conteúdo programado e recursos utilizados em sala. Além disso, o sistema disponibiliza relatórios de desempenho e análises de satisfação que poderão ser utilizados pela coordenação e pelos professores para identificar pontos fortes e oportunidades de melhoria.
+A aplicação permite que os alunos realizem avaliações de forma simples, registrando notas e comentários sobre diferentes aspectos relacionados à metodologia, clareza das explicações e condução das aulas. Além disso, o sistema possibilita à equipe administrativa gerenciar usuários, cursos, disciplinas e professores, garantindo o controle das informações e dos perfis de acesso.
+
+O propósito geral do sistema é promover um ambiente de feedback estruturado, que apoie decisões pedagógicas e fortaleça a comunicação entre alunos, docentes e coordenação.
+
+---
 
 ## Principais Funcionalidades
 
-- Cadastro e login de alunos, professores e administrador
-- Avaliação de disciplinas e professores com critérios de nota (1 a 5) e comentários
-- Avaliações anônimas ou identificadas
-- Relatórios com médias e estatísticas de satisfação e feedback
-- Área administrativa para acompanhar resultados e gerar relatórios
-- Cadastro e gerenciamento de disciplinas e professores
+- Autenticação de usuários
+- Cadastro e gerenciamento de usuários
+- Cadastro e gerenciamento de cursos
+- Cadastro e gerenciamento de disciplinas
+- Cadastro e gerenciamento de professores
+- Realização de avaliações de disciplinas
+- Realização de avaliações de professores
+- Gerenciamento de perfis de acesso (administrador)
+
+---
 
 ## Tecnologias Utilizadas
 
 - **Back-end:** Spring Boot com JPA
 - **Banco de Dados:** PostgreSQL
 - **Front-end:** React
-- **Controle de Versão:** Git e GitHub
+- **Versionamento:** Git e GitHub
 
-## Requisitos Funcionais
+---
 
-| **MÓDULO**       | **ID**  | **NOME DO REQUISITO**                     | **MUTABILIDADE** | **PRIORIDADE** |
-|------------------|---------|-------------------------------------------|------------------|----------------|
-| Usuário          | RF01    | Cadastro de Usuários                      | Média            | Alta           |
-| Usuário          | RF02    | Edição de Usuários                        | Alta             | Média          |
-| Usuário          | RF03    | Exclusão de Usuários                      | Média            | Média          |
-| Disciplina       | RF04    | Cadastro de Disciplinas                   | Baixa            | Alta           |
-| Disciplina       | RF05    | Edição de Disciplinas                     | Média            | Média          |
-| Disciplina       | RF06    | Exclusão de Disciplinas                   | Média            | Média          |
-| Avaliação        | RF07    | Avaliação de Disciplinas                  | Alta             | Alta           |
-| Avaliação        | RF08    | Avaliação de Professores                  | Alta             | Alta           |
-| Avaliação        | RF09    | Edição de Avaliações                      | Alta             | Média          |
-| Avaliação        | RF10    | Exclusão de Avaliações                    | Média            | Média          |
-| Relatório        | RF11    | Geração de Relatórios de Satisfação       | Baixa            | Alta           |
-| Relatório        | RF12    | Geração de Relatórios de Feedback         | Baixa            | Alta           |
-| Administração    | RF13    | Controle de Acesso Administrativo         | Baixa            | Alta           |
+## Requisitos Funcionais (Atualizados)
+
+| **MÓDULO**          | **ID**  | **REQUISITO (INFINITIVO)**                |
+|---------------------|---------|-------------------------------------------|
+| Autenticação        | RF01    | Realização de login                       |
+| Usuários            | RF02    | Cadastro de usuários                      |
+| Usuários            | RF03    | Edição de usuários                        |
+| Usuários            | RF04    | Exclusão de usuários                      |
+| Usuários            | RF05    | Listagem de usuários                      |
+| Cursos              | RF06    | Cadastro de cursos                        |
+| Cursos              | RF07    | Edição de cursos                          |
+| Cursos              | RF08    | Exclusão de cursos                        |
+| Cursos              | RF09    | Listagem de cursos                        |
+| Disciplinas         | RF10    | Cadastro de disciplinas                   |
+| Disciplinas         | RF11    | Edição de disciplinas                     |
+| Disciplinas         | RF12    | Exclusão de disciplinas                   |
+| Disciplinas         | RF13    | Listagem de disciplinas                   |
+| Professores         | RF14    | Cadastro de professores                   |
+| Professores         | RF15    | Edição de professores                     |
+| Professores         | RF16    | Exclusão de professores                   |
+| Professores         | RF17    | Listagem de professores                   |
+| Avaliações          | RF18    | Realização de avaliação de professor      |
+| Avaliações          | RF19    | Realização de avaliação de disciplina     |
+| Avaliações          | RF20    | Listagem de avaliações                    |
+| Avaliações          | RF21    | Exclusão de avaliações                    |
+| Perfis de Acesso    | RF22    | Gerenciamento de perfis                   |
+
+---
 
 ## Modelo Lógico do Banco de Dados
 
-O modelo lógico representa os relacionamentos entre usuários, alunos, professores, disciplinas, avaliações e relatórios. Você pode visualizar o diagrama completo nos arquivos:
+O modelo lógico representa as entidades do sistema e seus relacionamentos.  
+O arquivo pode ser visualizado em:
 
-- `doc/modelo-logico.pdf` → imagem do diagrama
+- `-doc/documentos do projeto.pdf`
+
+---
 
 ## Casos de Uso
 
-Os casos de uso representam as interações entre os diferentes perfis do sistema — aluno, professor e administrador — com as funcionalidades disponíveis. Eles ajudam a visualizar os fluxos principais da aplicação e os objetivos de cada usuário.
-Você pode visualizar o diagrama completo nos arquivos:
+Os casos de uso representam as interações dos atores (Aluno, Professor e Administrador) com o sistema.
 
-- `doc/casos-de-uso.astah` → imagem do diagrama no formato astah
+O diagrama pode ser visualizado em:
+
+- `-doc/documentos do projeto.pdf`
+
+---
 
 ## Como Contribuir
 

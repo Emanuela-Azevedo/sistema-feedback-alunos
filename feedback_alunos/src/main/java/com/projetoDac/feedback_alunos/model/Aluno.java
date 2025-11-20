@@ -1,24 +1,21 @@
 package com.projetoDac.feedback_alunos.model;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.PrimaryKeyJoinColumn;
-import jakarta.persistence.Table;
-import lombok.AllArgsConstructor;
+import jakarta.persistence.*;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
-@AllArgsConstructor
-@EqualsAndHashCode(callSuper = true)
 @Entity
 @Table(name = "TB_aluno")
-@PrimaryKeyJoinColumn(name = "matricula")
-public class Aluno extends Usuario {
+public class Aluno {
 
-    @Column(name = "curso", nullable = false, length = 100)
-    private String curso;
+    @Id
+    @Column(name = "id_aluno")
+    private Long id; // mesmo ID do usuário
+
+    @OneToOne(fetch = FetchType.LAZY, optional = false)
+    @MapsId  // Aluno.id = Usuario.id_usuario
+    @JoinColumn(name = "id_usuario")
+    private Usuario usuario;
 }
-
