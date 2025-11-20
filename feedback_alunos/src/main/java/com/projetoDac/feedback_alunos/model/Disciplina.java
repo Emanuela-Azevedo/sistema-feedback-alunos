@@ -1,27 +1,28 @@
 package com.projetoDac.feedback_alunos.model;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
-@AllArgsConstructor
 @Entity
 @Table(name = "TB_disciplina")
 public class Disciplina {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @Column(name = "id_disciplina")
+    private Long idDisciplina;
 
-    @Column(nullable = false, length = 100)
+    @Column(name = "nome", nullable = false, length = 100)
     private String nome;
 
-    @Column(nullable = false, length = 20)
-    private String codigo;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_curso")
+    private Curso curso;
 
-    @ManyToOne
-    @JoinColumn(name = "professor_id", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_professor")
     private Professor professor;
 }
-

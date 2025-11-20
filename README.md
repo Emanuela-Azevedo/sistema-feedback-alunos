@@ -2,7 +2,7 @@
 
 **Equipe:** Emanuela Azevedo e Luciana Farias
 
-## Descrição do Projeto
+##  Descrição do Projeto
 
 O Sistema de Avaliação de Disciplinas e Professores tem como objetivo disponibilizar uma plataforma na qual os alunos possam registrar avaliações sobre as disciplinas cursadas e os professores responsáveis, contribuindo para o aprimoramento contínuo da qualidade do ensino.
 
@@ -30,10 +30,13 @@ O propósito geral do sistema é promover um ambiente de feedback estruturado, q
 - **Back-end:** Spring Boot com JPA
 - **Banco de Dados:** PostgreSQL
 - **Front-end:** React
-- **Controle de Versão:** Git e GitHub
+- **Versionamento:** Git e GitHub
 
-## Requisitos Funcionais
+---
 
+## Requisitos Funcionais (Atualizados)
+
+>>>>>>> dev
 | **MÓDULO**          | **ID**  | **REQUISITO (INFINITIVO)**                |
 |---------------------|---------|-------------------------------------------|
 | Autenticação        | RF01    | Realização de login                       |
@@ -63,16 +66,19 @@ O propósito geral do sistema é promover um ambiente de feedback estruturado, q
 
 ## Modelo Lógico do Banco de Dados
 
-O modelo lógico representa os relacionamentos entre usuários, alunos, professores, disciplinas, avaliações e relatórios. Você pode visualizar o diagrama completo nos arquivos:
+O modelo lógico representa as entidades do sistema e seus relacionamentos.  
+O arquivo pode ser visualizado em:
 
-- `-doc/documentos do projeto.pdf`
+- `-doc/Documentos do projeto.pdf`
 
 ---
 
 ## Casos de Uso
+- Os casos de uso representam as interações dos atores (Aluno, Professor e Administrador) com o sistema.
 
-- `doc/Documentos do projeto.pdf`
+O diagrama pode ser visualizado em:
 
+- `-doc/Documentos do projeto.pdf`
 ---
 
 ## Como Contribuir
@@ -81,7 +87,5 @@ O modelo lógico representa os relacionamentos entre usuários, alunos, professo
    ```bash
    git clone https://github.com/Emanuela-Azevedo/sistema-feedback-alunos.git
 
-    Veja este vídeo para mais detalhes: 
-
- Veja este vídeo para mais detalhes: 
-https://youtu.be/XhIvYin3rxw?si=vprS7eI4_znwahUm
+    Veja este vídeo para mais detalhes:
+      https://youtu.be/XhIvYin3rxw?si=vprS7eI4_znwahUm
