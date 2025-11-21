@@ -7,12 +7,14 @@ import lombok.Setter;
 @Getter
 @Setter
 
-public class AdministradorCreateDTO {
+public class ProfessorCreateDTO {
 
 	@NotBlank(message = "O nome é obrigatório")
 	private String nome;
 
-	@NotBlank(message = "O setor é obrigatório")
-	private String setor;
+	@NotBlank(message = "A especialidade é obrigatória")
+	private String especialidade;
 
+	@NotBlank(message = "A matrícula é obrigatória")
+	private String matricula;
 }

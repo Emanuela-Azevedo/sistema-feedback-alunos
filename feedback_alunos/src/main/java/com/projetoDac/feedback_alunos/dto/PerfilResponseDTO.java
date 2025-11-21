@@ -6,8 +6,8 @@ import lombok.Setter;
 @Getter
 @Setter
 
-public class AdministratorResponseDTO {
-	private Long idAdministrador;
+public class PerfilResponseDTO {
+	private Long idPerfil;
 	private String nome;
-	private String setor;
+
 }

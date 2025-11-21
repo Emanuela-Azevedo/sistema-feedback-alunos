@@ -5,9 +5,11 @@ import lombok.Setter;
 
 @Getter
 @Setter
+public class AlunoResponseDTO {
 
-public class AdministratorResponseDTO {
-	private Long idAdministrador;
+	private Long idAluno;
 	private String nome;
-	private String setor;
+	private String matricula;
+	private String curso;
+
 }
