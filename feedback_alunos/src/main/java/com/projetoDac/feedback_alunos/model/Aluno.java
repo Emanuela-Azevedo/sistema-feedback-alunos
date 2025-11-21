@@ -10,12 +10,12 @@ import lombok.NoArgsConstructor;
 @Table(name = "TB_aluno")
 public class Aluno {
 
-    @Id
-    @Column(name = "id_aluno")
-    private Long id;
+	@Id
+	@Column(name = "id_aluno")
+	private Long id;
 
-    @OneToOne(fetch = FetchType.LAZY, optional = false)
-    @MapsId
-    @JoinColumn(name = "id_usuario")
-    private Usuario usuario;
+	@OneToOne(fetch = FetchType.LAZY, optional = false)
+	@MapsId
+	@JoinColumn(name = "id_usuario")
+	private Usuario usuario;
 }
