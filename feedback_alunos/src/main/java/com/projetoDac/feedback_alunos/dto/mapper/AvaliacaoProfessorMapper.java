@@ -13,6 +13,15 @@ public class AvaliacaoProfessorMapper {
         return mapper.map(dto, AvaliacaoProfessor.class);
     }
     public static AvaliacaoProfessorResponseDTO toDTO(AvaliacaoProfessor avaliacao){
-        return mapper.map(avaliacao, AvaliacaoProfessorResponseDTO.class);
+        AvaliacaoProfessorResponseDTO dto = mapper.map(avaliacao, AvaliacaoProfessorResponseDTO.class);
+        if (avaliacao.getUsuario() != null && !avaliacao.isAnonima()) {
+            dto.setUsuarioId(avaliacao.getUsuario().getIdUsuario());
+        } else {
+            dto.setUsuarioId(null);
+        }
+        if (avaliacao.getProfessor() != null) {
+            dto.setProfessorId(avaliacao.getProfessor().getId());
+        }
+        return dto;
     }
 }

@@ -13,6 +13,13 @@ public class DisciplinaMapper {
         return mapper.map( dto, Disciplina.class );
     }
     public static DisciplinaResponseDTO toDTO(Disciplina disciplina){
-        return mapper.map(disciplina, DisciplinaResponseDTO.class);
+        DisciplinaResponseDTO dto = mapper.map(disciplina, DisciplinaResponseDTO.class);
+        if (disciplina.getCurso() != null) {
+            dto.setCursoId(disciplina.getCurso().getIdCurso());
+        }
+        if (disciplina.getProfessor() != null) {
+            dto.setProfessorId(disciplina.getProfessor().getId());
+        }
+        return dto;
     }
 }

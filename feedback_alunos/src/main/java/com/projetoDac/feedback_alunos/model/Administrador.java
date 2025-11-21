@@ -15,7 +15,7 @@ import lombok.NoArgsConstructor;
 @EqualsAndHashCode(callSuper = true)
 @Entity
 @Table(name = "TB_administrador")
-@PrimaryKeyJoinColumn(name = "matricula")
+@PrimaryKeyJoinColumn(name = "id_usuario")
 public class Administrador extends Usuario {
 
     @Column(name = "super_admin", nullable = false)
