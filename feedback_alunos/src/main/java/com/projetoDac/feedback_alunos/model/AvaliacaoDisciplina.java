@@ -17,12 +17,10 @@ public class AvaliacaoDisciplina {
     @Column(name = "id_avaliacao_disciplina")
     private Long id;
 
-    // Quem avaliou — obrigatório
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_usuario")
     private Usuario usuario;
 
-    // Qual disciplina foi avaliada
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_disciplina")
     private Disciplina disciplina;
