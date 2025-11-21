@@ -12,10 +12,10 @@ public class Aluno {
 
     @Id
     @Column(name = "id_aluno")
-    private Long id; // mesmo ID do usuário
+    private Long id;
 
     @OneToOne(fetch = FetchType.LAZY, optional = false)
-    @MapsId  // Aluno.id = Usuario.id_usuario
+    @MapsId
     @JoinColumn(name = "id_usuario")
     private Usuario usuario;
 }
