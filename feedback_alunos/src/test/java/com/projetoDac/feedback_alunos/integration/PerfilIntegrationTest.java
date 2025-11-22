@@ -1,0 +1,112 @@
+package com.projetoDac.feedback_alunos.integration;
+
+import com.projetoDac.feedback_alunos.dto.PerfilCreateDTO;
+import com.projetoDac.feedback_alunos.dto.PerfilResponseDTO;
+import com.projetoDac.feedback_alunos.model.Perfil;
+import com.projetoDac.feedback_alunos.repository.PerfilRepository;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.test.context.ActiveProfiles;
+
+import static org.junit.jupiter.api.Assertions.*;
+
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@ActiveProfiles("test")
+class PerfilIntegrationTest {
+
+    @LocalServerPort
+    private int port;
+
+    @Autowired
+    private TestRestTemplate restTemplate;
+
+    @Autowired
+    private PerfilRepository perfilRepository;
+
+    private String baseUrl;
+
+    @BeforeEach
+    void setUp() {
+        baseUrl = "http://localhost:" + port + "/perfis";
+        perfilRepository.deleteAll();
+    }
+
+    @Test
+    void cadastrarPerfil_DeveRetornar201EPeristir() {
+        PerfilCreateDTO perfilCreateDTO = new PerfilCreateDTO();
+        perfilCreateDTO.setNome("ADMIN");
+
+        ResponseEntity<PerfilResponseDTO> response = restTemplate.postForEntity(
+                baseUrl, perfilCreateDTO, PerfilResponseDTO.class);
+
+        assertEquals(HttpStatus.CREATED, response.getStatusCode());
+        assertNotNull(response.getBody());
+        assertEquals("ADMIN", response.getBody().getNome());
+        assertEquals(1, perfilRepository.count());
+    }
+
+    @Test
+    void listarPerfis_DeveRetornarStatus200() {
+        ResponseEntity<PerfilResponseDTO[]> response = restTemplate.getForEntity(
+                baseUrl, PerfilResponseDTO[].class);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertNotNull(response.getBody());
+    }
+
+    @Test
+    void buscarPorId_ComIdValido_DeveRetornar200() {
+        Perfil perfil = new Perfil();
+        perfil.setNomePerfil("ALUNO");
+        perfil = perfilRepository.save(perfil);
+
+        ResponseEntity<PerfilResponseDTO> response = restTemplate.getForEntity(
+                baseUrl + "/" + perfil.getIdPerfil(), PerfilResponseDTO.class);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertNotNull(response.getBody());
+        assertEquals("ALUNO", response.getBody().getNome());
+    }
+
+    @Test
+    void buscarPorId_ComIdInvalido_DeveRetornar404() {
+        ResponseEntity<String> response = restTemplate.getForEntity(
+                baseUrl + "/999", String.class);
+
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+    }
+
+    @Test
+    void cadastrarPerfil_SemNome_DeveRetornar400() {
+        PerfilCreateDTO perfilCreateDTO = new PerfilCreateDTO();
+
+        ResponseEntity<String> response = restTemplate.postForEntity(
+                baseUrl, perfilCreateDTO, String.class);
+
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+    }
+
+    @Test
+    void listarPerfis_ComDados_DeveRetornarLista() {
+        Perfil perfil1 = new Perfil();
+        perfil1.setNomePerfil("ADMIN");
+        perfilRepository.save(perfil1);
+
+        Perfil perfil2 = new Perfil();
+        perfil2.setNomePerfil("ALUNO");
+        perfilRepository.save(perfil2);
+
+        ResponseEntity<PerfilResponseDTO[]> response = restTemplate.getForEntity(
+                baseUrl, PerfilResponseDTO[].class);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertNotNull(response.getBody());
+        assertEquals(2, response.getBody().length);
+    }
+}

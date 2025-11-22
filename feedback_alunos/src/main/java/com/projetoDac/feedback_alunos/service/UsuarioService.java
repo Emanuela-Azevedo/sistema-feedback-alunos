@@ -17,14 +17,12 @@ public class UsuarioService {
 	@Autowired
 	private UsuarioRepository usuarioRepository;
 
-	// Cadastrar usuário
 	public UsuarioResponseDTO cadastrarUsuario(UsuarioCreateDTO usuarioCreateDTO) {
 		Usuario usuario = UsuarioMapper.toEntity(usuarioCreateDTO);
 		Usuario salvo = usuarioRepository.save(usuario);
 		return UsuarioMapper.toDTO(salvo);
 	}
 
-	// Editar usuário
 	public UsuarioResponseDTO editarUsuario(Long id, UsuarioCreateDTO usuarioCreateDTO) {
 
 		Usuario usuario = usuarioRepository.findById(id)
@@ -39,7 +37,6 @@ public class UsuarioService {
 		return UsuarioMapper.toDTO(atualizado);
 	}
 
-	// Deletar usuário
 	public void excluirUsuario(Long id) {
 		if (!usuarioRepository.existsById(id)) {
 			throw new UsuarioNotFoundException("Usuário não encontrado com ID: " + id);
@@ -47,12 +44,10 @@ public class UsuarioService {
 		usuarioRepository.deleteById(id);
 	}
 
-	// Listar usuários
 	public List<UsuarioResponseDTO> listarUsuarios() {
 		return usuarioRepository.findAll().stream().map(UsuarioMapper::toDTO).toList();
 	}
 
-	// Buscar por ID
 	public UsuarioResponseDTO buscarPorId(Long id) {
 		Usuario usuario = usuarioRepository.findById(id)
 				.orElseThrow(() -> new UsuarioNotFoundException("Usuário não encontrado com ID: " + id));
