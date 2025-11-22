@@ -54,3 +54,4 @@ public class UsuarioService {
 
 		return UsuarioMapper.toDTO(usuario);
 	}
+}

@@ -1,16 +1,25 @@
 package com.projetoDac.feedback_alunos.controller;
 
-import com.projetoDac.feedback_alunos.dto.ProfessorCreateDTO;
-import com.projetoDac.feedback_alunos.dto.ProfessorResponseDTO;
-import com.projetoDac.feedback_alunos.service.ProfessorService;
-import jakarta.validation.Valid;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
+import com.projetoDac.feedback_alunos.dto.ProfessorCompletoCreateDTO;
+import com.projetoDac.feedback_alunos.dto.ProfessorCreateDTO;
+import com.projetoDac.feedback_alunos.dto.ProfessorResponseDTO;
+import com.projetoDac.feedback_alunos.service.ProfessorService;
+
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/professores")
@@ -19,16 +28,14 @@ public class ProfessorController {
     @Autowired
     private ProfessorService professorService;
 
-    // Cadastrar professor
     @PostMapping
     public ResponseEntity<ProfessorResponseDTO> cadastrarProfessor(
-            @Valid @RequestBody ProfessorCreateDTO professorCreateDTO) {
+            @Valid @RequestBody ProfessorCompletoCreateDTO professorCompletoCreateDTO) {
 
-        ProfessorResponseDTO professor = professorService.cadastrarProfessor(professorCreateDTO);
+        ProfessorResponseDTO professor = professorService.cadastrarProfessorCompleto(professorCompletoCreateDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(professor);
     }
 
-    // Editar professor
     @PutMapping("/{id}")
     public ResponseEntity<ProfessorResponseDTO> editarProfessor(
             @PathVariable Long id,
@@ -52,10 +59,10 @@ public class ProfessorController {
         return ResponseEntity.ok(professores);
     }
 
-    // Buscar professor por ID
-    @GetMapping("/{id}")
-    public ResponseEntity<ProfessorResponseDTO> buscarPorId(@PathVariable Long id) {
-        ProfessorResponseDTO professor = professorService.buscarPorId(id);
+    // Buscar professor por matrícula
+    @GetMapping("/matricula/{matricula}")
+    public ResponseEntity<ProfessorResponseDTO> buscarPorMatricula(@PathVariable String matricula) {
+        ProfessorResponseDTO professor = professorService.buscarPorMatricula(matricula);
         return ResponseEntity.ok(professor);
     }
 }

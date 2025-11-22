@@ -27,4 +27,9 @@ public class GlobalExceptionHandler {
     public ResponseEntity<String> handleUsuarioNotFoundException(UsuarioNotFoundException ex) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
     }
+
+    @ExceptionHandler(PerfilNotFoundException.class)
+    public ResponseEntity<String> handlePerfilNotFoundException(PerfilNotFoundException ex) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
+    }
 }
