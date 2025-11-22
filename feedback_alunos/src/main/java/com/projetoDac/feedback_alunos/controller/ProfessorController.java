@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.projetoDac.feedback_alunos.dto.ProfessorCompletoCreateDTO;
 import com.projetoDac.feedback_alunos.dto.ProfessorCreateDTO;
 import com.projetoDac.feedback_alunos.dto.ProfessorResponseDTO;
 import com.projetoDac.feedback_alunos.service.ProfessorService;
@@ -30,7 +29,7 @@ public class ProfessorController {
 
     @PostMapping
     public ResponseEntity<ProfessorResponseDTO> cadastrarProfessor(
-            @Valid @RequestBody ProfessorCompletoCreateDTO professorCompletoCreateDTO) {
+            @Valid @RequestBody ProfessorCreateDTO professorCompletoCreateDTO) {
 
         ProfessorResponseDTO professor = professorService.cadastrarProfessorCompleto(professorCompletoCreateDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(professor);

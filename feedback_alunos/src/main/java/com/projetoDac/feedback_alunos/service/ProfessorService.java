@@ -1,7 +1,6 @@
 package com.projetoDac.feedback_alunos.service;
 
 import com.projetoDac.feedback_alunos.dto.ProfessorCreateDTO;
-import com.projetoDac.feedback_alunos.dto.ProfessorCompletoCreateDTO;
 import com.projetoDac.feedback_alunos.dto.ProfessorResponseDTO;
 import com.projetoDac.feedback_alunos.dto.mapper.ProfessorMapper;
 import com.projetoDac.feedback_alunos.exception.ProfessorNotFoundException;
@@ -38,7 +37,7 @@ public class ProfessorService {
     }
 
     @Transactional
-    public ProfessorResponseDTO cadastrarProfessorCompleto(ProfessorCompletoCreateDTO dto) {
+    public ProfessorResponseDTO cadastrarProfessorCompleto(ProfessorCreateDTO dto) {
         // 1. Criar Usuario
         Usuario usuario = new Usuario();
         usuario.setNome(dto.getNome());
