@@ -17,7 +17,8 @@ public class AlunoMapper {
 		AlunoResponseDTO dto = mapper.map(aluno, AlunoResponseDTO.class);
 
 		if (aluno.getUsuario() != null) {
-			dto.setUsuarioId(aluno.getUsuario().getId());
+			dto.setIdAluno(aluno.getUsuario().getIdUsuario());
+			
 		}
 
 		return dto;
