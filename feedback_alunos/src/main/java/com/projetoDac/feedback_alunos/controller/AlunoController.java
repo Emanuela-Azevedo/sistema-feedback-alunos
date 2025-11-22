@@ -1,7 +1,5 @@
 package com.projetoDac.feedback_alunos.controller;
 
-package com.projetoDac.feedback_alunos.controller;
-
 import com.projetoDac.feedback_alunos.dto.AlunoCreateDTO;
 import com.projetoDac.feedback_alunos.dto.AlunoResponseDTO;
 import com.projetoDac.feedback_alunos.service.AlunoService;
@@ -39,7 +37,7 @@ public class AlunoController {
     // Editar aluno
     @PutMapping("/{id}")
     public ResponseEntity<AlunoResponseDTO> editarAluno(@PathVariable Long id,
-                                                        @Valid @RequestBody AlunoCreateDTO alunoCreateDTO) {
+            @Valid @RequestBody AlunoCreateDTO alunoCreateDTO) {
         AlunoResponseDTO aluno = alunoService.editarAluno(id, alunoCreateDTO);
         return ResponseEntity.ok(aluno);
     }

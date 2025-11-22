@@ -21,17 +21,13 @@ public class Aluno extends Usuario {
     @Column(name = "curso", nullable = false, length = 100)
     private String curso;
 
-
-
     @Id
     @Column(name = "id_aluno")
     private Long id;
 
-
     @Id
     @Column(name = "id_aluno")
     private Long id;
-
 
     @OneToOne(fetch = FetchType.LAZY, optional = false)
     @MapsId
@@ -43,4 +39,3 @@ public class Aluno extends Usuario {
     private String curso;
 
 }
-

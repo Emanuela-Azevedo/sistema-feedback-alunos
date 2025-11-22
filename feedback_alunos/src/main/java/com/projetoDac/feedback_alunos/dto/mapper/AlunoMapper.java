@@ -17,4 +17,5 @@ public class AlunoMapper {
 	public static AlunoResponseDTO toDTO(Aluno aluno) {
 		return mapper.map(aluno, AlunoResponseDTO.class);
 	}
+
 }
