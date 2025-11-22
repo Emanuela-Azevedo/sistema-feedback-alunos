@@ -19,6 +19,7 @@ import lombok.NoArgsConstructor;
 @Table(name = "TB_professor")
 public class Professor {
 
+
     @Id
     @Column(name = "id_professor")
     private Long id;
@@ -27,4 +28,13 @@ public class Professor {
     @MapsId
     @JoinColumn(name = "id_usuario")
     private Usuario usuario;
+
+    @Column(name = "nome", length = 100, nullable = false)
+    private String nome;
+
+    @Column(name = "matricula", length = 20, nullable = false)
+    private String matricula;
+
+    @Column(name = "especialidade", length = 100)
+    private String especialidade;
 }
