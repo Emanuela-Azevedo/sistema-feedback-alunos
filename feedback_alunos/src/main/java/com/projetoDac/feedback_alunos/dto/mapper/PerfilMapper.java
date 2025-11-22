@@ -12,7 +12,7 @@ public class PerfilMapper {
 		return mapper.map(dto, Perfil.class);
 	}
 
-	public static PerfilResponseDTO toDto(Perfil perfil) {
+	public static PerfilResponseDTO toDTO(Perfil perfil) {
 		return mapper.map(perfil, PerfilResponseDTO.class);
 	}
 

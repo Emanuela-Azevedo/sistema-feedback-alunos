@@ -13,9 +13,15 @@ public class AlunoMapper {
 		return mapper.map(dto, Aluno.class);
 	}
 
-	// Entity → DTO
 	public static AlunoResponseDTO toDTO(Aluno aluno) {
-		return mapper.map(aluno, AlunoResponseDTO.class);
+		AlunoResponseDTO dto = mapper.map(aluno, AlunoResponseDTO.class);
+
+		if (aluno.getUsuario() != null) {
+			dto.setIdAluno(aluno.getUsuario().getIdUsuario());
+			
+		}
+
+		return dto;
 	}
 
 }
