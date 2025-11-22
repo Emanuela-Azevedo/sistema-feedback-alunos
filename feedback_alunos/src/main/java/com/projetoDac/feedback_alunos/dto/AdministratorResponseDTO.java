@@ -9,5 +9,7 @@ import lombok.Setter;
 public class AdministratorResponseDTO {
 	private Long idAdministrador;
 	private String nome;
+	private String matricula;
 	private String setor;
+
 }
