@@ -13,8 +13,15 @@ public class AlunoMapper {
 		return mapper.map(dto, Aluno.class);
 	}
 
-	public static AlunoResponseDTO toDto(Aluno aluno) {
-		return mapper.map(aluno, AlunoResponseDTO.class);
+	public static AlunoResponseDTO toDTO(Aluno aluno) {
+		AlunoResponseDTO dto = mapper.map(aluno, AlunoResponseDTO.class);
+
+		if (aluno.getUsuario() != null) {
+			dto.setIdAluno(aluno.getUsuario().getIdUsuario());
+			
+		}
+
+		return dto;
 	}
 
 }

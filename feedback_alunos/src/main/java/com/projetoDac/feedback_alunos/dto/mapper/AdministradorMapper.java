@@ -8,12 +8,14 @@ import org.modelmapper.ModelMapper;
 
 public class AdministradorMapper {
 
-    private static final ModelMapper mapper = new ModelMapper();
+	private static final ModelMapper mapper = new ModelMapper();
 
     public static Administrador toEntity(AdministradorCreateDTO dto) {
         return mapper.map(dto, Administrador.class);
     }
-    public static AdministratorResponseDTO toDto(Administrador adm) {
-        return mapper.map(adm, AdministratorResponseDTO.class);
+
+    public static AdministratorResponseDTO toDTO(Administrador administrador) {
+        return mapper.map(administrador, AdministratorResponseDTO.class);
+        
     }
 }
