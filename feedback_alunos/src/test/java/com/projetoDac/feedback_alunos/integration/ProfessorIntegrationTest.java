@@ -14,7 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
 
-import com.projetoDac.feedback_alunos.dto.ProfessorCompletoCreateDTO;
+import com.projetoDac.feedback_alunos.dto.ProfessorCreateDTO;
 import com.projetoDac.feedback_alunos.dto.ProfessorResponseDTO;
 import com.projetoDac.feedback_alunos.repository.ProfessorRepository;
 import com.projetoDac.feedback_alunos.repository.UsuarioRepository;
@@ -55,7 +55,7 @@ class ProfessorIntegrationTest {
 
     @Test
     void cadastrarProfessor_DeveRetornar201EPeristir() {
-        ProfessorCompletoCreateDTO professorCreateDTO = new ProfessorCompletoCreateDTO();
+        ProfessorCreateDTO professorCreateDTO = new ProfessorCreateDTO();
         professorCreateDTO.setNome("João Silva");
         professorCreateDTO.setMatricula("PROF001");
         professorCreateDTO.setSenha("senha123");
@@ -73,13 +73,13 @@ class ProfessorIntegrationTest {
 
     @Test
     void editarProfessor_ComIdInexistente_DeveRetornar404() {
-        ProfessorCompletoCreateDTO professorCreateDTO = new ProfessorCompletoCreateDTO();
+        ProfessorCreateDTO professorCreateDTO = new ProfessorCreateDTO();
         professorCreateDTO.setNome("Professor Inexistente");
         professorCreateDTO.setMatricula("PROF999");
         professorCreateDTO.setSenha("senha123");
         professorCreateDTO.setEspecialidade("Inexistente");
 
-        HttpEntity<ProfessorCompletoCreateDTO> request = new HttpEntity<>(professorCreateDTO);
+        HttpEntity<ProfessorCreateDTO> request = new HttpEntity<>(professorCreateDTO);
         ResponseEntity<String> response = restTemplate.exchange(
                 baseUrl + "/999", HttpMethod.PUT, request, String.class);
 
@@ -96,7 +96,7 @@ class ProfessorIntegrationTest {
 
     @Test
     void buscarProfessorPorMatricula_DeveRetornar200() {
-        ProfessorCompletoCreateDTO professorCreateDTO = new ProfessorCompletoCreateDTO();
+        ProfessorCreateDTO professorCreateDTO = new ProfessorCreateDTO();
         professorCreateDTO.setNome("Maria Silva");
         professorCreateDTO.setMatricula("PROF002");
         professorCreateDTO.setSenha("senha123");

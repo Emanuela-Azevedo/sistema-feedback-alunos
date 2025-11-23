@@ -18,4 +18,8 @@ public class Aluno {
 	@MapsId
 	@JoinColumn(name = "id_usuario")
 	private Usuario usuario;
+
+	private String nome;
+	private String matricula;
+	private String curso;
 }
