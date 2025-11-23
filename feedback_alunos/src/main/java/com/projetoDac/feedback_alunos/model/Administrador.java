@@ -4,27 +4,22 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.PrimaryKeyJoinColumn;
 import jakarta.persistence.Table;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-@Data
-@AllArgsConstructor
-@EqualsAndHashCode(callSuper = true)
 @Entity
+@Getter
+@Setter
+@NoArgsConstructor
 @Table(name = "TB_administrador")
 @PrimaryKeyJoinColumn(name = "id_usuario")
 public class Administrador extends Usuario {
 
 	@Column(name = "super_admin", nullable = false)
 	private boolean superAdmin;
-	// Singleton
-	private static Administrador instance;
 
-	private Administrador() {
-		// construtor privado para impedir múltiplas instâncias
-	}
+	private static Administrador instance;
 
 	public static Administrador getInstance() {
 		if (instance == null) {
@@ -32,5 +27,4 @@ public class Administrador extends Usuario {
 		}
 		return instance;
 	}
-
 }

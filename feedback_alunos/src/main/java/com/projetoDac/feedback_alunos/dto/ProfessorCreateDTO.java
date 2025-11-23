@@ -6,7 +6,6 @@ import lombok.Setter;
 
 @Getter
 @Setter
-
 public class ProfessorCreateDTO {
 
     @NotBlank(message = "O nome é obrigatório")

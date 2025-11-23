@@ -7,9 +7,9 @@ import lombok.Setter;
 @Setter
 
 public class AdministratorResponseDTO {
-	private Long idAdministrador;
+	private Long idUsuario;
 	private String nome;
 	private String matricula;
-	private String setor;
+	private boolean superAdmin;
 
 }

@@ -35,28 +35,21 @@ public class AdministradorService {
 	@Transactional
 	public AdministratorResponseDTO cadastrarAdministrador(AdministradorCreateDTO dto) {
 		// Verifica se já existe um administrador
-		Optional<Administrador> existente = administradorRepository.findFirstByOrderByIdAsc();
+		Optional<Administrador> existente = administradorRepository.findFirstByOrderByIdUsuarioAsc();
 		if (existente.isPresent()) {
 			return AdministradorMapper.toDTO(existente.get());
 		}
 
-		// Criar Usuario
-		Usuario usuario = new Usuario();
-		usuario.setNome(dto.getNome());
-		usuario.setMatricula(dto.getMatricula());
-		usuario.setSenha(dto.getSenha());
+		// Criar Administrador (que herda de Usuario)
+		Administrador administrador = new Administrador();
+		administrador.setNome(dto.getNome());
+		administrador.setMatricula(dto.getMatricula());
+		administrador.setSenha(dto.getSenha());
+		administrador.setSuperAdmin(dto.isSuperAdmin());
 
 		// Atribuir perfil ADMIN
 		Optional<Perfil> perfilAdmin = perfilRepository.findByNomePerfil("ADMIN");
-		perfilAdmin.ifPresent(usuario.getPerfis()::add);
-
-		Usuario usuarioSalvo = usuarioRepository.save(usuario);
-
-		// Criar Administrador
-		Administrador administrador = Administrador.getInstance();
-		administrador.setNome(dto.getNome());
-		administrador.setMatricula(dto.getMatricula());
-		administrador.setSuperAdmin(dto.isSuperAdmin());
+		perfilAdmin.ifPresent(administrador.getPerfis()::add);
 
 		Administrador administradorSalvo = administradorRepository.save(administrador);
 		return AdministradorMapper.toDTO(administradorSalvo);
@@ -66,7 +59,7 @@ public class AdministradorService {
 	 * Buscar administrador único
 	 */
 	public AdministratorResponseDTO buscarAdministrador() {
-		Administrador admin = administradorRepository.findFirstByOrderByIdAsc()
+		Administrador admin = administradorRepository.findFirstByOrderByIdUsuarioAsc()
 				.orElseThrow(AdministradorNaoEncontradoException::new);
 		return AdministradorMapper.toDTO(admin);
 	}
@@ -76,7 +69,7 @@ public class AdministradorService {
 	 */
 	@Transactional
 	public AdministratorResponseDTO editarAdministrador(AdministradorCreateDTO dto) {
-		Administrador administrador = administradorRepository.findFirstByOrderByIdAsc()
+		Administrador administrador = administradorRepository.findFirstByOrderByIdUsuarioAsc()
 				.orElseThrow(AdministradorNaoEncontradoException::new);
 
 		administrador.setNome(dto.getNome());
@@ -85,12 +78,5 @@ public class AdministradorService {
 
 		Administrador atualizado = administradorRepository.save(administrador);
 		return AdministradorMapper.toDTO(atualizado);
-	}
-
-	/**
-	 * Excluir administrador (opcional, apenas se permitido)
-	 */
-	public void excluirAdministrador() {
-		administradorRepository.findFirstByOrderByIdAsc().ifPresent(administradorRepository::delete);
 	}
 }

@@ -30,11 +30,6 @@ public class ProfessorService {
     @Autowired
     private PerfilRepository perfilRepository;
 
-    public ProfessorResponseDTO cadastrarProfessor(ProfessorCreateDTO professorCreateDTO) {
-        Professor professor = ProfessorMapper.toEntity(professorCreateDTO);
-        Professor salvo = professorRepository.save(professor);
-        return ProfessorMapper.toDTO(salvo);
-    }
 
     @Transactional
     public ProfessorResponseDTO cadastrarProfessorCompleto(ProfessorCreateDTO dto) {
@@ -88,13 +83,6 @@ public class ProfessorService {
                 .map(ProfessorMapper::toDTO)
                 .toList();
     }
-
-    public ProfessorResponseDTO buscarPorId(Long id) {
-        Professor professor = professorRepository.findById(id)
-                .orElseThrow(() -> new ProfessorNotFoundException("Professor não encontrado com ID: " + id));
-        return ProfessorMapper.toDTO(professor);
-    }
-
     public ProfessorResponseDTO buscarPorMatricula(String matricula) {
         Professor professor = professorRepository.findByMatricula(matricula)
                 .orElseThrow(() -> new ProfessorNotFoundException("Professor não encontrado com matrícula: " + matricula));

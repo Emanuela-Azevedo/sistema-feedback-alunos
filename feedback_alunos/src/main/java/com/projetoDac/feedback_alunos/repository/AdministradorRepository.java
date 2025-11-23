@@ -11,5 +11,5 @@ import com.projetoDac.feedback_alunos.model.Administrador;
 public interface AdministradorRepository extends JpaRepository<Administrador, Long> {
 
 	// Retorna a primeira instância de administrador (para garantir singleton)
-	Optional<Administrador> findFirstByOrderByIdAsc();
+	Optional<Administrador> findFirstByOrderByIdUsuarioAsc();
 }

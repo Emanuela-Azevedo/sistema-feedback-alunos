@@ -2,6 +2,7 @@ package com.projetoDac.feedback_alunos.integration;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -118,5 +119,75 @@ class ProfessorIntegrationTest {
                 baseUrl + "/matricula/PROF999", String.class);
 
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+    }
+
+    @Test
+    void cadastrarProfessor_ComDadosInvalidos_DeveRetornar400() {
+        ProfessorCreateDTO professorCreateDTO = new ProfessorCreateDTO();
+        professorCreateDTO.setNome(""); // Nome vazio
+        professorCreateDTO.setMatricula(""); // Matrícula vazia
+        professorCreateDTO.setSenha("123"); // Senha muito curta
+        professorCreateDTO.setEspecialidade(""); // Especialidade vazia
+
+        ResponseEntity<String> response = restTemplate.postForEntity(
+                baseUrl, professorCreateDTO, String.class);
+
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+    }
+
+    @Test
+    void editarProfessor_DeveRetornar200EAtualizar() {
+        // Cadastra professor primeiro
+        ProfessorCreateDTO professorCreateDTO = new ProfessorCreateDTO();
+        professorCreateDTO.setNome("Professor Original");
+        professorCreateDTO.setMatricula("PROF003");
+        professorCreateDTO.setSenha("senha123");
+        professorCreateDTO.setEspecialidade("Física");
+
+        ResponseEntity<ProfessorResponseDTO> createResponse = restTemplate.postForEntity(
+                baseUrl, professorCreateDTO, ProfessorResponseDTO.class);
+        
+        Long professorId = createResponse.getBody().getIdProfessor();
+
+        // Atualiza o professor
+        ProfessorCreateDTO updateDTO = new ProfessorCreateDTO();
+        updateDTO.setNome("Professor Atualizado");
+        updateDTO.setMatricula("PROF003");
+        updateDTO.setSenha("novaSenha");
+        updateDTO.setEspecialidade("Química");
+
+        HttpEntity<ProfessorCreateDTO> request = new HttpEntity<>(updateDTO);
+        ResponseEntity<ProfessorResponseDTO> response = restTemplate.exchange(
+                baseUrl + "/" + professorId, HttpMethod.PUT, request, ProfessorResponseDTO.class);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals("Professor Atualizado", response.getBody().getNome());
+        assertEquals("Química", response.getBody().getEspecialidade());
+    }
+
+    @Test
+    void excluirProfessor_DeveRetornar204ERemover() {
+        // Cadastra professor primeiro
+        ProfessorCreateDTO professorCreateDTO = new ProfessorCreateDTO();
+        professorCreateDTO.setNome("Professor para Excluir");
+        professorCreateDTO.setMatricula("PROF004");
+        professorCreateDTO.setSenha("senha123");
+        professorCreateDTO.setEspecialidade("História");
+
+        ResponseEntity<ProfessorResponseDTO> createResponse = restTemplate.postForEntity(
+                baseUrl, professorCreateDTO, ProfessorResponseDTO.class);
+        
+        Long professorId = createResponse.getBody().getIdProfessor();
+
+        // Exclui o professor
+        ResponseEntity<Void> response = restTemplate.exchange(
+                baseUrl + "/" + professorId, HttpMethod.DELETE, null, Void.class);
+
+        assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
+        
+        // Verifica se foi excluído
+        ResponseEntity<String> getResponse = restTemplate.getForEntity(
+                baseUrl + "/matricula/PROF004", String.class);
+        assertEquals(HttpStatus.NOT_FOUND, getResponse.getStatusCode());
     }
 }

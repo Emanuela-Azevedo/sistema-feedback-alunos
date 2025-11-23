@@ -30,13 +30,6 @@ public class AlunoService {
 	@Autowired
 	private PerfilRepository perfilRepository;
 
-	// Cadastrar aluno simples
-	public AlunoResponseDTO cadastrarAluno(AlunoCreateDTO dto) {
-		Aluno aluno = AlunoMapper.toEntity(dto);
-		Aluno salvo = alunoRepository.save(aluno);
-		return AlunoMapper.toDTO(salvo);
-	}
-
 	// Cadastrar aluno COMPLETO (Usuario + Perfil + Aluno)
 	@Transactional
 	public AlunoResponseDTO cadastrarAlunoCompleto(AlunoCreateDTO dto) {
@@ -90,14 +83,6 @@ public class AlunoService {
 	public List<AlunoResponseDTO> listarAlunos() {
 		return alunoRepository.findAll().stream().map(AlunoMapper::toDTO).toList();
 	}
-
-	// Buscar por ID
-	public AlunoResponseDTO buscarPorId(Long id) {
-		Aluno aluno = alunoRepository.findById(id)
-				.orElseThrow(() -> new AlunoNotFoundException("Aluno não encontrado com ID: " + id));
-		return AlunoMapper.toDTO(aluno);
-	}
-
 	// Buscar por matrícula
 	public AlunoResponseDTO buscarPorMatricula(String matricula) {
 		Aluno aluno = alunoRepository.findByMatricula(matricula)
