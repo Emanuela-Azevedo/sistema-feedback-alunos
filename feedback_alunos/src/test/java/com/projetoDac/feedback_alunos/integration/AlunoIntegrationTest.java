@@ -49,7 +49,7 @@ class AlunoIntegrationTest {
     }
 
     @Test
-    void cadastrarAluno_SemUsuario_DeveRetornar500() {
+    void cadastrarAluno_SemSenha_DeveRetornar400() {
         AlunoCreateDTO alunoCreateDTO = new AlunoCreateDTO();
         alunoCreateDTO.setNome("João Silva");
         alunoCreateDTO.setMatricula("ALU001");
@@ -58,35 +58,36 @@ class AlunoIntegrationTest {
         ResponseEntity<String> response = restTemplate.postForEntity(
                 baseUrl, alunoCreateDTO, String.class);
 
-        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
     }
 
     @Test
-    void editarAluno_ComIdInexistente_DeveRetornar404() {
+    void editarAluno_ComMatriculaInexistente_DeveRetornar404() {
         AlunoCreateDTO alunoCreateDTO = new AlunoCreateDTO();
         alunoCreateDTO.setNome("Aluno Inexistente");
         alunoCreateDTO.setMatricula("ALU999");
         alunoCreateDTO.setCurso("Curso Inexistente");
+        alunoCreateDTO.setSenha("123456");
 
         HttpEntity<AlunoCreateDTO> request = new HttpEntity<>(alunoCreateDTO);
         ResponseEntity<String> response = restTemplate.exchange(
-                baseUrl + "/999", HttpMethod.PUT, request, String.class);
+                baseUrl + "/matricula/ALU999", HttpMethod.PUT, request, String.class);
 
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
     }
 
     @Test
-    void excluirAluno_ComIdInexistente_DeveRetornar404() {
+    void excluirAluno_ComMatriculaInexistente_DeveRetornar404() {
         ResponseEntity<String> response = restTemplate.exchange(
-                baseUrl + "/999", HttpMethod.DELETE, null, String.class);
+                baseUrl + "/matricula/ALU999", HttpMethod.DELETE, null, String.class);
 
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
     }
 
     @Test
-    void buscarAlunoPorId_ComIdInexistente_DeveRetornar404() {
+    void buscarAlunoPorMatricula_ComMatriculaInexistente_DeveRetornar404() {
         ResponseEntity<String> response = restTemplate.getForEntity(
-                baseUrl + "/999", String.class);
+                baseUrl + "/matricula/MAT999", String.class);
 
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
     }
@@ -94,9 +95,9 @@ class AlunoIntegrationTest {
     @Test
     void cadastrarAluno_ComDadosInvalidos_DeveRetornar400() {
         AlunoCreateDTO alunoCreateDTO = new AlunoCreateDTO();
-        alunoCreateDTO.setNome(""); // Nome vazio
-        alunoCreateDTO.setMatricula(""); // Matrícula vazia
-        alunoCreateDTO.setCurso(""); // Curso vazio
+        alunoCreateDTO.setNome("");
+        alunoCreateDTO.setMatricula("");
+        alunoCreateDTO.setCurso("");
 
         ResponseEntity<String> response = restTemplate.postForEntity(
                 baseUrl, alunoCreateDTO, String.class);

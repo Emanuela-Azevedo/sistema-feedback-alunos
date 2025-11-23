@@ -50,10 +50,10 @@ class UsuarioIntegrationTest {
     }
 
     @Test
-    void cadastrarUsuario_DeveRetornar201EPeristir() {
+    void cadastrarUsuario_DeveRetornar201EPersistir() {
         UsuarioCreateDTO usuarioCreateDTO = new UsuarioCreateDTO();
         usuarioCreateDTO.setNome("João Silva");
-        usuarioCreateDTO.setEmail("joao@email.com");
+        usuarioCreateDTO.setMatricula("USR001");
         usuarioCreateDTO.setSenha("senha123");
 
         ResponseEntity<UsuarioResponseDTO> response = restTemplate.postForEntity(
@@ -62,7 +62,7 @@ class UsuarioIntegrationTest {
         assertEquals(HttpStatus.CREATED, response.getStatusCode());
         assertNotNull(response.getBody());
         assertEquals("João Silva", response.getBody().getNome());
-        assertEquals("joao@email.com", response.getBody().getEmail());
+        assertEquals("USR001", response.getBody().getMatricula());
         assertEquals(1, usuarioRepository.count());
     }
 
@@ -91,7 +91,7 @@ class UsuarioIntegrationTest {
 
         UsuarioCreateDTO usuarioCreateDTO = new UsuarioCreateDTO();
         usuarioCreateDTO.setNome("Usuario Atualizado");
-        usuarioCreateDTO.setEmail("atualizado@email.com");
+        usuarioCreateDTO.setMatricula("USER002UPD");
         usuarioCreateDTO.setSenha("novaSenha");
 
         HttpEntity<UsuarioCreateDTO> request = new HttpEntity<>(usuarioCreateDTO);
@@ -121,7 +121,7 @@ class UsuarioIntegrationTest {
     void editarUsuario_ComIdInexistente_DeveRetornar404() {
         UsuarioCreateDTO usuarioCreateDTO = new UsuarioCreateDTO();
         usuarioCreateDTO.setNome("Usuario Inexistente");
-        usuarioCreateDTO.setEmail("inexistente@email.com");
+        usuarioCreateDTO.setMatricula("INEXIST001");
         usuarioCreateDTO.setSenha("senha123");
 
         HttpEntity<UsuarioCreateDTO> request = new HttpEntity<>(usuarioCreateDTO);
@@ -151,7 +151,7 @@ class UsuarioIntegrationTest {
     void cadastrarUsuario_ComDadosInvalidos_DeveRetornar400() {
         UsuarioCreateDTO usuarioCreateDTO = new UsuarioCreateDTO();
         usuarioCreateDTO.setNome(""); // Nome vazio
-        usuarioCreateDTO.setEmail("email-invalido"); // Email inválido
+        usuarioCreateDTO.setMatricula(""); // Matrícula vazia
         usuarioCreateDTO.setSenha("123"); // Senha muito curta
 
         ResponseEntity<String> response = restTemplate.postForEntity(

@@ -29,9 +29,8 @@ public class UsuarioService {
 				.orElseThrow(() -> new UsuarioNotFoundException("Usuário não encontrado com ID: " + id));
 
 		usuario.setNome(usuarioCreateDTO.getNome());
-		//usuario.setEmail(usuarioCreateDTO.getEmail());
-		// Se existir senha no CreateDTO:
-		// usuario.setSenha(usuarioCreateDTO.getSenha());
+		usuario.setMatricula(usuarioCreateDTO.getMatricula());
+		usuario.setSenha(usuarioCreateDTO.getSenha());
 
 		Usuario atualizado = usuarioRepository.save(usuario);
 		return UsuarioMapper.toDTO(atualizado);

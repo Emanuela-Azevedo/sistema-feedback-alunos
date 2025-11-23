@@ -1,5 +1,12 @@
 package com.projetoDac.feedback_alunos.service;
 
+import java.util.List;
+import java.util.Optional;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.projetoDac.feedback_alunos.dto.AlunoCreateDTO;
 import com.projetoDac.feedback_alunos.dto.AlunoResponseDTO;
 import com.projetoDac.feedback_alunos.dto.mapper.AlunoMapper;
@@ -10,13 +17,6 @@ import com.projetoDac.feedback_alunos.model.Usuario;
 import com.projetoDac.feedback_alunos.repository.AlunoRepository;
 import com.projetoDac.feedback_alunos.repository.PerfilRepository;
 import com.projetoDac.feedback_alunos.repository.UsuarioRepository;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
-import java.util.Optional;
 
 @Service
 public class AlunoService {
@@ -59,9 +59,9 @@ public class AlunoService {
 	}
 
 	// Editar aluno
-	public AlunoResponseDTO editarAluno(Long id, AlunoCreateDTO dto) {
-		Aluno aluno = alunoRepository.findById(id)
-				.orElseThrow(() -> new AlunoNotFoundException("Aluno não encontrado com ID: " + id));
+	public AlunoResponseDTO editarAluno(String matricula, AlunoCreateDTO dto) {
+		Aluno aluno = alunoRepository.findByMatricula(matricula)
+				.orElseThrow(() -> new AlunoNotFoundException("Aluno não encontrado com matrícula: " + matricula));
 
 		aluno.setNome(dto.getNome());
 		aluno.setCurso(dto.getCurso());
@@ -72,17 +72,17 @@ public class AlunoService {
 	}
 
 	// Excluir aluno
-	public void excluirAluno(Long id) {
-		if (!alunoRepository.existsById(id)) {
-			throw new AlunoNotFoundException("Aluno não encontrado com ID: " + id);
-		}
-		alunoRepository.deleteById(id);
+	public void excluirAluno(String matricula) {
+		Aluno aluno = alunoRepository.findByMatricula(matricula)
+				.orElseThrow(() -> new AlunoNotFoundException("Aluno não encontrado com matrícula: " + matricula));
+		alunoRepository.delete(aluno);
 	}
 
 	// Listar todos
 	public List<AlunoResponseDTO> listarAlunos() {
 		return alunoRepository.findAll().stream().map(AlunoMapper::toDTO).toList();
 	}
+
 	// Buscar por matrícula
 	public AlunoResponseDTO buscarPorMatricula(String matricula) {
 		Aluno aluno = alunoRepository.findByMatricula(matricula)

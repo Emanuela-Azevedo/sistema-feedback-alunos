@@ -29,7 +29,7 @@ public class AlunoController {
 
     // Cadastrar aluno completo
     @PostMapping
-    public ResponseEntity<AlunoResponseDTO> cadastrarAluno(
+    public ResponseEntity<?> cadastrarAluno(
             @Valid @RequestBody AlunoCreateDTO alunoCreateDTO) {
 
         AlunoResponseDTO aluno = alunoService.cadastrarAlunoCompleto(alunoCreateDTO);
@@ -37,19 +37,19 @@ public class AlunoController {
     }
 
     // Editar aluno
-    @PutMapping("/{id}")
-    public ResponseEntity<AlunoResponseDTO> editarAluno(
-            @PathVariable Long id,
+    @PutMapping("/matricula/{matricula}")
+    public ResponseEntity<?> editarAluno(
+            @PathVariable String matricula,
             @Valid @RequestBody AlunoCreateDTO alunoCreateDTO) {
 
-        AlunoResponseDTO aluno = alunoService.editarAluno(id, alunoCreateDTO);
+        AlunoResponseDTO aluno = alunoService.editarAluno(matricula, alunoCreateDTO);
         return ResponseEntity.ok(aluno);
     }
 
     // Excluir aluno
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> excluirAluno(@PathVariable Long id) {
-        alunoService.excluirAluno(id);
+    @DeleteMapping("/matricula/{matricula}")
+    public ResponseEntity<Void> excluirAluno(@PathVariable String matricula) {
+        alunoService.excluirAluno(matricula);
         return ResponseEntity.noContent().build();
     }
 
