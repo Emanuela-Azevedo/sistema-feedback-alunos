@@ -10,7 +10,6 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 @Entity
@@ -18,8 +17,20 @@ import lombok.NoArgsConstructor;
 @PrimaryKeyJoinColumn(name = "id_usuario")
 public class Administrador extends Usuario {
 
-    @Column(name = "super_admin", nullable = false)
-    private boolean superAdmin;
+	@Column(name = "super_admin", nullable = false)
+	private boolean superAdmin;
+	// Singleton
+	private static Administrador instance;
+
+	private Administrador() {
+		// construtor privado para impedir múltiplas instâncias
+	}
+
+	public static Administrador getInstance() {
+		if (instance == null) {
+			instance = new Administrador();
+		}
+		return instance;
+	}
 
 }
-
