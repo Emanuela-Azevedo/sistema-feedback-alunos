@@ -43,21 +43,18 @@ public class ProfessorController {
         return ResponseEntity.ok(professor);
     }
 
-    // Excluir professor
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> excluirProfessor(@PathVariable Long id) {
         professorService.excluirProfessor(id);
         return ResponseEntity.noContent().build();
     }
 
-    // Listar todos professores
     @GetMapping
     public ResponseEntity<List<ProfessorResponseDTO>> listarProfessores() {
         List<ProfessorResponseDTO> professores = professorService.listarProfessores();
         return ResponseEntity.ok(professores);
     }
 
-    // Buscar professor por matrícula
     @GetMapping("/matricula/{matricula}")
     public ResponseEntity<ProfessorResponseDTO> buscarPorMatricula(@PathVariable String matricula) {
         ProfessorResponseDTO professor = professorService.buscarPorMatricula(matricula);

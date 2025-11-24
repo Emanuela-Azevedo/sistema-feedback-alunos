@@ -30,23 +30,19 @@ public class AlunoService {
 	@Autowired
 	private PerfilRepository perfilRepository;
 
-	// Cadastrar aluno COMPLETO (Usuario + Perfil + Aluno)
 	@Transactional
 	public AlunoResponseDTO cadastrarAlunoCompleto(AlunoCreateDTO dto) {
 
-		// 1. Criar Usuário
 		Usuario usuario = new Usuario();
 		usuario.setNome(dto.getNome());
 		usuario.setMatricula(dto.getMatricula());
 		usuario.setSenha(dto.getSenha());
 
-		// 2. Atribuir perfil ALUNO
 		Optional<Perfil> perfilAluno = perfilRepository.findByNomePerfil("ALUNO");
 		perfilAluno.ifPresent(p -> usuario.getPerfis().add(p));
 
 		Usuario usuarioSalvo = usuarioRepository.save(usuario);
 
-		// 3. Criar Aluno
 		Aluno aluno = new Aluno();
 		aluno.setUsuario(usuarioSalvo);
 		aluno.setNome(dto.getNome());
@@ -58,7 +54,6 @@ public class AlunoService {
 		return AlunoMapper.toDTO(alunoSalvo);
 	}
 
-	// Editar aluno
 	public AlunoResponseDTO editarAluno(String matricula, AlunoCreateDTO dto) {
 		Aluno aluno = alunoRepository.findByMatricula(matricula)
 				.orElseThrow(() -> new AlunoNotFoundException("Aluno não encontrado com matrícula: " + matricula));
@@ -71,19 +66,16 @@ public class AlunoService {
 		return AlunoMapper.toDTO(atualizado);
 	}
 
-	// Excluir aluno
 	public void excluirAluno(String matricula) {
 		Aluno aluno = alunoRepository.findByMatricula(matricula)
 				.orElseThrow(() -> new AlunoNotFoundException("Aluno não encontrado com matrícula: " + matricula));
 		alunoRepository.delete(aluno);
 	}
 
-	// Listar todos
 	public List<AlunoResponseDTO> listarAlunos() {
 		return alunoRepository.findAll().stream().map(AlunoMapper::toDTO).toList();
 	}
 
-	// Buscar por matrícula
 	public AlunoResponseDTO buscarPorMatricula(String matricula) {
 		Aluno aluno = alunoRepository.findByMatricula(matricula)
 				.orElseThrow(() -> new AlunoNotFoundException("Aluno não encontrado com matrícula: " + matricula));

@@ -5,7 +5,6 @@ public class AdministradorNaoEncontradoException extends RuntimeException {
 		super("Administrador não cadastrado");
 	}
 
-	// Construtor que permite passar mensagem personalizada
 	public AdministradorNaoEncontradoException(String mensagem) {
 		super(mensagem);
 	}
