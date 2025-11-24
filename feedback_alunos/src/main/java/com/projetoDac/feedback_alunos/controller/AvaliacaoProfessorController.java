@@ -9,6 +9,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/avaliacoes/professores")
 public class AvaliacaoProfessorController {
@@ -20,5 +22,23 @@ public class AvaliacaoProfessorController {
     public ResponseEntity<AvaliacaoProfessorResponseDTO> criarAvaliacaoProfessor(@Valid @RequestBody AvaliacaoProfessorCreateDTO avaliacaoCreateDTO) {
         AvaliacaoProfessorResponseDTO avaliacao = avaliacaoProfessorService.criarAvaliacaoProfessor(avaliacaoCreateDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(avaliacao);
+    }
+
+    @GetMapping
+    public ResponseEntity<List<AvaliacaoProfessorResponseDTO>> listarAvaliacoes() {
+        List<AvaliacaoProfessorResponseDTO> avaliacoes = avaliacaoProfessorService.listarAvaliacoes();
+        return ResponseEntity.ok(avaliacoes);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<AvaliacaoProfessorResponseDTO> buscarPorId(@PathVariable Long id) {
+        AvaliacaoProfessorResponseDTO avaliacao = avaliacaoProfessorService.buscarPorId(id);
+        return ResponseEntity.ok(avaliacao);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> excluirAvaliacao(@PathVariable Long id) {
+        avaliacaoProfessorService.excluirAvaliacao(id);
+        return ResponseEntity.noContent().build();
     }
 }

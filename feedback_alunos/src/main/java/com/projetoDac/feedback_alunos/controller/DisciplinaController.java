@@ -41,4 +41,10 @@ public class DisciplinaController {
         List<DisciplinaResponseDTO> disciplinas = disciplinaService.listarDisciplinas();
         return ResponseEntity.ok(disciplinas);
     }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<DisciplinaResponseDTO> buscarPorId(@PathVariable Long id) {
+        DisciplinaResponseDTO disciplina = disciplinaService.buscarPorId(id);
+        return ResponseEntity.ok(disciplina);
+    }
 }

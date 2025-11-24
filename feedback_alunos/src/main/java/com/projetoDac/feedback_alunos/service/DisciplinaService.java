@@ -75,4 +75,10 @@ public class DisciplinaService {
                 .map(DisciplinaMapper::toDTO)
                 .toList();
     }
+
+    public DisciplinaResponseDTO buscarPorId(Long id) {
+        Disciplina disciplina = disciplinaRepository.findById(id)
+                .orElseThrow(() -> new DisciplinaNotFoundException("Disciplina não encontrada com ID: " + id));
+        return DisciplinaMapper.toDTO(disciplina);
+    }
 }

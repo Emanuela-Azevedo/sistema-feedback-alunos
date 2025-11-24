@@ -21,7 +21,7 @@ public class Professor {
 
 
     @Id
-    @Column(name = "id_professor")
+    @Column(name = "id_usuario")
     private Long id;
 
     @OneToOne(fetch = FetchType.LAZY, optional = false)

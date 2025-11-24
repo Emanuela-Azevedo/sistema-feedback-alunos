@@ -1,8 +1,14 @@
 package com.projetoDac.feedback_alunos.service;
 
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import com.projetoDac.feedback_alunos.dto.AvaliacaoProfessorCreateDTO;
 import com.projetoDac.feedback_alunos.dto.AvaliacaoProfessorResponseDTO;
 import com.projetoDac.feedback_alunos.dto.mapper.AvaliacaoProfessorMapper;
+import com.projetoDac.feedback_alunos.exception.AvaliacaoNotFoundException;
 import com.projetoDac.feedback_alunos.exception.ProfessorNotFoundException;
 import com.projetoDac.feedback_alunos.exception.UsuarioNotFoundException;
 import com.projetoDac.feedback_alunos.model.AvaliacaoProfessor;
@@ -11,8 +17,6 @@ import com.projetoDac.feedback_alunos.model.Usuario;
 import com.projetoDac.feedback_alunos.repository.AvaliacaoProfessorRepository;
 import com.projetoDac.feedback_alunos.repository.ProfessorRepository;
 import com.projetoDac.feedback_alunos.repository.UsuarioRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 @Service
 public class AvaliacaoProfessorService {
@@ -39,5 +43,24 @@ public class AvaliacaoProfessorService {
 
         AvaliacaoProfessor avaliacaoSalva = avaliacaoProfessorRepository.save(avaliacao);
         return AvaliacaoProfessorMapper.toDTO(avaliacaoSalva);
+    }
+
+    public List<AvaliacaoProfessorResponseDTO> listarAvaliacoes() {
+        return avaliacaoProfessorRepository.findAll().stream()
+                .map(AvaliacaoProfessorMapper::toDTO)
+                .toList();
+    }
+
+    public AvaliacaoProfessorResponseDTO buscarPorId(Long id) {
+        AvaliacaoProfessor avaliacao = avaliacaoProfessorRepository.findById(id)
+                .orElseThrow(() -> new AvaliacaoNotFoundException("Avaliação não encontrada com ID: " + id));
+        return AvaliacaoProfessorMapper.toDTO(avaliacao);
+    }
+
+    public void excluirAvaliacao(Long id) {
+        if (!avaliacaoProfessorRepository.existsById(id)) {
+            throw new AvaliacaoNotFoundException("Avaliação não encontrada com ID: " + id);
+        }
+        avaliacaoProfessorRepository.deleteById(id);
     }
 }

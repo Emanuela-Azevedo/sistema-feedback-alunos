@@ -10,7 +10,11 @@ public class AvaliacaoProfessorMapper {
     private static final ModelMapper mapper = new ModelMapper();
 
     public static AvaliacaoProfessor toEntity(AvaliacaoProfessorCreateDTO dto){
-        return mapper.map(dto, AvaliacaoProfessor.class);
+        AvaliacaoProfessor avaliacao = new AvaliacaoProfessor();
+        avaliacao.setNota(dto.getNota());
+        avaliacao.setComentario(dto.getComentario());
+        avaliacao.setAnonima(dto.isAnonima());
+        return avaliacao;
     }
     public static AvaliacaoProfessorResponseDTO toDTO(AvaliacaoProfessor avaliacao){
         AvaliacaoProfessorResponseDTO dto = mapper.map(avaliacao, AvaliacaoProfessorResponseDTO.class);
