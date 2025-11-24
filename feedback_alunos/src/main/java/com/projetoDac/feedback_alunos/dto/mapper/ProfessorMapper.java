@@ -9,12 +9,10 @@ public class ProfessorMapper {
 
 	 private static final ModelMapper mapper = new ModelMapper();
 
-	    // DTO → Entity
 	    public static Professor toEntity(ProfessorCreateDTO dto) {
 	        return mapper.map(dto, Professor.class);
 	    }
 
-	    // Entity → DTO
 	    public static ProfessorResponseDTO toDTO(Professor professor) {
 	        return mapper.map(professor, ProfessorResponseDTO.class);
 	        

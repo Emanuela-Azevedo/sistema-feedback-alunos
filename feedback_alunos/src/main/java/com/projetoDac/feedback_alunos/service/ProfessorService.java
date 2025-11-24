@@ -33,13 +33,12 @@ public class ProfessorService {
 
     @Transactional
     public ProfessorResponseDTO cadastrarProfessorCompleto(ProfessorCreateDTO dto) {
-        // 1. Criar Usuario
+ 
         Usuario usuario = new Usuario();
         usuario.setNome(dto.getNome());
         usuario.setMatricula(dto.getMatricula());
         usuario.setSenha(dto.getSenha());
         
-        // 2. Atribuir perfil PROFESSOR
         Optional<Perfil> perfilProfessor = perfilRepository.findByNomePerfil("PROFESSOR");
         if (perfilProfessor.isPresent()) {
             usuario.getPerfis().add(perfilProfessor.get());
@@ -47,7 +46,6 @@ public class ProfessorService {
         
         Usuario usuarioSalvo = usuarioRepository.save(usuario);
         
-        // 3. Criar Professor
         Professor professor = new Professor();
         professor.setUsuario(usuarioSalvo);
         professor.setNome(dto.getNome());

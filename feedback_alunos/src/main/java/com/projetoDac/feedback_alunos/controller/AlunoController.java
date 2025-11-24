@@ -27,7 +27,6 @@ public class AlunoController {
     @Autowired
     private AlunoService alunoService;
 
-    // Cadastrar aluno completo
     @PostMapping
     public ResponseEntity<?> cadastrarAluno(
             @Valid @RequestBody AlunoCreateDTO alunoCreateDTO) {
@@ -36,7 +35,6 @@ public class AlunoController {
         return ResponseEntity.status(HttpStatus.CREATED).body(aluno);
     }
 
-    // Editar aluno
     @PutMapping("/matricula/{matricula}")
     public ResponseEntity<?> editarAluno(
             @PathVariable String matricula,
@@ -46,21 +44,20 @@ public class AlunoController {
         return ResponseEntity.ok(aluno);
     }
 
-    // Excluir aluno
     @DeleteMapping("/matricula/{matricula}")
     public ResponseEntity<Void> excluirAluno(@PathVariable String matricula) {
         alunoService.excluirAluno(matricula);
         return ResponseEntity.noContent().build();
     }
 
-    // Listar todos alunos
+ 
     @GetMapping
     public ResponseEntity<List<AlunoResponseDTO>> listarAlunos() {
         List<AlunoResponseDTO> alunos = alunoService.listarAlunos();
         return ResponseEntity.ok(alunos);
     }
 
-    // Buscar aluno por matrícula
+    
     @GetMapping("/matricula/{matricula}")
     public ResponseEntity<AlunoResponseDTO> buscarPorMatricula(@PathVariable String matricula) {
         AlunoResponseDTO aluno = alunoService.buscarPorMatricula(matricula);

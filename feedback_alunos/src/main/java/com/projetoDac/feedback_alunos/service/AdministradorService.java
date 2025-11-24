@@ -29,9 +29,6 @@ public class AdministradorService {
 	@Autowired
 	private PerfilRepository perfilRepository;
 
-	/**
-	 * Cadastrar administrador único (singleton)
-	 */
 	@Transactional
 	public AdministratorResponseDTO cadastrarAdministrador(AdministradorCreateDTO dto) {
 		// Verifica se já existe um administrador
@@ -40,14 +37,12 @@ public class AdministradorService {
 			return AdministradorMapper.toDTO(existente.get());
 		}
 
-		// Criar Administrador (que herda de Usuario)
 		Administrador administrador = new Administrador();
 		administrador.setNome(dto.getNome());
 		administrador.setMatricula(dto.getMatricula());
 		administrador.setSenha(dto.getSenha());
 		administrador.setSuperAdmin(dto.isSuperAdmin());
 
-		// Atribuir perfil ADMIN
 		Optional<Perfil> perfilAdmin = perfilRepository.findByNomePerfil("ADMIN");
 		perfilAdmin.ifPresent(administrador.getPerfis()::add);
 
@@ -55,18 +50,13 @@ public class AdministradorService {
 		return AdministradorMapper.toDTO(administradorSalvo);
 	}
 
-	/**
-	 * Buscar administrador único
-	 */
+	
 	public AdministratorResponseDTO buscarAdministrador() {
 		Administrador admin = administradorRepository.findFirstByOrderByIdUsuarioAsc()
 				.orElseThrow(AdministradorNaoEncontradoException::new);
 		return AdministradorMapper.toDTO(admin);
 	}
 
-	/**
-	 * Editar administrador
-	 */
 	@Transactional
 	public AdministratorResponseDTO editarAdministrador(AdministradorCreateDTO dto) {
 		Administrador administrador = administradorRepository.findFirstByOrderByIdUsuarioAsc()

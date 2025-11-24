@@ -18,7 +18,6 @@ public class UsuarioController {
     @Autowired
     private UsuarioService usuarioService;
 
-    // Cadastrar usuário
     @PostMapping
     public ResponseEntity<UsuarioResponseDTO> cadastrarUsuario(
             @Valid @RequestBody UsuarioCreateDTO usuarioCreateDTO) {
@@ -27,7 +26,6 @@ public class UsuarioController {
         return ResponseEntity.status(HttpStatus.CREATED).body(usuario);
     }
 
-    // Editar usuário
     @PutMapping("/{id}")
     public ResponseEntity<UsuarioResponseDTO> editarUsuario(
             @PathVariable Long id,
@@ -37,20 +35,17 @@ public class UsuarioController {
         return ResponseEntity.ok(usuario);
     }
 
-    // Excluir usuário
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> excluirUsuario(@PathVariable Long id) {
         usuarioService.excluirUsuario(id);
         return ResponseEntity.noContent().build();
     }
 
-    // Listar todos
     @GetMapping
     public ResponseEntity<List<UsuarioResponseDTO>> listarUsuarios() {
         return ResponseEntity.ok(usuarioService.listarUsuarios());
     }
 
-    // Buscar por ID
     @GetMapping("/{id}")
     public ResponseEntity<UsuarioResponseDTO> buscarPorId(@PathVariable Long id) {
         return ResponseEntity.ok(usuarioService.buscarPorId(id));
