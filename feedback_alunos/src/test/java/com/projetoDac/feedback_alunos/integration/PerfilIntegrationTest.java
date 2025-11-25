@@ -3,7 +3,11 @@ package com.projetoDac.feedback_alunos.integration;
 import com.projetoDac.feedback_alunos.dto.PerfilCreateDTO;
 import com.projetoDac.feedback_alunos.dto.PerfilResponseDTO;
 import com.projetoDac.feedback_alunos.model.Perfil;
+import com.projetoDac.feedback_alunos.repository.AvaliacaoDisciplinaRepository;
+import com.projetoDac.feedback_alunos.repository.AvaliacaoProfessorRepository;
+import com.projetoDac.feedback_alunos.repository.DisciplinaRepository;
 import com.projetoDac.feedback_alunos.repository.PerfilRepository;
+import com.projetoDac.feedback_alunos.repository.UsuarioRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,11 +33,27 @@ class PerfilIntegrationTest {
     @Autowired
     private PerfilRepository perfilRepository;
 
+    @Autowired
+    private AvaliacaoDisciplinaRepository avaliacaoDisciplinaRepository;
+
+    @Autowired
+    private AvaliacaoProfessorRepository avaliacaoProfessorRepository;
+
+    @Autowired
+    private DisciplinaRepository disciplinaRepository;
+
+    @Autowired
+    private UsuarioRepository usuarioRepository;
+
     private String baseUrl;
 
     @BeforeEach
     void setUp() {
         baseUrl = "http://localhost:" + port + "/perfis";
+        avaliacaoDisciplinaRepository.deleteAll();
+        avaliacaoProfessorRepository.deleteAll();
+        disciplinaRepository.deleteAll();
+        usuarioRepository.deleteAll();
         perfilRepository.deleteAll();
     }
 

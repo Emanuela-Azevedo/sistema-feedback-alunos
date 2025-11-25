@@ -1,14 +1,7 @@
 package com.projetoDac.feedback_alunos.integration;
 
-import com.projetoDac.feedback_alunos.dto.DisciplinaCreateDTO;
-import com.projetoDac.feedback_alunos.dto.DisciplinaResponseDTO;
-import com.projetoDac.feedback_alunos.model.Curso;
-import com.projetoDac.feedback_alunos.model.Professor;
-import com.projetoDac.feedback_alunos.model.Usuario;
-import com.projetoDac.feedback_alunos.repository.CursoRepository;
-import com.projetoDac.feedback_alunos.repository.DisciplinaRepository;
-import com.projetoDac.feedback_alunos.repository.ProfessorRepository;
-import com.projetoDac.feedback_alunos.repository.UsuarioRepository;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +12,17 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
 
-import static org.junit.jupiter.api.Assertions.*;
+import com.projetoDac.feedback_alunos.dto.DisciplinaCreateDTO;
+import com.projetoDac.feedback_alunos.dto.DisciplinaResponseDTO;
+import com.projetoDac.feedback_alunos.model.Curso;
+import com.projetoDac.feedback_alunos.model.Perfil;
+import com.projetoDac.feedback_alunos.model.Usuario;
+import com.projetoDac.feedback_alunos.repository.AvaliacaoDisciplinaRepository;
+import com.projetoDac.feedback_alunos.repository.AvaliacaoProfessorRepository;
+import com.projetoDac.feedback_alunos.repository.CursoRepository;
+import com.projetoDac.feedback_alunos.repository.DisciplinaRepository;
+import com.projetoDac.feedback_alunos.repository.PerfilRepository;
+import com.projetoDac.feedback_alunos.repository.UsuarioRepository;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
@@ -35,23 +38,53 @@ class DisciplinaIntegrationTest {
     private DisciplinaRepository disciplinaRepository;
 
     @Autowired
-    private CursoRepository cursoRepository;
+    private AvaliacaoDisciplinaRepository avaliacaoDisciplinaRepository;
 
     @Autowired
-    private ProfessorRepository professorRepository;
+    private AvaliacaoProfessorRepository avaliacaoProfessorRepository;
+
+    @Autowired
+    private CursoRepository cursoRepository;
 
     @Autowired
     private UsuarioRepository usuarioRepository;
 
+    @Autowired
+    private PerfilRepository perfilRepository;
+
     private String baseUrl;
+    private Long cursoId;
+    private Long professorId;
 
     @BeforeEach
     void setUp() {
         baseUrl = "http://localhost:" + port + "/disciplinas";
+        avaliacaoDisciplinaRepository.deleteAll();
+        avaliacaoProfessorRepository.deleteAll();
         disciplinaRepository.deleteAll();
-        professorRepository.deleteAll();
         usuarioRepository.deleteAll();
         cursoRepository.deleteAll();
+        perfilRepository.deleteAll();
+        
+        // Criar perfil professor
+        Perfil perfilProfessor = new Perfil();
+        perfilProfessor.setNomePerfil("PROFESSOR");
+        perfilProfessor = perfilRepository.save(perfilProfessor);
+        
+        // Criar curso
+        Curso curso = new Curso();
+        curso.setNome("Curso Teste");
+        curso = cursoRepository.save(curso);
+        cursoId = curso.getIdCurso();
+        
+        // Criar usuário professor
+        Usuario professor = new Usuario();
+        professor.setMatricula("PROF001");
+        professor.setNome("Professor Teste");
+        professor.setSenha("senha123");
+        professor.getPerfis().add(perfilProfessor);
+        professor = usuarioRepository.save(professor);
+        professorId = professor.getIdUsuario();
     }
 
     @Test
@@ -77,10 +110,25 @@ class DisciplinaIntegrationTest {
     }
 
     @Test
+    void cadastrarDisciplina_ComDadosValidos_DeveRetornar201() {
+        DisciplinaCreateDTO disciplinaCreateDTO = new DisciplinaCreateDTO();
+        disciplinaCreateDTO.setNome("Programação Java");
+        disciplinaCreateDTO.setCursoId(cursoId);
+        disciplinaCreateDTO.setProfessorId(professorId);
+
+        ResponseEntity<DisciplinaResponseDTO> response = restTemplate.postForEntity(
+                baseUrl, disciplinaCreateDTO, DisciplinaResponseDTO.class);
+
+        assertEquals(HttpStatus.CREATED, response.getStatusCode());
+        assertNotNull(response.getBody());
+        assertEquals("Programação Java", response.getBody().getNome());
+    }
+
+    @Test
     void cadastrarDisciplina_SemNome_DeveRetornar400() {
         DisciplinaCreateDTO disciplinaCreateDTO = new DisciplinaCreateDTO();
-        disciplinaCreateDTO.setCursoId(1L);
-        disciplinaCreateDTO.setProfessorId(1L);
+        disciplinaCreateDTO.setCursoId(cursoId);
+        disciplinaCreateDTO.setProfessorId(professorId);
 
         ResponseEntity<String> response = restTemplate.postForEntity(
                 baseUrl, disciplinaCreateDTO, String.class);

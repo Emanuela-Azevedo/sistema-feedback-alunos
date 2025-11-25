@@ -7,6 +7,7 @@ import lombok.*;
 @Setter
 public class AvaliacaoProfessorCreateDTO {
 
+    @NotNull(message = "O ID do usuário é obrigatório")
     private Long usuarioId;
 
     @NotNull(message = "O id do professor é obrigatório")

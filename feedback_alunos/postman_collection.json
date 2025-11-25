@@ -1,7 +1,8 @@
 {
 	"info": {
-		"name": "Sistema Feedback Alunos - API",
-		"description": "Coleção de endpoints para o sistema de feedback de alunos",
+		"name": "Sistema Feedback Alunos - API Completa",
+		"description": "Coleção completa de endpoints para o sistema de feedback de alunos - Arquitetura Unificada com Usuario e Perfil",
+		"version": "2.0.0",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
@@ -10,6 +11,54 @@
 			"item": [
 				{
 					"name": "Criar Perfil",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"nome\": \"ADMINISTRADOR\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/perfis",
+							"host": ["{{baseUrl}}"],
+							"path": ["perfis"]
+						}
+					}
+				},
+				{
+					"name": "Listar Perfis",
+					"request": {
+						"method": "GET",
+						"url": {
+							"raw": "{{baseUrl}}/perfis",
+							"host": ["{{baseUrl}}"],
+							"path": ["perfis"]
+						}
+					}
+				},
+				{
+					"name": "Buscar Perfil por ID",
+					"request": {
+						"method": "GET",
+						"url": {
+							"raw": "{{baseUrl}}/perfis/1",
+							"host": ["{{baseUrl}}"],
+							"path": ["perfis", "1"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Usuários Completo",
+			"item": [
+				{
+					"name": "Criar Perfil ALUNO",
 					"request": {
 						"method": "POST",
 						"header": [
@@ -30,21 +79,26 @@
 					}
 				},
 				{
-					"name": "Listar Perfis",
+					"name": "Criar Perfil PROFESSOR",
 					"request": {
-						"method": "GET",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"nome\": \"PROFESSOR\"\n}"
+						},
 						"url": {
 							"raw": "{{baseUrl}}/perfis",
 							"host": ["{{baseUrl}}"],
 							"path": ["perfis"]
 						}
 					}
-				}
-			]
-		},
-		{
-			"name": "Usuários Completo",
-			"item": [
+				},
 				{
 					"name": "Criar Usuário Aluno",
 					"request": {
@@ -99,7 +153,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"nome\": \"Admin Sistema\",\n  \"matricula\": \"ADM001\",\n  \"senha\": \"senha123\",\n  \"perfilIds\": [1],\n  \"superAdmin\": true\n}"
+							"raw": "{\n  \"nome\": \"Admin Sistema\",\n  \"matricula\": \"ADM001\",\n  \"senha\": \"senha123\",\n  \"perfilIds\": [1]\n}"
 						},
 						"url": {
 							"raw": "{{baseUrl}}/usuarios-completo",
@@ -198,6 +252,38 @@
 							"path": ["cursos"]
 						}
 					}
+				},
+				{
+					"name": "Editar Curso",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"nome\": \"Ciência da Computação\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/cursos/1",
+							"host": ["{{baseUrl}}"],
+							"path": ["cursos", "1"]
+						}
+					}
+				},
+				{
+					"name": "Excluir Curso",
+					"request": {
+						"method": "DELETE",
+						"url": {
+							"raw": "{{baseUrl}}/cursos/1",
+							"host": ["{{baseUrl}}"],
+							"path": ["cursos", "1"]
+						}
+					}
 				}
 			]
 		},
@@ -233,6 +319,49 @@
 							"raw": "{{baseUrl}}/disciplinas",
 							"host": ["{{baseUrl}}"],
 							"path": ["disciplinas"]
+						}
+					}
+				},
+				{
+					"name": "Buscar Disciplina por ID",
+					"request": {
+						"method": "GET",
+						"url": {
+							"raw": "{{baseUrl}}/disciplinas/1",
+							"host": ["{{baseUrl}}"],
+							"path": ["disciplinas", "1"]
+						}
+					}
+				},
+				{
+					"name": "Atualizar Disciplina",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"nome\": \"Programação Java Avançada\",\n  \"cursoId\": 1,\n  \"professorId\": 2\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/disciplinas/1",
+							"host": ["{{baseUrl}}"],
+							"path": ["disciplinas", "1"]
+						}
+					}
+				},
+				{
+					"name": "Excluir Disciplina",
+					"request": {
+						"method": "DELETE",
+						"url": {
+							"raw": "{{baseUrl}}/disciplinas/1",
+							"host": ["{{baseUrl}}"],
+							"path": ["disciplinas", "1"]
 						}
 					}
 				}
@@ -302,6 +431,50 @@
 							"raw": "{{baseUrl}}/avaliacoes/professores",
 							"host": ["{{baseUrl}}"],
 							"path": ["avaliacoes", "professores"]
+						}
+					}
+				},
+				{
+					"name": "Buscar Avaliação de Disciplina por ID",
+					"request": {
+						"method": "GET",
+						"url": {
+							"raw": "{{baseUrl}}/avaliacoes/disciplinas/1",
+							"host": ["{{baseUrl}}"],
+							"path": ["avaliacoes", "disciplinas", "1"]
+						}
+					}
+				},
+				{
+					"name": "Buscar Avaliação de Professor por ID",
+					"request": {
+						"method": "GET",
+						"url": {
+							"raw": "{{baseUrl}}/avaliacoes/professores/1",
+							"host": ["{{baseUrl}}"],
+							"path": ["avaliacoes", "professores", "1"]
+						}
+					}
+				},
+				{
+					"name": "Excluir Avaliação de Disciplina",
+					"request": {
+						"method": "DELETE",
+						"url": {
+							"raw": "{{baseUrl}}/avaliacoes/disciplinas/1",
+							"host": ["{{baseUrl}}"],
+							"path": ["avaliacoes", "disciplinas", "1"]
+						}
+					}
+				},
+				{
+					"name": "Excluir Avaliação de Professor",
+					"request": {
+						"method": "DELETE",
+						"url": {
+							"raw": "{{baseUrl}}/avaliacoes/professores/1",
+							"host": ["{{baseUrl}}"],
+							"path": ["avaliacoes", "professores", "1"]
 						}
 					}
 				}
