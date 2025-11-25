@@ -33,6 +33,12 @@ public class Usuario implements Serializable {
     @Column(name = "senha", nullable = false, length = 200)
     private String senha;
 
+    @Column(name = "curso", length = 100)
+    private String curso;
+
+    @Column(name = "especialidade", length = 100)
+    private String especialidade;
+
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "TB_usuario_perfil",

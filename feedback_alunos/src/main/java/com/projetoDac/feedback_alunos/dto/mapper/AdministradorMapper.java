@@ -14,6 +14,12 @@ public class AdministradorMapper {
 	}
 
 	public static AdministratorResponseDTO toDTO(Administrador administrador) {
-		return mapper.map(administrador, AdministratorResponseDTO.class);
+		AdministratorResponseDTO dto = mapper.map(administrador, AdministratorResponseDTO.class);
+		
+		if (administrador.getUsuario() != null) {
+			dto.setIdUsuario(administrador.getUsuario().getIdUsuario());
+		}
+		
+		return dto;
 	}
 }

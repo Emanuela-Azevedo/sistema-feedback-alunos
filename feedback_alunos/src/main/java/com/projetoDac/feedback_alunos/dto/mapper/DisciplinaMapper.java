@@ -21,7 +21,7 @@ public class DisciplinaMapper {
             dto.setCursoId(disciplina.getCurso().getIdCurso());
         }
         if (disciplina.getProfessor() != null) {
-            dto.setProfessorId(disciplina.getProfessor().getId());
+            dto.setProfessorId(disciplina.getProfessor().getIdUsuario());
         }
         return dto;
     }

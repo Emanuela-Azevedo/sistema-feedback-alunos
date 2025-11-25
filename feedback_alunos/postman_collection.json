@@ -1,0 +1,318 @@
+{
+	"info": {
+		"name": "Sistema Feedback Alunos - API",
+		"description": "Coleção de endpoints para o sistema de feedback de alunos",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Perfis",
+			"item": [
+				{
+					"name": "Criar Perfil",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"nome\": \"ALUNO\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/perfis",
+							"host": ["{{baseUrl}}"],
+							"path": ["perfis"]
+						}
+					}
+				},
+				{
+					"name": "Listar Perfis",
+					"request": {
+						"method": "GET",
+						"url": {
+							"raw": "{{baseUrl}}/perfis",
+							"host": ["{{baseUrl}}"],
+							"path": ["perfis"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Usuários Completo",
+			"item": [
+				{
+					"name": "Criar Usuário Aluno",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"nome\": \"João Silva\",\n  \"matricula\": \"ALU001\",\n  \"senha\": \"senha123\",\n  \"curso\": \"Engenharia de Software\",\n  \"perfilIds\": [2]\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/usuarios-completo",
+							"host": ["{{baseUrl}}"],
+							"path": ["usuarios-completo"]
+						}
+					}
+				},
+				{
+					"name": "Criar Usuário Professor",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"nome\": \"Maria Santos\",\n  \"matricula\": \"PROF001\",\n  \"senha\": \"senha123\",\n  \"especialidade\": \"Engenharia de Software\",\n  \"perfilIds\": [3]\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/usuarios-completo",
+							"host": ["{{baseUrl}}"],
+							"path": ["usuarios-completo"]
+						}
+					}
+				},
+				{
+					"name": "Criar Usuário Admin",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"nome\": \"Admin Sistema\",\n  \"matricula\": \"ADM001\",\n  \"senha\": \"senha123\",\n  \"perfilIds\": [1],\n  \"superAdmin\": true\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/usuarios-completo",
+							"host": ["{{baseUrl}}"],
+							"path": ["usuarios-completo"]
+						}
+					}
+				},
+				{
+					"name": "Listar Usuários",
+					"request": {
+						"method": "GET",
+						"url": {
+							"raw": "{{baseUrl}}/usuarios-completo",
+							"host": ["{{baseUrl}}"],
+							"path": ["usuarios-completo"]
+						}
+					}
+				},
+				{
+					"name": "Buscar Usuário por ID",
+					"request": {
+						"method": "GET",
+						"url": {
+							"raw": "{{baseUrl}}/usuarios-completo/1",
+							"host": ["{{baseUrl}}"],
+							"path": ["usuarios-completo", "1"]
+						}
+					}
+				},
+				{
+					"name": "Atualizar Usuário",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"nome\": \"João Silva Atualizado\",\n  \"matricula\": \"ALU001\",\n  \"senha\": \"novaSenha123\",\n  \"curso\": \"Ciência da Computação\",\n  \"perfilIds\": [2]\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/usuarios-completo/1",
+							"host": ["{{baseUrl}}"],
+							"path": ["usuarios-completo", "1"]
+						}
+					}
+				},
+				{
+					"name": "Excluir Usuário",
+					"request": {
+						"method": "DELETE",
+						"url": {
+							"raw": "{{baseUrl}}/usuarios-completo/1",
+							"host": ["{{baseUrl}}"],
+							"path": ["usuarios-completo", "1"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Cursos",
+			"item": [
+				{
+					"name": "Criar Curso",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"nome\": \"Engenharia de Software\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/cursos",
+							"host": ["{{baseUrl}}"],
+							"path": ["cursos"]
+						}
+					}
+				},
+				{
+					"name": "Listar Cursos",
+					"request": {
+						"method": "GET",
+						"url": {
+							"raw": "{{baseUrl}}/cursos",
+							"host": ["{{baseUrl}}"],
+							"path": ["cursos"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Disciplinas",
+			"item": [
+				{
+					"name": "Criar Disciplina",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"nome\": \"Programação Java\",\n  \"cursoId\": 1,\n  \"professorId\": 2\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/disciplinas",
+							"host": ["{{baseUrl}}"],
+							"path": ["disciplinas"]
+						}
+					}
+				},
+				{
+					"name": "Listar Disciplinas",
+					"request": {
+						"method": "GET",
+						"url": {
+							"raw": "{{baseUrl}}/disciplinas",
+							"host": ["{{baseUrl}}"],
+							"path": ["disciplinas"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Avaliações",
+			"item": [
+				{
+					"name": "Avaliar Disciplina",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"usuarioId\": 1,\n  \"disciplinaId\": 1,\n  \"nota\": 5,\n  \"comentario\": \"Excelente disciplina, muito bem explicada!\",\n  \"anonima\": false\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/avaliacoes/disciplinas",
+							"host": ["{{baseUrl}}"],
+							"path": ["avaliacoes", "disciplinas"]
+						}
+					}
+				},
+				{
+					"name": "Avaliar Professor",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"usuarioId\": 1,\n  \"professorId\": 2,\n  \"nota\": 4,\n  \"comentario\": \"Professor muito didático e atencioso.\",\n  \"anonima\": false\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/avaliacoes/professores",
+							"host": ["{{baseUrl}}"],
+							"path": ["avaliacoes", "professores"]
+						}
+					}
+				},
+				{
+					"name": "Listar Avaliações de Disciplinas",
+					"request": {
+						"method": "GET",
+						"url": {
+							"raw": "{{baseUrl}}/avaliacoes/disciplinas",
+							"host": ["{{baseUrl}}"],
+							"path": ["avaliacoes", "disciplinas"]
+						}
+					}
+				},
+				{
+					"name": "Listar Avaliações de Professores",
+					"request": {
+						"method": "GET",
+						"url": {
+							"raw": "{{baseUrl}}/avaliacoes/professores",
+							"host": ["{{baseUrl}}"],
+							"path": ["avaliacoes", "professores"]
+						}
+					}
+				}
+			]
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:8080",
+			"type": "string"
+		}
+	]
+}

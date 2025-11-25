@@ -24,7 +24,7 @@ public class AvaliacaoProfessorMapper {
             dto.setUsuarioId(null);
         }
         if (avaliacao.getProfessor() != null) {
-            dto.setProfessorId(avaliacao.getProfessor().getId());
+            dto.setProfessorId(avaliacao.getProfessor().getIdUsuario());
         }
         return dto;
     }

@@ -22,7 +22,7 @@ public class AvaliacaoProfessor {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_professor")
-    private Professor professor;
+    private Usuario professor;
 
     @Column(name = "nota", nullable = false)
     private Integer nota;

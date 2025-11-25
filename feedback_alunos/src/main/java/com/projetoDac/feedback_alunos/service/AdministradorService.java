@@ -6,7 +6,6 @@ import com.projetoDac.feedback_alunos.dto.mapper.AdministradorMapper;
 import com.projetoDac.feedback_alunos.exception.AdministradorNaoEncontradoException;
 import com.projetoDac.feedback_alunos.model.Administrador;
 import com.projetoDac.feedback_alunos.model.Perfil;
-import com.projetoDac.feedback_alunos.model.Usuario;
 import com.projetoDac.feedback_alunos.repository.PerfilRepository;
 import com.projetoDac.feedback_alunos.repository.UsuarioRepository;
 import com.projetoDac.feedback_alunos.repository.AdministradorRepository;

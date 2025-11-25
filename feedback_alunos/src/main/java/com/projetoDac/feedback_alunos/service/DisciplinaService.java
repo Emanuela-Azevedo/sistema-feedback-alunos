@@ -10,13 +10,13 @@ import com.projetoDac.feedback_alunos.dto.DisciplinaResponseDTO;
 import com.projetoDac.feedback_alunos.dto.mapper.DisciplinaMapper;
 import com.projetoDac.feedback_alunos.exception.CursoNotFoundException;
 import com.projetoDac.feedback_alunos.exception.DisciplinaNotFoundException;
-import com.projetoDac.feedback_alunos.exception.ProfessorNotFoundException;
+import com.projetoDac.feedback_alunos.exception.UsuarioNotFoundException;
 import com.projetoDac.feedback_alunos.model.Curso;
 import com.projetoDac.feedback_alunos.model.Disciplina;
-import com.projetoDac.feedback_alunos.model.Professor;
+import com.projetoDac.feedback_alunos.model.Usuario;
 import com.projetoDac.feedback_alunos.repository.CursoRepository;
 import com.projetoDac.feedback_alunos.repository.DisciplinaRepository;
-import com.projetoDac.feedback_alunos.repository.ProfessorRepository;
+import com.projetoDac.feedback_alunos.repository.UsuarioRepository;
 
 @Service
 public class DisciplinaService {
@@ -28,14 +28,14 @@ public class DisciplinaService {
     private CursoRepository cursoRepository;
 
     @Autowired
-    private ProfessorRepository professorRepository;
+    private UsuarioRepository usuarioRepository;
 
     public DisciplinaResponseDTO cadastrarDisciplina(DisciplinaCreateDTO disciplinaCreateDTO) {
         Curso curso = cursoRepository.findById(disciplinaCreateDTO.getCursoId())
                 .orElseThrow(() -> new CursoNotFoundException("Curso não encontrado com ID: " + disciplinaCreateDTO.getCursoId()));
         
-        Professor professor = professorRepository.findById(disciplinaCreateDTO.getProfessorId())
-                .orElseThrow(() -> new ProfessorNotFoundException("Professor não encontrado com ID: " + disciplinaCreateDTO.getProfessorId()));
+        Usuario professor = usuarioRepository.findById(disciplinaCreateDTO.getProfessorId())
+                .orElseThrow(() -> new UsuarioNotFoundException("Professor não encontrado com ID: " + disciplinaCreateDTO.getProfessorId()));
 
         Disciplina disciplina = DisciplinaMapper.toEntity(disciplinaCreateDTO);
         disciplina.setCurso(curso);
@@ -52,8 +52,8 @@ public class DisciplinaService {
         Curso curso = cursoRepository.findById(disciplinaCreateDTO.getCursoId())
                 .orElseThrow(() -> new CursoNotFoundException("Curso não encontrado com ID: " + disciplinaCreateDTO.getCursoId()));
         
-        Professor professor = professorRepository.findById(disciplinaCreateDTO.getProfessorId())
-                .orElseThrow(() -> new ProfessorNotFoundException("Professor não encontrado com ID: " + disciplinaCreateDTO.getProfessorId()));
+        Usuario professor = usuarioRepository.findById(disciplinaCreateDTO.getProfessorId())
+                .orElseThrow(() -> new UsuarioNotFoundException("Professor não encontrado com ID: " + disciplinaCreateDTO.getProfessorId()));
 
         disciplina.setNome(disciplinaCreateDTO.getNome());
         disciplina.setCurso(curso);

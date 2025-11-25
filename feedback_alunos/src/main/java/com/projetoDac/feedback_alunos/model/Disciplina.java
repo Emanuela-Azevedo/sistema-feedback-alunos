@@ -24,5 +24,5 @@ public class Disciplina {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_professor")
-    private Professor professor;
+    private Usuario professor;
 }
