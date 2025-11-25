@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import com.projetoDac.feedback_alunos.dto.AvaliacaoProfessorCreateDTO;
 import com.projetoDac.feedback_alunos.dto.AvaliacaoProfessorResponseDTO;
 import com.projetoDac.feedback_alunos.dto.mapper.AvaliacaoProfessorMapper;
+import com.projetoDac.feedback_alunos.exception.ApenasAlunosPodeAvaliarException;
 import com.projetoDac.feedback_alunos.exception.AvaliacaoNotFoundException;
 import com.projetoDac.feedback_alunos.exception.UsuarioNotFoundException;
 import com.projetoDac.feedback_alunos.model.AvaliacaoProfessor;
@@ -30,6 +31,13 @@ public class AvaliacaoProfessorService {
     public AvaliacaoProfessorResponseDTO criarAvaliacaoProfessor(AvaliacaoProfessorCreateDTO avaliacaoCreateDTO) {
         Usuario usuario = usuarioRepository.findById(avaliacaoCreateDTO.getUsuarioId())
                 .orElseThrow(() -> new UsuarioNotFoundException("Usuário não encontrado com ID: " + avaliacaoCreateDTO.getUsuarioId()));
+
+        boolean isAluno = usuario.getPerfis().stream()
+                .anyMatch(perfil -> "ALUNO".equals(perfil.getNomePerfil()));
+        
+        if (!isAluno) {
+            throw new ApenasAlunosPodeAvaliarException("Apenas alunos podem fazer avaliações.");
+        }
 
         Usuario professor = professorRepository.findById(avaliacaoCreateDTO.getProfessorId())
                 .orElseThrow(() -> new UsuarioNotFoundException("Professor não encontrado com ID: " + avaliacaoCreateDTO.getProfessorId()));

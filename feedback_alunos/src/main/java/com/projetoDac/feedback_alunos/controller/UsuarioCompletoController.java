@@ -46,6 +46,12 @@ public class UsuarioCompletoController {
         return ResponseEntity.ok(usuario);
     }
 
+    @GetMapping("/matricula/{matricula}")
+    public ResponseEntity<UsuarioCompletoResponseDTO> buscarPorMatricula(@PathVariable String matricula) {
+        UsuarioCompletoResponseDTO usuario = usuarioCompletoService.buscarPorMatricula(matricula);
+        return ResponseEntity.ok(usuario);
+    }
+
     @PutMapping("/{id}")
     public ResponseEntity<UsuarioCompletoResponseDTO> atualizarUsuario(
             @PathVariable Long id,
@@ -58,5 +64,26 @@ public class UsuarioCompletoController {
     public ResponseEntity<Void> excluirUsuario(@PathVariable Long id) {
         usuarioCompletoService.excluirUsuario(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/aluno")
+    public ResponseEntity<UsuarioCompletoResponseDTO> criarAluno(
+            @Valid @RequestBody UsuarioCompletoCreateDTO dto) {
+        UsuarioCompletoResponseDTO usuario = usuarioCompletoService.criarAluno(dto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(usuario);
+    }
+
+    @PostMapping("/professor")
+    public ResponseEntity<UsuarioCompletoResponseDTO> criarProfessor(
+            @Valid @RequestBody UsuarioCompletoCreateDTO dto) {
+        UsuarioCompletoResponseDTO usuario = usuarioCompletoService.criarProfessor(dto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(usuario);
+    }
+
+    @PostMapping("/admin")
+    public ResponseEntity<UsuarioCompletoResponseDTO> criarAdmin(
+            @Valid @RequestBody UsuarioCompletoCreateDTO dto) {
+        UsuarioCompletoResponseDTO usuario = usuarioCompletoService.criarAdmin(dto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(usuario);
     }
 }

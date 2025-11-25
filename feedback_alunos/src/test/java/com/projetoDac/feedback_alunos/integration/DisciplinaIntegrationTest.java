@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
@@ -134,5 +136,65 @@ class DisciplinaIntegrationTest {
                 baseUrl, disciplinaCreateDTO, String.class);
 
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+    }
+
+    @Test
+    void editarDisciplina_ComDadosValidos_DeveRetornar200() {
+        DisciplinaCreateDTO disciplinaCreateDTO = new DisciplinaCreateDTO();
+        disciplinaCreateDTO.setNome("Programação Java");
+        disciplinaCreateDTO.setCursoId(cursoId);
+        disciplinaCreateDTO.setProfessorId(professorId);
+
+        ResponseEntity<DisciplinaResponseDTO> createResponse = restTemplate.postForEntity(
+                baseUrl, disciplinaCreateDTO, DisciplinaResponseDTO.class);
+        Long disciplinaId = createResponse.getBody().getIdDisciplina();
+
+        disciplinaCreateDTO.setNome("Programação Java Avançada");
+
+        HttpEntity<DisciplinaCreateDTO> request = new HttpEntity<>(disciplinaCreateDTO);
+        ResponseEntity<DisciplinaResponseDTO> response = restTemplate.exchange(
+                baseUrl + "/" + disciplinaId, HttpMethod.PUT, request, DisciplinaResponseDTO.class);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals("Programação Java Avançada", response.getBody().getNome());
+    }
+
+    @Test
+    void editarDisciplina_ComIdInexistente_DeveRetornar404() {
+        DisciplinaCreateDTO disciplinaCreateDTO = new DisciplinaCreateDTO();
+        disciplinaCreateDTO.setNome("Disciplina Inexistente");
+        disciplinaCreateDTO.setCursoId(cursoId);
+        disciplinaCreateDTO.setProfessorId(professorId);
+
+        HttpEntity<DisciplinaCreateDTO> request = new HttpEntity<>(disciplinaCreateDTO);
+        ResponseEntity<String> response = restTemplate.exchange(
+                baseUrl + "/999", HttpMethod.PUT, request, String.class);
+
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+    }
+
+    @Test
+    void excluirDisciplina_ComIdValido_DeveRetornar204() {
+        DisciplinaCreateDTO disciplinaCreateDTO = new DisciplinaCreateDTO();
+        disciplinaCreateDTO.setNome("Programação Java");
+        disciplinaCreateDTO.setCursoId(cursoId);
+        disciplinaCreateDTO.setProfessorId(professorId);
+
+        ResponseEntity<DisciplinaResponseDTO> createResponse = restTemplate.postForEntity(
+                baseUrl, disciplinaCreateDTO, DisciplinaResponseDTO.class);
+        Long disciplinaId = createResponse.getBody().getIdDisciplina();
+
+        ResponseEntity<Void> response = restTemplate.exchange(
+                baseUrl + "/" + disciplinaId, HttpMethod.DELETE, null, Void.class);
+
+        assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
+    }
+
+    @Test
+    void excluirDisciplina_ComIdInexistente_DeveRetornar404() {
+        ResponseEntity<String> response = restTemplate.exchange(
+                baseUrl + "/999", HttpMethod.DELETE, null, String.class);
+
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
     }
 }

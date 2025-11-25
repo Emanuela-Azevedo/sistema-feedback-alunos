@@ -157,4 +157,61 @@ class AvaliacaoProfessorIntegrationTest {
         
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
     }
+
+    @Test
+    void buscarPorId_ComIdValido_DeveRetornar200() {
+        AvaliacaoProfessorCreateDTO avaliacaoCreateDTO = new AvaliacaoProfessorCreateDTO();
+        avaliacaoCreateDTO.setUsuarioId(alunoId);
+        avaliacaoCreateDTO.setProfessorId(professorId);
+        avaliacaoCreateDTO.setNota(5);
+        avaliacaoCreateDTO.setComentario("Excelente professor!");
+        avaliacaoCreateDTO.setAnonima(false);
+
+        ResponseEntity<AvaliacaoProfessorResponseDTO> createResponse = restTemplate.postForEntity(
+                baseUrl, avaliacaoCreateDTO, AvaliacaoProfessorResponseDTO.class);
+        Long avaliacaoId = createResponse.getBody().getId();
+
+        ResponseEntity<AvaliacaoProfessorResponseDTO> response = restTemplate.getForEntity(
+                baseUrl + "/" + avaliacaoId, AvaliacaoProfessorResponseDTO.class);
+        
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertNotNull(response.getBody());
+        assertEquals(5, response.getBody().getNota());
+    }
+
+    @Test
+    void excluirAvaliacao_ComIdValido_DeveRetornar204() {
+        AvaliacaoProfessorCreateDTO avaliacaoCreateDTO = new AvaliacaoProfessorCreateDTO();
+        avaliacaoCreateDTO.setUsuarioId(alunoId);
+        avaliacaoCreateDTO.setProfessorId(professorId);
+        avaliacaoCreateDTO.setNota(4);
+        avaliacaoCreateDTO.setComentario("Bom professor!");
+        avaliacaoCreateDTO.setAnonima(false);
+
+        ResponseEntity<AvaliacaoProfessorResponseDTO> createResponse = restTemplate.postForEntity(
+                baseUrl, avaliacaoCreateDTO, AvaliacaoProfessorResponseDTO.class);
+        Long avaliacaoId = createResponse.getBody().getId();
+
+        ResponseEntity<Void> response = restTemplate.exchange(
+                baseUrl + "/" + avaliacaoId, HttpMethod.DELETE, null, Void.class);
+        
+        assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
+    }
+
+    @Test
+    void listarAvaliacoes_ComDados_DeveRetornarLista() {
+        AvaliacaoProfessorCreateDTO avaliacaoCreateDTO = new AvaliacaoProfessorCreateDTO();
+        avaliacaoCreateDTO.setUsuarioId(alunoId);
+        avaliacaoCreateDTO.setProfessorId(professorId);
+        avaliacaoCreateDTO.setNota(5);
+        avaliacaoCreateDTO.setComentario("Excelente professor!");
+        avaliacaoCreateDTO.setAnonima(false);
+
+        restTemplate.postForEntity(baseUrl, avaliacaoCreateDTO, AvaliacaoProfessorResponseDTO.class);
+
+        ResponseEntity<List> response = restTemplate.getForEntity(baseUrl, List.class);
+        
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertFalse(response.getBody().isEmpty());
+    }
 }

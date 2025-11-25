@@ -1,9 +1,14 @@
 package com.projetoDac.feedback_alunos.repository;
 
-import com.projetoDac.feedback_alunos.model.Usuario;
+import java.util.Optional;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import com.projetoDac.feedback_alunos.model.Usuario;
+
 @Repository
 public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
+    Optional<Usuario> findByMatricula(String matricula);
+    boolean existsByPerfisNomePerfil(String nomePerfil);
 }

@@ -19,6 +19,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
 
 import static org.junit.jupiter.api.Assertions.*;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
@@ -128,5 +130,54 @@ class PerfilIntegrationTest {
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertNotNull(response.getBody());
         assertEquals(2, response.getBody().length);
+    }
+
+    @Test
+    void editarPerfil_ComDadosValidos_DeveRetornar200() {
+        Perfil perfil = new Perfil();
+        perfil.setNomePerfil("ALUNO");
+        perfil = perfilRepository.save(perfil);
+
+        PerfilCreateDTO perfilCreateDTO = new PerfilCreateDTO();
+        perfilCreateDTO.setNome("ESTUDANTE");
+
+        HttpEntity<PerfilCreateDTO> request = new HttpEntity<>(perfilCreateDTO);
+        ResponseEntity<PerfilResponseDTO> response = restTemplate.exchange(
+                baseUrl + "/" + perfil.getIdPerfil(), HttpMethod.PUT, request, PerfilResponseDTO.class);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals("ESTUDANTE", response.getBody().getNome());
+    }
+
+    @Test
+    void editarPerfil_ComIdInexistente_DeveRetornar404() {
+        PerfilCreateDTO perfilCreateDTO = new PerfilCreateDTO();
+        perfilCreateDTO.setNome("INEXISTENTE");
+
+        HttpEntity<PerfilCreateDTO> request = new HttpEntity<>(perfilCreateDTO);
+        ResponseEntity<String> response = restTemplate.exchange(
+                baseUrl + "/999", HttpMethod.PUT, request, String.class);
+
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+    }
+
+    @Test
+    void excluirPerfil_ComIdValido_DeveRetornar204() {
+        Perfil perfil = new Perfil();
+        perfil.setNomePerfil("TEMPORARIO");
+        perfil = perfilRepository.save(perfil);
+
+        ResponseEntity<Void> response = restTemplate.exchange(
+                baseUrl + "/" + perfil.getIdPerfil(), HttpMethod.DELETE, null, Void.class);
+
+        assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
+    }
+
+    @Test
+    void excluirPerfil_ComIdInexistente_DeveRetornar404() {
+        ResponseEntity<String> response = restTemplate.exchange(
+                baseUrl + "/999", HttpMethod.DELETE, null, String.class);
+
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
     }
 }

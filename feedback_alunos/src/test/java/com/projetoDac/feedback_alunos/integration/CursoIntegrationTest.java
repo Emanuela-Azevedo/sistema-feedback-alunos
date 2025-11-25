@@ -113,5 +113,37 @@ class CursoIntegrationTest {
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
     }
 
+    @Test
+    void buscarCurso_ComIdValido_DeveRetornar200() {
+        Curso curso = new Curso();
+        curso.setNome("Curso Teste");
+        curso = cursoRepository.save(curso);
+
+        ResponseEntity<CursoResponseDTO> response = restTemplate.getForEntity(
+                baseUrl + "/" + curso.getIdCurso(), CursoResponseDTO.class);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertNotNull(response.getBody());
+        assertEquals("Curso Teste", response.getBody().getNome());
+    }
+
+    @Test
+    void buscarCurso_ComIdInexistente_DeveRetornar404() {
+        ResponseEntity<String> response = restTemplate.getForEntity(
+                baseUrl + "/999", String.class);
+
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+    }
+
+    @Test
+    void cadastrarCurso_SemNome_DeveRetornar400() {
+        CursoCreateDTO cursoCreateDTO = new CursoCreateDTO();
+
+        ResponseEntity<String> response = restTemplate.postForEntity(
+                baseUrl, cursoCreateDTO, String.class);
+
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+    }
+
 
 }

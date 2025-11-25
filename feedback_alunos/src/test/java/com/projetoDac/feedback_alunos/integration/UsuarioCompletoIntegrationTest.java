@@ -123,4 +123,96 @@ class UsuarioCompletoIntegrationTest {
 
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
     }
+
+    @Test
+    void buscarPorMatricula_ComMatriculaValida_DeveRetornar200() {
+        UsuarioCompletoCreateDTO usuarioCreateDTO = new UsuarioCompletoCreateDTO();
+        usuarioCreateDTO.setNome("João Silva");
+        usuarioCreateDTO.setMatricula("ALU001");
+        usuarioCreateDTO.setSenha("senha123");
+        usuarioCreateDTO.setCurso("Engenharia de Software");
+        usuarioCreateDTO.setPerfilIds(new Long[]{perfilAlunoId});
+
+        restTemplate.postForEntity(baseUrl, usuarioCreateDTO, UsuarioCompletoResponseDTO.class);
+
+        ResponseEntity<UsuarioCompletoResponseDTO> response = restTemplate.getForEntity(
+                baseUrl + "/matricula/ALU001", UsuarioCompletoResponseDTO.class);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertNotNull(response.getBody());
+        assertEquals("ALU001", response.getBody().getMatricula());
+    }
+
+    @Test
+    void buscarPorMatricula_ComMatriculaInexistente_DeveRetornar404() {
+        ResponseEntity<String> response = restTemplate.getForEntity(
+                baseUrl + "/matricula/INEXISTENTE", String.class);
+
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+    }
+
+    @Test
+    void atualizarUsuario_ComDadosValidos_DeveRetornar200() {
+        UsuarioCompletoCreateDTO usuarioCreateDTO = new UsuarioCompletoCreateDTO();
+        usuarioCreateDTO.setNome("João Silva");
+        usuarioCreateDTO.setMatricula("ALU001");
+        usuarioCreateDTO.setSenha("senha123");
+        usuarioCreateDTO.setCurso("Engenharia de Software");
+        usuarioCreateDTO.setPerfilIds(new Long[]{perfilAlunoId});
+
+        ResponseEntity<UsuarioCompletoResponseDTO> createResponse = restTemplate.postForEntity(
+                baseUrl, usuarioCreateDTO, UsuarioCompletoResponseDTO.class);
+        Long usuarioId = createResponse.getBody().getIdUsuario();
+
+        usuarioCreateDTO.setNome("João Silva Atualizado");
+        usuarioCreateDTO.setCurso("Ciência da Computação");
+
+        HttpEntity<UsuarioCompletoCreateDTO> request = new HttpEntity<>(usuarioCreateDTO);
+        ResponseEntity<UsuarioCompletoResponseDTO> response = restTemplate.exchange(
+                baseUrl + "/" + usuarioId, HttpMethod.PUT, request, UsuarioCompletoResponseDTO.class);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals("João Silva Atualizado", response.getBody().getNome());
+        assertEquals("Ciência da Computação", response.getBody().getCurso());
+    }
+
+    @Test
+    void excluirUsuario_ComIdValido_DeveRetornar204() {
+        UsuarioCompletoCreateDTO usuarioCreateDTO = new UsuarioCompletoCreateDTO();
+        usuarioCreateDTO.setNome("João Silva");
+        usuarioCreateDTO.setMatricula("ALU001");
+        usuarioCreateDTO.setSenha("senha123");
+        usuarioCreateDTO.setCurso("Engenharia de Software");
+        usuarioCreateDTO.setPerfilIds(new Long[]{perfilAlunoId});
+
+        ResponseEntity<UsuarioCompletoResponseDTO> createResponse = restTemplate.postForEntity(
+                baseUrl, usuarioCreateDTO, UsuarioCompletoResponseDTO.class);
+        Long usuarioId = createResponse.getBody().getIdUsuario();
+
+        ResponseEntity<Void> response = restTemplate.exchange(
+                baseUrl + "/" + usuarioId, HttpMethod.DELETE, null, Void.class);
+
+        assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
+    }
+
+    @Test
+    void buscarPorId_ComUsuarioExistente_DeveRetornar200() {
+        UsuarioCompletoCreateDTO usuarioCreateDTO = new UsuarioCompletoCreateDTO();
+        usuarioCreateDTO.setNome("João Silva");
+        usuarioCreateDTO.setMatricula("ALU001");
+        usuarioCreateDTO.setSenha("senha123");
+        usuarioCreateDTO.setCurso("Engenharia de Software");
+        usuarioCreateDTO.setPerfilIds(new Long[]{perfilAlunoId});
+
+        ResponseEntity<UsuarioCompletoResponseDTO> createResponse = restTemplate.postForEntity(
+                baseUrl, usuarioCreateDTO, UsuarioCompletoResponseDTO.class);
+        Long usuarioId = createResponse.getBody().getIdUsuario();
+
+        ResponseEntity<UsuarioCompletoResponseDTO> response = restTemplate.getForEntity(
+                baseUrl + "/" + usuarioId, UsuarioCompletoResponseDTO.class);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertNotNull(response.getBody());
+        assertEquals("João Silva", response.getBody().getNome());
+    }
 }

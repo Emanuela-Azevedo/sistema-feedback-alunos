@@ -150,6 +150,23 @@ class AvaliacaoDisciplinaIntegrationTest {
     }
 
     @Test
+    void listarAvaliacoes_ComDados_DeveRetornarLista() {
+        AvaliacaoDisciplinaCreateDTO avaliacaoCreateDTO = new AvaliacaoDisciplinaCreateDTO();
+        avaliacaoCreateDTO.setUsuarioId(usuarioId);
+        avaliacaoCreateDTO.setDisciplinaId(disciplinaId);
+        avaliacaoCreateDTO.setNota(5);
+        avaliacaoCreateDTO.setComentario("Excelente disciplina!");
+        avaliacaoCreateDTO.setAnonima(false);
+
+        restTemplate.postForEntity(baseUrl, avaliacaoCreateDTO, AvaliacaoDisciplinaResponseDTO.class);
+
+        ResponseEntity<List> response = restTemplate.getForEntity(baseUrl, List.class);
+        
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertFalse(response.getBody().isEmpty());
+    }
+
+    @Test
     void buscarPorId_ComIdInexistente_DeveRetornar404() {
         ResponseEntity<String> response = restTemplate.getForEntity(
                 baseUrl + "/999", String.class);
@@ -165,6 +182,46 @@ class AvaliacaoDisciplinaIntegrationTest {
                 baseUrl + "/999", HttpMethod.DELETE, null, String.class);
         
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+    }
+
+    @Test
+    void buscarPorId_ComIdValido_DeveRetornar200() {
+        AvaliacaoDisciplinaCreateDTO avaliacaoCreateDTO = new AvaliacaoDisciplinaCreateDTO();
+        avaliacaoCreateDTO.setUsuarioId(usuarioId);
+        avaliacaoCreateDTO.setDisciplinaId(disciplinaId);
+        avaliacaoCreateDTO.setNota(5);
+        avaliacaoCreateDTO.setComentario("Excelente disciplina!");
+        avaliacaoCreateDTO.setAnonima(false);
+
+        ResponseEntity<AvaliacaoDisciplinaResponseDTO> createResponse = restTemplate.postForEntity(
+                baseUrl, avaliacaoCreateDTO, AvaliacaoDisciplinaResponseDTO.class);
+        Long avaliacaoId = createResponse.getBody().getId();
+
+        ResponseEntity<AvaliacaoDisciplinaResponseDTO> response = restTemplate.getForEntity(
+                baseUrl + "/" + avaliacaoId, AvaliacaoDisciplinaResponseDTO.class);
+        
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertNotNull(response.getBody());
+        assertEquals(5, response.getBody().getNota());
+    }
+
+    @Test
+    void excluirAvaliacao_ComIdValido_DeveRetornar204() {
+        AvaliacaoDisciplinaCreateDTO avaliacaoCreateDTO = new AvaliacaoDisciplinaCreateDTO();
+        avaliacaoCreateDTO.setUsuarioId(usuarioId);
+        avaliacaoCreateDTO.setDisciplinaId(disciplinaId);
+        avaliacaoCreateDTO.setNota(4);
+        avaliacaoCreateDTO.setComentario("Boa disciplina!");
+        avaliacaoCreateDTO.setAnonima(false);
+
+        ResponseEntity<AvaliacaoDisciplinaResponseDTO> createResponse = restTemplate.postForEntity(
+                baseUrl, avaliacaoCreateDTO, AvaliacaoDisciplinaResponseDTO.class);
+        Long avaliacaoId = createResponse.getBody().getId();
+
+        ResponseEntity<Void> response = restTemplate.exchange(
+                baseUrl + "/" + avaliacaoId, HttpMethod.DELETE, null, Void.class);
+        
+        assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
     }
 
 

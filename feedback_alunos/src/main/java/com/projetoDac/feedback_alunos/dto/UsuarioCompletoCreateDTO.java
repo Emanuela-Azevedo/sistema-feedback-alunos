@@ -26,7 +26,6 @@ public class UsuarioCompletoCreateDTO {
     @Size(max = 100, message = "A especialidade deve ter no máximo 100 caracteres")
     private String especialidade;
 
-    @NotNull(message = "Pelo menos um perfil deve ser selecionado")
     private Long[] perfilIds;
 
     private boolean superAdmin;

@@ -1,21 +1,23 @@
 package com.projetoDac.feedback_alunos.service;
 
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import com.projetoDac.feedback_alunos.dto.AvaliacaoDisciplinaCreateDTO;
 import com.projetoDac.feedback_alunos.dto.AvaliacaoDisciplinaResponseDTO;
 import com.projetoDac.feedback_alunos.dto.mapper.AvaliacaoDisciplinaMapper;
+import com.projetoDac.feedback_alunos.exception.ApenasAlunosPodeAvaliarException;
 import com.projetoDac.feedback_alunos.exception.AvaliacaoNotFoundException;
 import com.projetoDac.feedback_alunos.exception.DisciplinaNotFoundException;
 import com.projetoDac.feedback_alunos.exception.UsuarioNotFoundException;
-
-import java.util.List;
 import com.projetoDac.feedback_alunos.model.AvaliacaoDisciplina;
 import com.projetoDac.feedback_alunos.model.Disciplina;
 import com.projetoDac.feedback_alunos.model.Usuario;
 import com.projetoDac.feedback_alunos.repository.AvaliacaoDisciplinaRepository;
 import com.projetoDac.feedback_alunos.repository.DisciplinaRepository;
 import com.projetoDac.feedback_alunos.repository.UsuarioRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 @Service
 public class AvaliacaoDisciplinaService {
@@ -32,6 +34,13 @@ public class AvaliacaoDisciplinaService {
     public AvaliacaoDisciplinaResponseDTO criarAvaliacaoDisciplina(AvaliacaoDisciplinaCreateDTO avaliacaoCreateDTO) {
         Usuario usuario = usuarioRepository.findById(avaliacaoCreateDTO.getUsuarioId())
                 .orElseThrow(() -> new UsuarioNotFoundException("Usuário não encontrado com ID: " + avaliacaoCreateDTO.getUsuarioId()));
+
+        boolean isAluno = usuario.getPerfis().stream()
+                .anyMatch(perfil -> "ALUNO".equals(perfil.getNomePerfil()));
+        
+        if (!isAluno) {
+            throw new ApenasAlunosPodeAvaliarException("Apenas alunos podem fazer avaliações.");
+        }
 
         Disciplina disciplina = disciplinaRepository.findById(avaliacaoCreateDTO.getDisciplinaId())
                 .orElseThrow(() -> new DisciplinaNotFoundException("Disciplina não encontrada com ID: " + avaliacaoCreateDTO.getDisciplinaId()));
