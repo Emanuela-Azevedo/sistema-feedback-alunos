@@ -9,18 +9,18 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.projetoDac.feedback_alunos.model.Usuario;
-import com.projetoDac.feedback_alunos.service.RoleService;
-import com.projetoDac.feedback_alunos.service.UserService;
+import com.projetoDac.feedback_alunos.service.PerfilService;
+import com.projetoDac.feedback_alunos.service.UsuarioCompletoService;
 
 @RestController
 @RequestMapping("/api/users")
 public class UserRestController {
 
     @Autowired
-    protected UserService userService;
+    protected UsuarioCompletoService userService;
 
     @Autowired
-    protected RoleService roleService;
+    protected PerfilService roleService;
 
     @Autowired
     protected PasswordEncoder passwordEncoder;

@@ -55,4 +55,8 @@ public class PerfilService {
                 .orElseThrow(() -> new PerfilNotFoundException("Perfil não encontrado com nome: " + nomePerfil));
         return PerfilMapper.toDTO(perfil);
     }
+
+    public Perfil save(Perfil perfil) {
+        return perfilRepository.save(perfil);
+    }
 }

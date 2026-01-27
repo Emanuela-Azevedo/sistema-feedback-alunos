@@ -7,6 +7,10 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,13 +26,26 @@ import com.projetoDac.feedback_alunos.repository.PerfilRepository;
 import com.projetoDac.feedback_alunos.repository.UsuarioRepository;
 
 @Service
-public class UsuarioCompletoService {
+public class UsuarioCompletoService implements UserDetailsService {
 
     @Autowired
     private UsuarioRepository usuarioRepository;
 
     @Autowired
     private PerfilRepository perfilRepository;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    @Override
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        return usuarioRepository.findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException("Usuário não encontrado"));
+    }
+
+    public Usuario save(Usuario user) {
+        return usuarioRepository.save(user);
+    }
 
     @Transactional
     public UsuarioCompletoResponseDTO criarUsuario(UsuarioCompletoCreateDTO dto) {
