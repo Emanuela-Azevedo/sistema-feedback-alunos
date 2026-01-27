@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -76,6 +77,7 @@ public class AlunoService {
 		return alunoRepository.findAll().stream().map(AlunoMapper::toDTO).toList();
 	}
 
+	@PreAuthorize("hasRole('ADMIN') or authentication.name == #matricula")
 	public AlunoResponseDTO buscarPorMatricula(String matricula) {
 		Aluno aluno = alunoRepository.findByMatricula(matricula)
 				.orElseThrow(() -> new AlunoNotFoundException("Aluno não encontrado com matrícula: " + matricula));

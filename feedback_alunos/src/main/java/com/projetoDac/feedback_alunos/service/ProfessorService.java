@@ -12,6 +12,7 @@ import com.projetoDac.feedback_alunos.repository.ProfessorRepository;
 import com.projetoDac.feedback_alunos.repository.UsuarioRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -81,6 +82,7 @@ public class ProfessorService {
                 .map(ProfessorMapper::toDTO)
                 .toList();
     }
+    @PreAuthorize("hasRole('ADMIN') or authentication.name == #matricula")
     public ProfessorResponseDTO buscarPorMatricula(String matricula) {
         Professor professor = professorRepository.findByMatricula(matricula)
                 .orElseThrow(() -> new ProfessorNotFoundException("Professor não encontrado com matrícula: " + matricula));

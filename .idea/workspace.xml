@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="364c0c57-6ae1-4b05-b354-cc678722dc01" name="Changes" comment="" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;customColor&quot;: &quot;&quot;,
+  &quot;associatedIndex&quot;: 5
+}</component>
+  <component name="ProjectId" id="35yxP0fRYZTMmLhaUHYKeTgLeBg" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;JUnit.AvaliacaoDisciplinaIntegrationTest.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.AvaliacaoProfessorIntegrationTest.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.CursoControllerTest.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.CursoIntegrationTest.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.DisciplinaIntegrationTest.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.PerfilIntegrationTest.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.UsuarioCompletoIntegrationTest.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.java in feedback_alunos.executor&quot;: &quot;Coverage&quot;,
+    &quot;Maven.feedback_alunos [org.springframework.boot:spring-boot-maven-plugin:3.5.7:run].executor&quot;: &quot;Run&quot;,
+    &quot;Maven.feedback_alunos [org.springframework.boot:spring-boot-maven-plugin:3.5.7:test-run].executor&quot;: &quot;Run&quot;,
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;junie.onboarding.icon.badge.shown&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/Lucia/OneDrive/Desktop/Projeto DAC/sistema-feedback-alunos&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;to.speed.mode.migration.done&quot;: &quot;true&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  }
+}</component>
+  <component name="RunManager" selected="JUnit.java in feedback_alunos">
+    <configuration name="AvaliacaoProfessorIntegrationTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="feedback_alunos" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.projetoDac.feedback_alunos.integration.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="com.projetoDac.feedback_alunos.integration" />
+      <option name="MAIN_CLASS_NAME" value="com.projetoDac.feedback_alunos.integration.AvaliacaoProfessorIntegrationTest" />
+      <option name="TEST_OBJECT" value="class" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="CursoControllerTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="feedback_alunos" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.projetoDac.feedback_alunos.controller.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="com.projetoDac.feedback_alunos.controller" />
+      <option name="MAIN_CLASS_NAME" value="com.projetoDac.feedback_alunos.controller.CursoControllerTest" />
+      <option name="TEST_OBJECT" value="class" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="PerfilIntegrationTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="feedback_alunos" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.projetoDac.feedback_alunos.integration.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="com.projetoDac.feedback_alunos.integration" />
+      <option name="MAIN_CLASS_NAME" value="com.projetoDac.feedback_alunos.integration.PerfilIntegrationTest" />
+      <option name="TEST_OBJECT" value="class" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="UsuarioCompletoIntegrationTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="feedback_alunos" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.projetoDac.feedback_alunos.integration.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="com.projetoDac.feedback_alunos.integration" />
+      <option name="MAIN_CLASS_NAME" value="com.projetoDac.feedback_alunos.integration.UsuarioCompletoIntegrationTest" />
+      <option name="TEST_OBJECT" value="class" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="java in feedback_alunos" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="feedback_alunos" />
+      <option name="TEST_OBJECT" value="directory" />
+      <dir value="$PROJECT_DIR$/feedback_alunos/src/test/java" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="FeedbackAlunosApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
+      <module name="feedback_alunos" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="com.projetoDac.feedback_alunos.FeedbackAlunosApplication" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="JUnit.java in feedback_alunos" />
+        <item itemvalue="JUnit.CursoControllerTest" />
+        <item itemvalue="JUnit.AvaliacaoProfessorIntegrationTest" />
+        <item itemvalue="JUnit.UsuarioCompletoIntegrationTest" />
+        <item itemvalue="JUnit.PerfilIntegrationTest" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-jdk-9823dce3aa75-fbdcb00ec9e3-intellij.indexing.shared.core-IU-251.26927.53" />
+        <option value="bundled-js-predefined-d6986cc7102b-09060db00ec0-JavaScript-IU-251.26927.53" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="364c0c57-6ae1-4b05-b354-cc678722dc01" name="Changes" comment="" />
+      <created>1764096085149</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1764096085149</updated>
+      <workItem from="1764096086919" duration="11947000" />
+      <workItem from="1764697457582" duration="1531000" />
+      <workItem from="1768767939593" duration="3355000" />
+      <workItem from="1769475200308" duration="1095000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="com.intellij.coverage.CoverageDataManagerImpl">
+    <SUITE FILE_PATH="coverage/sistema_feedback_alunos$java_in_feedback_alunos.ic" NAME="java in feedback_alunos Coverage Results" MODIFIED="1764100150319" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="idea" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="true" />
+  </component>
+</project>

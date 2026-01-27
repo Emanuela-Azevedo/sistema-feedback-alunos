@@ -1,7 +1,7 @@
 package com.projetoDac.feedback_alunos.service;
 
-import com.projetoDac.feedback_alunos.dto.UsuarioCreateDTO;
-import com.projetoDac.feedback_alunos.dto.UsuarioResponseDTO;
+import com.projetoDac.feedback_alunos.dto.UsuarioCompletoCreateDTO;
+import com.projetoDac.feedback_alunos.dto.UsuarioCompletoResponseDTO;
 import com.projetoDac.feedback_alunos.dto.mapper.UsuarioMapper;
 import com.projetoDac.feedback_alunos.exception.UsuarioNotFoundException;
 import com.projetoDac.feedback_alunos.model.Usuario;
@@ -17,13 +17,13 @@ public class UsuarioService {
 	@Autowired
 	private UsuarioRepository usuarioRepository;
 
-	public UsuarioResponseDTO cadastrarUsuario(UsuarioCreateDTO usuarioCreateDTO) {
-		Usuario usuario = UsuarioMapper.toEntity(usuarioCreateDTO);
+	public UsuarioCompletoResponseDTO cadastrarUsuario(UsuarioCompletoResponseDTO usuarioDTO) {
+		Usuario usuario = UsuarioMapper.toEntity(usuarioDTO);
 		Usuario salvo = usuarioRepository.save(usuario);
 		return UsuarioMapper.toDTO(salvo);
 	}
 
-	public UsuarioResponseDTO editarUsuario(Long id, UsuarioCreateDTO usuarioCreateDTO) {
+	public UsuarioCompletoResponseDTO editarUsuario(Long id, UsuarioCompletoCreateDTO usuarioCreateDTO) {
 
 		Usuario usuario = usuarioRepository.findById(id)
 				.orElseThrow(() -> new UsuarioNotFoundException("Usuário não encontrado com ID: " + id));
@@ -43,11 +43,11 @@ public class UsuarioService {
 		usuarioRepository.deleteById(id);
 	}
 
-	public List<UsuarioResponseDTO> listarUsuarios() {
+	public List<UsuarioCompletoResponseDTO> listarUsuarios() {
 		return usuarioRepository.findAll().stream().map(UsuarioMapper::toDTO).toList();
 	}
 
-	public UsuarioResponseDTO buscarPorId(Long id) {
+	public UsuarioCompletoResponseDTO buscarPorId(Long id) {
 		Usuario usuario = usuarioRepository.findById(id)
 				.orElseThrow(() -> new UsuarioNotFoundException("Usuário não encontrado com ID: " + id));
 

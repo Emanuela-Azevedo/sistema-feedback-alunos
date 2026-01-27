@@ -2,6 +2,9 @@ package com.projetoDac.feedback_alunos.integration;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+
+import com.projetoDac.feedback_alunos.dto.UsuarioCompletoCreateDTO;
+import com.projetoDac.feedback_alunos.dto.UsuarioCompletoResponseDTO;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,8 +17,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
 
-import com.projetoDac.feedback_alunos.dto.UsuarioCreateDTO;
-import com.projetoDac.feedback_alunos.dto.UsuarioResponseDTO;
 import com.projetoDac.feedback_alunos.model.Usuario;
 import com.projetoDac.feedback_alunos.repository.UsuarioRepository;
 
@@ -42,8 +43,8 @@ class UsuarioIntegrationTest {
 
     @Test
     void listarUsuarios_DeveRetornarStatus200() {
-        ResponseEntity<UsuarioResponseDTO[]> response = restTemplate.getForEntity(
-                baseUrl, UsuarioResponseDTO[].class);
+        ResponseEntity<UsuarioCompletoResponseDTO[]> response = restTemplate.getForEntity(
+                baseUrl, UsuarioCompletoResponseDTO[].class);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertNotNull(response.getBody());
@@ -51,13 +52,13 @@ class UsuarioIntegrationTest {
 
     @Test
     void cadastrarUsuario_DeveRetornar201EPersistir() {
-        UsuarioCreateDTO usuarioCreateDTO = new UsuarioCreateDTO();
+        UsuarioCompletoCreateDTO usuarioCreateDTO = new UsuarioCompletoCreateDTO();
         usuarioCreateDTO.setNome("João Silva");
         usuarioCreateDTO.setMatricula("USR001");
         usuarioCreateDTO.setSenha("senha123");
 
-        ResponseEntity<UsuarioResponseDTO> response = restTemplate.postForEntity(
-                baseUrl, usuarioCreateDTO, UsuarioResponseDTO.class);
+        ResponseEntity<UsuarioCompletoResponseDTO> response = restTemplate.postForEntity(
+                baseUrl, usuarioCreateDTO, UsuarioCompletoResponseDTO.class);
 
         assertEquals(HttpStatus.CREATED, response.getStatusCode());
         assertNotNull(response.getBody());
@@ -74,8 +75,8 @@ class UsuarioIntegrationTest {
         usuario.setSenha("senha123");
         usuario = usuarioRepository.save(usuario);
 
-        ResponseEntity<UsuarioResponseDTO> response = restTemplate.getForEntity(
-                baseUrl + "/" + usuario.getIdUsuario(), UsuarioResponseDTO.class);
+        ResponseEntity<UsuarioCompletoResponseDTO> response = restTemplate.getForEntity(
+                baseUrl + "/" + usuario.getIdUsuario(), UsuarioCompletoResponseDTO.class);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals("Maria Silva", response.getBody().getNome());
@@ -89,14 +90,14 @@ class UsuarioIntegrationTest {
         usuario.setSenha("senha123");
         usuario = usuarioRepository.save(usuario);
 
-        UsuarioCreateDTO usuarioCreateDTO = new UsuarioCreateDTO();
-        usuarioCreateDTO.setNome("Usuario Atualizado");
-        usuarioCreateDTO.setMatricula("USER002UPD");
-        usuarioCreateDTO.setSenha("novaSenha");
+        UsuarioCompletoCreateDTO usuarioCreateCompletoDTO = new UsuarioCompletoCreateDTO();
+        usuarioCreateCompletoDTO.setNome("Usuario Atualizado");
+        usuarioCreateCompletoDTO.setMatricula("USER002UPD");
+        usuarioCreateCompletoDTO.setSenha("novaSenha");
 
-        HttpEntity<UsuarioCreateDTO> request = new HttpEntity<>(usuarioCreateDTO);
-        ResponseEntity<UsuarioResponseDTO> response = restTemplate.exchange(
-                baseUrl + "/" + usuario.getIdUsuario(), HttpMethod.PUT, request, UsuarioResponseDTO.class);
+        HttpEntity<UsuarioCompletoCreateDTO> request = new HttpEntity<>(usuarioCreateCompletoDTO);
+        ResponseEntity<UsuarioCompletoResponseDTO> response = restTemplate.exchange(
+                baseUrl + "/" + usuario.getIdUsuario(), HttpMethod.PUT, request, UsuarioCompletoResponseDTO.class);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals("Usuario Atualizado", response.getBody().getNome());
@@ -119,12 +120,12 @@ class UsuarioIntegrationTest {
 
     @Test
     void editarUsuario_ComIdInexistente_DeveRetornar404() {
-        UsuarioCreateDTO usuarioCreateDTO = new UsuarioCreateDTO();
-        usuarioCreateDTO.setNome("Usuario Inexistente");
-        usuarioCreateDTO.setMatricula("INEXIST001");
-        usuarioCreateDTO.setSenha("senha123");
+        UsuarioCompletoCreateDTO usuarioCompletoCreateDTO = new UsuarioCompletoCreateDTO();
+        usuarioCompletoCreateDTO.setNome("Usuario Inexistente");
+        usuarioCompletoCreateDTO.setMatricula("INEXIST001");
+        usuarioCompletoCreateDTO.setSenha("senha123");
 
-        HttpEntity<UsuarioCreateDTO> request = new HttpEntity<>(usuarioCreateDTO);
+        HttpEntity<UsuarioCompletoCreateDTO> request = new HttpEntity<>(usuarioCompletoCreateDTO);
         ResponseEntity<String> response = restTemplate.exchange(
                 baseUrl + "/999", HttpMethod.PUT, request, String.class);
 
@@ -149,7 +150,7 @@ class UsuarioIntegrationTest {
 
     @Test
     void cadastrarUsuario_ComDadosInvalidos_DeveRetornar400() {
-        UsuarioCreateDTO usuarioCreateDTO = new UsuarioCreateDTO();
+        UsuarioCompletoCreateDTO usuarioCreateDTO = new UsuarioCompletoCreateDTO();
         usuarioCreateDTO.setNome(""); // Nome vazio
         usuarioCreateDTO.setMatricula(""); // Matrícula vazia
         usuarioCreateDTO.setSenha("123"); // Senha muito curta
