@@ -11,6 +11,7 @@ public class UsuarioCompletoResponseDTO {
     private Long idUsuario;
     private String nome;
     private String matricula;
+    private String email;
     private String curso;
     private String especialidade;
     private Set<String> perfis;

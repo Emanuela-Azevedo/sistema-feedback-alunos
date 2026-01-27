@@ -23,6 +23,9 @@ public class UsuarioCompletoCreateDTO {
     @Size(max = 100, message = "O curso deve ter no máximo 100 caracteres")
     private String curso;
 
+    @Email(message = "Email deve ter um formato válido")
+    private String email;
+
     @Size(max = 100, message = "A especialidade deve ter no máximo 100 caracteres")
     private String especialidade;
 
