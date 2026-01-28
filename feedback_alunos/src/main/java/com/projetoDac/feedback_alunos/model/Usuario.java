@@ -36,9 +36,6 @@ public class Usuario implements Serializable, UserDetails {
     @Column(name = "senha", nullable = false, length = 200)
     private String senha;
 
-    @Column(name = "email", unique = true, length = 100)
-    private String email;
-
     @Column(name = "curso", length = 100)
     private String curso;
 
@@ -65,7 +62,7 @@ public class Usuario implements Serializable, UserDetails {
 
     @Override
     public String getUsername() {
-        return email != null ? email : matricula;
+        return matricula;
     }
 
     @Override
