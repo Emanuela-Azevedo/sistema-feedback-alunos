@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthController {
     protected AuthenticationManager authenticationManager;
     protected UsuarioService usuarioService;
-    private JWTService jwtService;
+    private final JWTService jwtService;
 
     public AuthController(AuthenticationManager authenticationManager, UsuarioService usuarioService, JWTService jwtService) {
         this.authenticationManager = authenticationManager;
@@ -35,7 +35,7 @@ public class AuthController {
             SecurityContextHolder.getContext().setAuthentication(authentication);
             String token = jwtService.generateToken(authentication);
 
-            UsuarioCompletoResponseDTO userDTO = usuarioService.loadUserByMatricula(login.getMatricula());
+            UsuarioCompletoResponseDTO userDTO = usuarioService.loadUserByUsername(login.getMatricula());
             TokenDTO tokenDTO = new TokenDTO(token , userDTO);
 
             return ResponseEntity.ok(tokenDTO);
