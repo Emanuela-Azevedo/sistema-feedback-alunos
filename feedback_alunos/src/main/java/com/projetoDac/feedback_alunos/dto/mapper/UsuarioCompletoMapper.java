@@ -14,6 +14,7 @@ public class UsuarioCompletoMapper {
         usuario.setNome(dto.getNome());
         usuario.setMatricula(dto.getMatricula());
         usuario.setSenha(dto.getSenha());
+        usuario.setEmail(dto.getEmail());
         usuario.setCurso(dto.getCurso());
         usuario.setEspecialidade(dto.getEspecialidade());
         return usuario;
@@ -24,6 +25,7 @@ public class UsuarioCompletoMapper {
         dto.setIdUsuario(usuario.getIdUsuario());
         dto.setNome(usuario.getNome());
         dto.setMatricula(usuario.getMatricula());
+        dto.setEmail(usuario.getEmail());
         dto.setCurso(usuario.getCurso());
         dto.setEspecialidade(usuario.getEspecialidade());
         dto.setPerfis(usuario.getPerfis().stream()

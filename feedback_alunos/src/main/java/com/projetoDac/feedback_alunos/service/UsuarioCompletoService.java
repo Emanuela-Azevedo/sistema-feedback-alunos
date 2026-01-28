@@ -1,5 +1,6 @@
 package com.projetoDac.feedback_alunos.service;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -53,7 +54,7 @@ public class UsuarioCompletoService {
             
             perfis.add(perfil);
         }
-        usuario.setPerfis(perfis);
+        usuario.setPerfis(new ArrayList<>(perfis));
 
         Usuario usuarioSalvo = usuarioRepository.save(usuario);
         return UsuarioCompletoMapper.toDTO(usuarioSalvo);
@@ -79,6 +80,7 @@ public class UsuarioCompletoService {
         usuario.setNome(dto.getNome());
         usuario.setMatricula(dto.getMatricula());
         usuario.setSenha(dto.getSenha());
+        usuario.setEmail(dto.getEmail());
         usuario.setCurso(dto.getCurso());
         usuario.setEspecialidade(dto.getEspecialidade());
 
@@ -88,7 +90,7 @@ public class UsuarioCompletoService {
                     .orElseThrow(() -> new PerfilNotFoundException("Perfil não encontrado com ID: " + perfilId));
             perfis.add(perfil);
         }
-        usuario.setPerfis(perfis);
+        usuario.setPerfis(new ArrayList<>(perfis));
 
         Usuario usuarioAtualizado = usuarioRepository.save(usuario);
         return UsuarioCompletoMapper.toDTO(usuarioAtualizado);
@@ -116,10 +118,11 @@ public class UsuarioCompletoService {
         usuario.setNome(dto.getNome());
         usuario.setMatricula(dto.getMatricula());
         usuario.setSenha(dto.getSenha());
+        usuario.setEmail(dto.getEmail());
         usuario.setCurso(dto.getCurso());
         usuario.setEspecialidade(dto.getEspecialidade());
         
-        Set<Perfil> perfis = new HashSet<>();
+        List<Perfil> perfis = new ArrayList<>();
         perfis.add(perfilAluno);
         usuario.setPerfis(perfis);
         
@@ -133,7 +136,7 @@ public class UsuarioCompletoService {
                 .orElseThrow(() -> new PerfilNotFoundException("Perfil PROFESSOR não encontrado"));
         
         Usuario usuario = UsuarioCompletoMapper.toEntity(dto);
-        Set<Perfil> perfis = new HashSet<>();
+        List<Perfil> perfis = new ArrayList<>();
         perfis.add(perfilProfessor);
         usuario.setPerfis(perfis);
         
@@ -151,7 +154,7 @@ public class UsuarioCompletoService {
                 .orElseThrow(() -> new PerfilNotFoundException("Perfil ADMIN não encontrado"));
         
         Usuario usuario = UsuarioCompletoMapper.toEntity(dto);
-        Set<Perfil> perfis = new HashSet<>();
+        List<Perfil> perfis = new ArrayList<>();
         perfis.add(perfilAdmin);
         usuario.setPerfis(perfis);
         
