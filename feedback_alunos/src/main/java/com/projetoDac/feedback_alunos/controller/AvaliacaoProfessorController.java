@@ -7,6 +7,7 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -18,24 +19,28 @@ public class AvaliacaoProfessorController {
     @Autowired
     private AvaliacaoProfessorService avaliacaoProfessorService;
 
+    @PreAuthorize("hasRole('ALUNO')")
     @PostMapping
-    public ResponseEntity<AvaliacaoProfessorResponseDTO> criarAvaliacaoProfessor(@Valid @RequestBody AvaliacaoProfessorCreateDTO avaliacaoCreateDTO) {
-        AvaliacaoProfessorResponseDTO avaliacao = avaliacaoProfessorService.criarAvaliacaoProfessor(avaliacaoCreateDTO);
+    public ResponseEntity<AvaliacaoProfessorResponseDTO> criarAvaliacaoProfessor(
+            @Valid @RequestBody AvaliacaoProfessorCreateDTO avaliacaoCreateDTO) {
+
+        AvaliacaoProfessorResponseDTO avaliacao =
+                avaliacaoProfessorService.criarAvaliacaoProfessor(avaliacaoCreateDTO);
+
         return ResponseEntity.status(HttpStatus.CREATED).body(avaliacao);
     }
 
     @GetMapping
     public ResponseEntity<List<AvaliacaoProfessorResponseDTO>> listarAvaliacoes() {
-        List<AvaliacaoProfessorResponseDTO> avaliacoes = avaliacaoProfessorService.listarAvaliacoes();
-        return ResponseEntity.ok(avaliacoes);
+        return ResponseEntity.ok(avaliacaoProfessorService.listarAvaliacoes());
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<AvaliacaoProfessorResponseDTO> buscarPorId(@PathVariable Long id) {
-        AvaliacaoProfessorResponseDTO avaliacao = avaliacaoProfessorService.buscarPorId(id);
-        return ResponseEntity.ok(avaliacao);
+        return ResponseEntity.ok(avaliacaoProfessorService.buscarPorId(id));
     }
 
+    @PreAuthorize("hasRole('ADMIN') or (hasRole('ALUNO') and @avaliacaoProfessorService.isAutorDaAvaliacao(#id))")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> excluirAvaliacao(@PathVariable Long id) {
         avaliacaoProfessorService.excluirAvaliacao(id);
