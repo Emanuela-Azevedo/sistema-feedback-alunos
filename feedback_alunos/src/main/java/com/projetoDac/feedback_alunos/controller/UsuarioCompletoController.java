@@ -2,6 +2,7 @@ package com.projetoDac.feedback_alunos.controller;
 
 import java.util.List;
 
+import com.projetoDac.feedback_alunos.service.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,7 +17,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.projetoDac.feedback_alunos.dto.UsuarioCompletoCreateDTO;
 import com.projetoDac.feedback_alunos.dto.UsuarioCompletoResponseDTO;
-import com.projetoDac.feedback_alunos.service.UsuarioCompletoService;
 
 import jakarta.validation.Valid;
 
@@ -25,30 +25,30 @@ import jakarta.validation.Valid;
 public class UsuarioCompletoController {
 
     @Autowired
-    private UsuarioCompletoService usuarioCompletoService;
+    private UsuarioService usuarioService;
 
     @PostMapping
     public ResponseEntity<UsuarioCompletoResponseDTO> criarUsuario(
             @Valid @RequestBody UsuarioCompletoCreateDTO dto) {
-        UsuarioCompletoResponseDTO usuario = usuarioCompletoService.criarUsuario(dto);
+        UsuarioCompletoResponseDTO usuario = usuarioService.criarUsuario(dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(usuario);
     }
 
     @GetMapping
     public ResponseEntity<List<UsuarioCompletoResponseDTO>> listarUsuarios() {
-        List<UsuarioCompletoResponseDTO> usuarios = usuarioCompletoService.listarUsuarios();
+        List<UsuarioCompletoResponseDTO> usuarios = usuarioService.listarUsuarios();
         return ResponseEntity.ok(usuarios);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<UsuarioCompletoResponseDTO> buscarPorId(@PathVariable Long id) {
-        UsuarioCompletoResponseDTO usuario = usuarioCompletoService.buscarPorId(id);
+        UsuarioCompletoResponseDTO usuario = usuarioService.buscarPorId(id);
         return ResponseEntity.ok(usuario);
     }
 
     @GetMapping("/matricula/{matricula}")
     public ResponseEntity<UsuarioCompletoResponseDTO> buscarPorMatricula(@PathVariable String matricula) {
-        UsuarioCompletoResponseDTO usuario = usuarioCompletoService.buscarPorMatricula(matricula);
+        UsuarioCompletoResponseDTO usuario = usuarioService.buscarPorMatricula(matricula);
         return ResponseEntity.ok(usuario);
     }
 
@@ -56,34 +56,34 @@ public class UsuarioCompletoController {
     public ResponseEntity<UsuarioCompletoResponseDTO> atualizarUsuario(
             @PathVariable Long id,
             @Valid @RequestBody UsuarioCompletoCreateDTO dto) {
-        UsuarioCompletoResponseDTO usuario = usuarioCompletoService.atualizarUsuario(id, dto);
+        UsuarioCompletoResponseDTO usuario = usuarioService.atualizarUsuario(id, dto);
         return ResponseEntity.ok(usuario);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> excluirUsuario(@PathVariable Long id) {
-        usuarioCompletoService.excluirUsuario(id);
+        usuarioService.excluirUsuario(id);
         return ResponseEntity.noContent().build();
     }
 
     @PostMapping("/aluno")
     public ResponseEntity<UsuarioCompletoResponseDTO> criarAluno(
             @Valid @RequestBody UsuarioCompletoCreateDTO dto) {
-        UsuarioCompletoResponseDTO usuario = usuarioCompletoService.criarAluno(dto);
+        UsuarioCompletoResponseDTO usuario = usuarioService.criarAluno(dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(usuario);
     }
 
     @PostMapping("/professor")
     public ResponseEntity<UsuarioCompletoResponseDTO> criarProfessor(
             @Valid @RequestBody UsuarioCompletoCreateDTO dto) {
-        UsuarioCompletoResponseDTO usuario = usuarioCompletoService.criarProfessor(dto);
+        UsuarioCompletoResponseDTO usuario = usuarioService.criarProfessor(dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(usuario);
     }
 
     @PostMapping("/admin")
     public ResponseEntity<UsuarioCompletoResponseDTO> criarAdmin(
             @Valid @RequestBody UsuarioCompletoCreateDTO dto) {
-        UsuarioCompletoResponseDTO usuario = usuarioCompletoService.criarAdmin(dto);
+        UsuarioCompletoResponseDTO usuario = usuarioService.criarAdmin(dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(usuario);
     }
 }

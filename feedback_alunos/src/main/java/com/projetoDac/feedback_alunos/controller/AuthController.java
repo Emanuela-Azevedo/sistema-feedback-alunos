@@ -4,7 +4,7 @@ import com.projetoDac.feedback_alunos.dto.TokenDTO;
 import com.projetoDac.feedback_alunos.dto.UsuarioCompletoResponseDTO;
 import com.projetoDac.feedback_alunos.dto.UsuarioLoginDTO;
 import com.projetoDac.feedback_alunos.jwt.JWTService;
-import com.projetoDac.feedback_alunos.service.UsuarioCompletoService;
+import com.projetoDac.feedback_alunos.service.UsuarioService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -20,12 +20,12 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/auth")
 public class AuthController {
     protected AuthenticationManager authenticationManager;
-    protected UsuarioCompletoService usuarioCompletoService;
+    protected UsuarioService usuarioService;
     private JWTService jwtService;
 
-    public AuthController(AuthenticationManager authenticationManager, UsuarioCompletoService usuarioCompletoService, JWTService jwtService) {
+    public AuthController(AuthenticationManager authenticationManager, UsuarioService usuarioService, JWTService jwtService) {
         this.authenticationManager = authenticationManager;
-        this.usuarioCompletoService = usuarioCompletoService;
+        this.usuarioService = usuarioService;
         this.jwtService = jwtService;
     }
     @PostMapping("/login")
@@ -35,7 +35,7 @@ public class AuthController {
             SecurityContextHolder.getContext().setAuthentication(authentication);
             String token = jwtService.generateToken(authentication);
 
-            UsuarioCompletoResponseDTO userDTO = usuarioCompletoService.findByMatricula(login.getMatricula());
+            UsuarioCompletoResponseDTO userDTO = usuarioService.loadUserByMatricula(login.getMatricula());
             TokenDTO tokenDTO = new TokenDTO(token , userDTO);
 
             return ResponseEntity.ok(tokenDTO);
