@@ -38,8 +38,8 @@ public class UsuarioCompletoService implements UserDetailsService {
     private PasswordEncoder passwordEncoder;
 
     @Override
-    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        return usuarioRepository.findByEmail(email)
+    public UserDetails loadUserByUsername(String matricula) throws UsernameNotFoundException {
+        return usuarioRepository.findByMatricula(matricula)
                 .orElseThrow(() -> new UsernameNotFoundException("Usuário não encontrado"));
     }
 
@@ -97,7 +97,6 @@ public class UsuarioCompletoService implements UserDetailsService {
         usuario.setNome(dto.getNome());
         usuario.setMatricula(dto.getMatricula());
         usuario.setSenha(dto.getSenha());
-        usuario.setEmail(dto.getEmail());
         usuario.setCurso(dto.getCurso());
         usuario.setEspecialidade(dto.getEspecialidade());
 
@@ -135,7 +134,6 @@ public class UsuarioCompletoService implements UserDetailsService {
         usuario.setNome(dto.getNome());
         usuario.setMatricula(dto.getMatricula());
         usuario.setSenha(dto.getSenha());
-        usuario.setEmail(dto.getEmail());
         usuario.setCurso(dto.getCurso());
         usuario.setEspecialidade(dto.getEspecialidade());
         
