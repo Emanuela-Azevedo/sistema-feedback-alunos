@@ -2,7 +2,7 @@ package com.projetoDac.feedback_alunos.controller;
 
 import java.util.List;
 
-import com.projetoDac.feedback_alunos.service.UsuarioService;
+import com.projetoDac.feedback_alunos.service.UsuarioCompletoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,7 +25,7 @@ import jakarta.validation.Valid;
 public class UsuarioCompletoController {
 
     @Autowired
-    private UsuarioService usuarioService;
+    private UsuarioCompletoService usuarioService;
 
     @PostMapping
     public ResponseEntity<UsuarioCompletoResponseDTO> criarUsuario(
