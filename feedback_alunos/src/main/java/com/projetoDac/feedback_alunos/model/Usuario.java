@@ -4,21 +4,23 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "TB_usuario")
+@Table(name = "tb_usuario")
 @Inheritance(strategy = InheritanceType.JOINED)
-public class Usuario implements Serializable, UserDetails {
+@ToString
+public class Usuario implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -45,43 +47,32 @@ public class Usuario implements Serializable, UserDetails {
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "tb_user_role",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "role_id")
+            joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id_usuario"),
+            inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id_perfil")
     )
     private List<Perfil> perfis = new ArrayList<>();
 
-    @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return getPerfis();
     }
 
-    @Override
     public String getPassword() {
         return senha;
     }
 
-    @Override
     public String getUsername() {
         return matricula;
     }
 
     @Override
-    public boolean isAccountNonExpired() {
-        return true;
+    public boolean equals(Object o) {
+        if (!(o instanceof Usuario user))
+            return false;
+        return Objects.equals(idUsuario, user.idUsuario);
     }
 
     @Override
-    public boolean isAccountNonLocked() {
-        return true;
-    }
-
-    @Override
-    public boolean isCredentialsNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isEnabled() {
-        return true;
+    public int hashCode() {
+        return Objects.hashCode(idUsuario);
     }
 }

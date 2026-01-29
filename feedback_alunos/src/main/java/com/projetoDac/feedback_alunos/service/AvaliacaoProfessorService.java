@@ -1,7 +1,6 @@
 package com.projetoDac.feedback_alunos.service;
 
 import com.projetoDac.feedback_alunos.dto.AvaliacaoProfessorCreateDTO;
-import com.projetoDac.feedback_alunos.dto.AvaliacaoProfessorResponseDTO;
 import com.projetoDac.feedback_alunos.dto.mapper.AvaliacaoProfessorMapper;
 import com.projetoDac.feedback_alunos.exception.AvaliacaoNotFoundException;
 import com.projetoDac.feedback_alunos.exception.UsuarioNotFoundException;
@@ -25,61 +24,43 @@ public class AvaliacaoProfessorService {
     @Autowired
     private UsuarioRepository usuarioRepository;
 
-    public AvaliacaoProfessorResponseDTO criarAvaliacaoProfessor(
-            AvaliacaoProfessorCreateDTO avaliacaoCreateDTO) {
+    public AvaliacaoProfessor criarAvaliacaoProfessor(AvaliacaoProfessorCreateDTO dto) {
+        Usuario usuario = usuarioRepository.findById(dto.getUsuarioId())
+                .orElseThrow(() -> new UsuarioNotFoundException("Usuário não encontrado com ID: " + dto.getUsuarioId()));
 
-        Usuario usuario = usuarioRepository.findById(avaliacaoCreateDTO.getUsuarioId())
-                .orElseThrow(() -> new UsuarioNotFoundException(
-                        "Usuário não encontrado com ID: " + avaliacaoCreateDTO.getUsuarioId()));
+        Usuario professor = usuarioRepository.findById(dto.getProfessorId())
+                .orElseThrow(() -> new UsuarioNotFoundException("Professor não encontrado com ID: " + dto.getProfessorId()));
 
-        Usuario professor = usuarioRepository.findById(avaliacaoCreateDTO.getProfessorId())
-                .orElseThrow(() -> new UsuarioNotFoundException(
-                        "Professor não encontrado com ID: " + avaliacaoCreateDTO.getProfessorId()));
-
-        AvaliacaoProfessor avaliacao = AvaliacaoProfessorMapper.toEntity(avaliacaoCreateDTO);
+        AvaliacaoProfessor avaliacao = AvaliacaoProfessorMapper.toEntity(dto);
         avaliacao.setUsuario(usuario);
         avaliacao.setProfessor(professor);
 
-        AvaliacaoProfessor avaliacaoSalva =
-                avaliacaoProfessorRepository.save(avaliacao);
-
-        return AvaliacaoProfessorMapper.toDTO(avaliacaoSalva);
+        return avaliacaoProfessorRepository.save(avaliacao);
     }
 
-    public List<AvaliacaoProfessorResponseDTO> listarAvaliacoes() {
-        return avaliacaoProfessorRepository.findAll().stream()
-                .map(AvaliacaoProfessorMapper::toDTO)
-                .toList();
+    public List<AvaliacaoProfessor> listarAvaliacoes() {
+        return avaliacaoProfessorRepository.findAll();
     }
 
-    public AvaliacaoProfessorResponseDTO buscarPorId(Long id) {
-        AvaliacaoProfessor avaliacao = avaliacaoProfessorRepository.findById(id)
-                .orElseThrow(() -> new AvaliacaoNotFoundException(
-                        "Avaliação não encontrada com ID: " + id));
-
-        return AvaliacaoProfessorMapper.toDTO(avaliacao);
+    public AvaliacaoProfessor buscarPorId(Long id) {
+        return avaliacaoProfessorRepository.findById(id)
+                .orElseThrow(() -> new AvaliacaoNotFoundException("Avaliação não encontrada com ID: " + id));
     }
 
     public void excluirAvaliacao(Long id) {
         if (!avaliacaoProfessorRepository.existsById(id)) {
-            throw new AvaliacaoNotFoundException(
-                    "Avaliação não encontrada com ID: " + id);
+            throw new AvaliacaoNotFoundException("Avaliação não encontrada com ID: " + id);
         }
         avaliacaoProfessorRepository.deleteById(id);
     }
 
     public boolean isAutorDaAvaliacao(Long avaliacaoId) {
-
-        Authentication authentication =
-                SecurityContextHolder.getContext().getAuthentication();
-
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Usuario usuarioLogado = (Usuario) authentication.getPrincipal();
 
         AvaliacaoProfessor avaliacao = avaliacaoProfessorRepository.findById(avaliacaoId)
-                .orElseThrow(() -> new AvaliacaoNotFoundException(
-                        "Avaliação não encontrada com ID: " + avaliacaoId));
+                .orElseThrow(() -> new AvaliacaoNotFoundException("Avaliação não encontrada com ID: " + avaliacaoId));
 
-        return avaliacao.getUsuario().getIdUsuario()
-                .equals(usuarioLogado.getIdUsuario());
+        return avaliacao.getUsuario().getIdUsuario().equals(usuarioLogado.getIdUsuario());
     }
 }

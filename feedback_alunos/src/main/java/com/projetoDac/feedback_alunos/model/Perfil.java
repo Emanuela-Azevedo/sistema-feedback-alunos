@@ -2,15 +2,20 @@ package com.projetoDac.feedback_alunos.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 
 @Data
 @Entity
-@Table(name = "tb_role")
+@Table(name = "tb_perfil")
+@NoArgsConstructor
+@AllArgsConstructor
 public class Perfil implements GrantedAuthority {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id_perfil")
     private Long id;
 
     @Column(unique = true, nullable = false)

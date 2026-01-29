@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @Entity
-@Table(name = "TB_disciplina")
+@Table(name = "tb_disciplina")
 public class Disciplina {
 
     @Id
@@ -19,10 +19,10 @@ public class Disciplina {
     private String nome;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_curso")
+    @JoinColumn(name = "id_curso", nullable = false)
     private Curso curso;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_professor")
+    @JoinColumn(name = "id_professor", nullable = false)
     private Usuario professor;
 }

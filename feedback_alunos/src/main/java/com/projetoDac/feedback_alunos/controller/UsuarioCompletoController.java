@@ -1,89 +1,130 @@
 package com.projetoDac.feedback_alunos.controller;
 
-import java.util.List;
-
-import com.projetoDac.feedback_alunos.service.UsuarioCompletoService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
 import com.projetoDac.feedback_alunos.dto.UsuarioCompletoCreateDTO;
 import com.projetoDac.feedback_alunos.dto.UsuarioCompletoResponseDTO;
-
+import com.projetoDac.feedback_alunos.dto.mapper.UsuarioCompletoMapper;
+import com.projetoDac.feedback_alunos.model.Usuario;
+import com.projetoDac.feedback_alunos.service.UsuarioCompletoService;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
+@Slf4j
+@RequiredArgsConstructor
 @RestController
-@RequestMapping("/usuarios-completo")
+@RequestMapping("/usuarios")
 public class UsuarioCompletoController {
 
-    @Autowired
-    private UsuarioCompletoService usuarioService;
-
-    @PostMapping
-    public ResponseEntity<UsuarioCompletoResponseDTO> criarUsuario(
-            @Valid @RequestBody UsuarioCompletoCreateDTO dto) {
-        UsuarioCompletoResponseDTO usuario = usuarioService.criarUsuario(dto);
-        return ResponseEntity.status(HttpStatus.CREATED).body(usuario);
-    }
+    private final UsuarioCompletoService usuarioService;
 
     @GetMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<UsuarioCompletoResponseDTO>> listarUsuarios() {
-        List<UsuarioCompletoResponseDTO> usuarios = usuarioService.listarUsuarios();
-        return ResponseEntity.ok(usuarios);
+        List<Usuario> usuarios = usuarioService.listarUsuarios();
+        List<UsuarioCompletoResponseDTO> response = usuarios.stream()
+                .map(UsuarioCompletoMapper::toDTO)
+                .toList();
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<UsuarioCompletoResponseDTO> buscarPorId(@PathVariable Long id) {
-        UsuarioCompletoResponseDTO usuario = usuarioService.buscarPorId(id);
-        return ResponseEntity.ok(usuario);
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<?> buscarPorId(@PathVariable Long id) {
+        try {
+            Usuario usuario = usuarioService.buscarPorId(id);
+            return ResponseEntity.ok(UsuarioCompletoMapper.toDTO(usuario));
+        } catch (Exception e) {
+            log.error("Usuário não encontrado com id {}: {}", id, e.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Usuário não encontrado");
+        }
     }
 
     @GetMapping("/matricula/{matricula}")
-    public ResponseEntity<UsuarioCompletoResponseDTO> buscarPorMatricula(@PathVariable String matricula) {
-        UsuarioCompletoResponseDTO usuario = usuarioService.buscarPorMatricula(matricula);
-        return ResponseEntity.ok(usuario);
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<?> buscarPorMatricula(@PathVariable String matricula) {
+        try {
+            Usuario usuario = usuarioService.buscarPorMatricula(matricula);
+            return ResponseEntity.ok(UsuarioCompletoMapper.toDTO(usuario));
+        } catch (Exception e) {
+            log.error("Usuário não encontrado com matrícula {}: {}", matricula, e.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Usuário não encontrado");
+        }
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<UsuarioCompletoResponseDTO> atualizarUsuario(
-            @PathVariable Long id,
-            @Valid @RequestBody UsuarioCompletoCreateDTO dto) {
-        UsuarioCompletoResponseDTO usuario = usuarioService.atualizarUsuario(id, dto);
-        return ResponseEntity.ok(usuario);
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<?> atualizarUsuario(@PathVariable Long id,
+                                              @Valid @RequestBody UsuarioCompletoCreateDTO dto) {
+        try {
+            Usuario usuarioEntity = UsuarioCompletoMapper.toEntity(dto);
+            Usuario usuarioAtualizado = usuarioService.atualizarUsuario(id, usuarioEntity, List.of(dto.getPerfilIds()));
+            return ResponseEntity.ok(UsuarioCompletoMapper.toDTO(usuarioAtualizado));
+        } catch (Exception e) {
+            log.error("Erro ao atualizar usuário {}: {}", id, e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> excluirUsuario(@PathVariable Long id) {
-        usuarioService.excluirUsuario(id);
-        return ResponseEntity.noContent().build();
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<?> excluirUsuario(@PathVariable Long id) {
+        try {
+            usuarioService.excluirUsuario(id);
+            log.info("Usuário excluído: {}", id);
+            return ResponseEntity.noContent().build();
+        } catch (Exception e) {
+            log.error("Erro ao excluir usuário {}: {}", id, e.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Usuário não encontrado");
+        }
     }
 
     @PostMapping("/aluno")
-    public ResponseEntity<UsuarioCompletoResponseDTO> criarAluno(
-            @Valid @RequestBody UsuarioCompletoCreateDTO dto) {
-        UsuarioCompletoResponseDTO usuario = usuarioService.criarAluno(dto);
-        return ResponseEntity.status(HttpStatus.CREATED).body(usuario);
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<?> criarAluno(@Valid @RequestBody UsuarioCompletoCreateDTO dto) {
+        try {
+            Usuario usuarioEntity = UsuarioCompletoMapper.toEntity(dto);
+            Usuario usuarioSalvo = usuarioService.save(usuarioEntity, List.of(dto.getPerfilIds()));
+            UsuarioCompletoResponseDTO response = UsuarioCompletoMapper.toDTO(usuarioSalvo);
+            log.info("Aluno criado: {}", response.getMatricula());
+            return ResponseEntity.status(HttpStatus.CREATED).body(response);
+        } catch (Exception e) {
+            log.error("Erro ao criar aluno: {}", e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
     }
 
     @PostMapping("/professor")
-    public ResponseEntity<UsuarioCompletoResponseDTO> criarProfessor(
-            @Valid @RequestBody UsuarioCompletoCreateDTO dto) {
-        UsuarioCompletoResponseDTO usuario = usuarioService.criarProfessor(dto);
-        return ResponseEntity.status(HttpStatus.CREATED).body(usuario);
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<?> criarProfessor(@Valid @RequestBody UsuarioCompletoCreateDTO dto) {
+        try {
+            Usuario usuarioEntity = UsuarioCompletoMapper.toEntity(dto);
+            Usuario usuarioSalvo = usuarioService.save(usuarioEntity, List.of(dto.getPerfilIds()));
+            UsuarioCompletoResponseDTO response = UsuarioCompletoMapper.toDTO(usuarioSalvo);
+            log.info("Professor criado: {}", response.getMatricula());
+            return ResponseEntity.status(HttpStatus.CREATED).body(response);
+        } catch (Exception e) {
+            log.error("Erro ao criar professor: {}", e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
     }
 
     @PostMapping("/admin")
-    public ResponseEntity<UsuarioCompletoResponseDTO> criarAdmin(
-            @Valid @RequestBody UsuarioCompletoCreateDTO dto) {
-        UsuarioCompletoResponseDTO usuario = usuarioService.criarAdmin(dto);
-        return ResponseEntity.status(HttpStatus.CREATED).body(usuario);
+    public ResponseEntity<?> criarAdmin(@Valid @RequestBody UsuarioCompletoCreateDTO dto) {
+        try {
+            Usuario usuarioEntity = UsuarioCompletoMapper.toEntity(dto);
+            Usuario usuarioSalvo = usuarioService.save(usuarioEntity, List.of(dto.getPerfilIds()));
+            UsuarioCompletoResponseDTO response = UsuarioCompletoMapper.toDTO(usuarioSalvo);
+            log.info("Administrador criado: {}", response.getMatricula());
+            return ResponseEntity.status(HttpStatus.CREATED).body(response);
+        } catch (Exception e) {
+            log.error("Erro ao criar administrador: {}", e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
     }
 }

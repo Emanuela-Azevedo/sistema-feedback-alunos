@@ -8,7 +8,7 @@ import java.time.LocalDate;
 @Data
 @NoArgsConstructor
 @Entity
-@Table(name = "TB_avaliacao_professor")
+@Table(name = "tb_avaliacao_professor")
 public class AvaliacaoProfessor {
 
     @Id
@@ -32,6 +32,11 @@ public class AvaliacaoProfessor {
 
     @Column(name = "data_avaliacao")
     private LocalDate dataAvaliacao = LocalDate.now();
+
+    @PrePersist
+    public void prePersist() {
+        this.dataAvaliacao = LocalDate.now();
+    }
 
     @Column(name = "anonima")
     private boolean anonima;

@@ -32,61 +32,43 @@ public class AvaliacaoDisciplinaService {
     @Autowired
     private DisciplinaRepository disciplinaRepository;
 
-    public AvaliacaoDisciplinaResponseDTO criarAvaliacaoDisciplina(
-            AvaliacaoDisciplinaCreateDTO avaliacaoCreateDTO) {
+    public AvaliacaoDisciplina criarAvaliacaoDisciplina(AvaliacaoDisciplinaCreateDTO dto) {
+        Usuario usuario = usuarioRepository.findById(dto.getUsuarioId())
+                .orElseThrow(() -> new UsuarioNotFoundException("Usuário não encontrado com ID: " + dto.getUsuarioId()));
 
-        Usuario usuario = usuarioRepository.findById(avaliacaoCreateDTO.getUsuarioId())
-                .orElseThrow(() -> new UsuarioNotFoundException(
-                        "Usuário não encontrado com ID: " + avaliacaoCreateDTO.getUsuarioId()));
+        Disciplina disciplina = disciplinaRepository.findById(dto.getDisciplinaId())
+                .orElseThrow(() -> new DisciplinaNotFoundException("Disciplina não encontrada com ID: " + dto.getDisciplinaId()));
 
-        Disciplina disciplina = disciplinaRepository.findById(avaliacaoCreateDTO.getDisciplinaId())
-                .orElseThrow(() -> new DisciplinaNotFoundException(
-                        "Disciplina não encontrada com ID: " + avaliacaoCreateDTO.getDisciplinaId()));
-
-        AvaliacaoDisciplina avaliacao = AvaliacaoDisciplinaMapper.toEntity(avaliacaoCreateDTO);
+        AvaliacaoDisciplina avaliacao = AvaliacaoDisciplinaMapper.toEntity(dto);
         avaliacao.setUsuario(usuario);
         avaliacao.setDisciplina(disciplina);
 
-        AvaliacaoDisciplina avaliacaoSalva =
-                avaliacaoDisciplinaRepository.save(avaliacao);
-
-        return AvaliacaoDisciplinaMapper.toDTO(avaliacaoSalva);
+        return avaliacaoDisciplinaRepository.save(avaliacao);
     }
 
-    public List<AvaliacaoDisciplinaResponseDTO> listarAvaliacoes() {
-        return avaliacaoDisciplinaRepository.findAll().stream()
-                .map(AvaliacaoDisciplinaMapper::toDTO)
-                .toList();
+    public List<AvaliacaoDisciplina> listarAvaliacoes() {
+        return avaliacaoDisciplinaRepository.findAll();
     }
 
-    public AvaliacaoDisciplinaResponseDTO buscarPorId(Long id) {
-        AvaliacaoDisciplina avaliacao = avaliacaoDisciplinaRepository.findById(id)
-                .orElseThrow(() -> new AvaliacaoNotFoundException(
-                        "Avaliação não encontrada com ID: " + id));
-
-        return AvaliacaoDisciplinaMapper.toDTO(avaliacao);
+    public AvaliacaoDisciplina buscarPorId(Long id) {
+        return avaliacaoDisciplinaRepository.findById(id)
+                .orElseThrow(() -> new AvaliacaoNotFoundException("Avaliação não encontrada com ID: " + id));
     }
 
     public void excluirAvaliacao(Long id) {
         if (!avaliacaoDisciplinaRepository.existsById(id)) {
-            throw new AvaliacaoNotFoundException(
-                    "Avaliação não encontrada com ID: " + id);
+            throw new AvaliacaoNotFoundException("Avaliação não encontrada com ID: " + id);
         }
         avaliacaoDisciplinaRepository.deleteById(id);
     }
 
     public boolean isAutorDaAvaliacao(Long avaliacaoId) {
-
-        Authentication authentication =
-                SecurityContextHolder.getContext().getAuthentication();
-
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Usuario usuarioLogado = (Usuario) authentication.getPrincipal();
 
         AvaliacaoDisciplina avaliacao = avaliacaoDisciplinaRepository.findById(avaliacaoId)
-                .orElseThrow(() -> new AvaliacaoNotFoundException(
-                        "Avaliação não encontrada com ID: " + avaliacaoId));
+                .orElseThrow(() -> new AvaliacaoNotFoundException("Avaliação não encontrada com ID: " + avaliacaoId));
 
-        return avaliacao.getUsuario().getIdUsuario()
-                .equals(usuarioLogado.getIdUsuario());
+        return avaliacao.getUsuario().getIdUsuario().equals(usuarioLogado.getIdUsuario());
     }
 }

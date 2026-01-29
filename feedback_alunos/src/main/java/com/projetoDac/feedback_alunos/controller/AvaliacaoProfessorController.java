@@ -2,6 +2,8 @@ package com.projetoDac.feedback_alunos.controller;
 
 import com.projetoDac.feedback_alunos.dto.AvaliacaoProfessorCreateDTO;
 import com.projetoDac.feedback_alunos.dto.AvaliacaoProfessorResponseDTO;
+import com.projetoDac.feedback_alunos.dto.mapper.AvaliacaoProfessorMapper;
+import com.projetoDac.feedback_alunos.model.AvaliacaoProfessor;
 import com.projetoDac.feedback_alunos.service.AvaliacaoProfessorService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,26 +24,30 @@ public class AvaliacaoProfessorController {
     @PreAuthorize("hasRole('ALUNO')")
     @PostMapping
     public ResponseEntity<AvaliacaoProfessorResponseDTO> criarAvaliacaoProfessor(
-            @Valid @RequestBody AvaliacaoProfessorCreateDTO avaliacaoCreateDTO) {
+            @Valid @RequestBody AvaliacaoProfessorCreateDTO dto) {
 
-        AvaliacaoProfessorResponseDTO avaliacao =
-                avaliacaoProfessorService.criarAvaliacaoProfessor(avaliacaoCreateDTO);
-
-        return ResponseEntity.status(HttpStatus.CREATED).body(avaliacao);
+        AvaliacaoProfessor avaliacao = avaliacaoProfessorService.criarAvaliacaoProfessor(dto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(AvaliacaoProfessorMapper.toDTO(avaliacao));
     }
 
     @GetMapping
+    @PreAuthorize("hasRole('ADMIN') or hasRole('PROFESSOR') or hasRole('ALUNO')")
     public ResponseEntity<List<AvaliacaoProfessorResponseDTO>> listarAvaliacoes() {
-        return ResponseEntity.ok(avaliacaoProfessorService.listarAvaliacoes());
+        List<AvaliacaoProfessorResponseDTO> response = avaliacaoProfessorService.listarAvaliacoes().stream()
+                .map(AvaliacaoProfessorMapper::toDTO)
+                .toList();
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('PROFESSOR') or hasRole('ALUNO')")
     public ResponseEntity<AvaliacaoProfessorResponseDTO> buscarPorId(@PathVariable Long id) {
-        return ResponseEntity.ok(avaliacaoProfessorService.buscarPorId(id));
+        AvaliacaoProfessor avaliacao = avaliacaoProfessorService.buscarPorId(id);
+        return ResponseEntity.ok(AvaliacaoProfessorMapper.toDTO(avaliacao));
     }
 
-    @PreAuthorize("hasRole('ADMIN') or (hasRole('ALUNO') and @avaliacaoProfessorService.isAutorDaAvaliacao(#id))")
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN') or (hasRole('ALUNO') and @avaliacaoProfessorService.isAutorDaAvaliacao(#id))")
     public ResponseEntity<Void> excluirAvaliacao(@PathVariable Long id) {
         avaliacaoProfessorService.excluirAvaliacao(id);
         return ResponseEntity.noContent().build();

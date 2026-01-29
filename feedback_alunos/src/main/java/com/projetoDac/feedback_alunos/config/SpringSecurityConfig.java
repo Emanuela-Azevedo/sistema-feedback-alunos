@@ -1,9 +1,10 @@
 package com.projetoDac.feedback_alunos.config;
 
-import com.projetoDac.feedback_alunos.jwt.JwtAuthFilter;
+import com.projetoDac.feedback_alunos.jwt.JwtAuthenticationEntryPoint;
+import com.projetoDac.feedback_alunos.jwt.JwtAuthorizationFilter;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -13,46 +14,26 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
-@EnableMethodSecurity
-@EnableWebMvc
+@EnableMethodSecurity(prePostEnabled = true)
 @Configuration
+@RequiredArgsConstructor
+
 public class SpringSecurityConfig {
 
-    private static final String[] DOCUMENTATION_OPENAPI = {
-            "/docs/index.html",
-            "/swagger-feedback.html",
-            "/v3/api-docs/**",
-            "/swagger-ui/**",
-            "/webjars/**",
-            "/swagger-resources/**"
-    };
-
-    private final JwtAuthFilter jwtAuthFilter;
-
-    public SpringSecurityConfig(JwtAuthFilter jwtAuthFilter) {
-        this.jwtAuthFilter = jwtAuthFilter;
-    }
-
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
                 .csrf(csrf -> csrf.disable())
-                .formLogin(form -> form.disable())
-                .httpBasic(basic -> basic.disable())
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        // Endpoints públicos
-                        .requestMatchers(HttpMethod.POST, "/api/auth/**").permitAll()
-                        .requestMatchers(DOCUMENTATION_OPENAPI).permitAll()
-                        // Admin
-                        .requestMatchers("/administradores/**").hasRole("ADMIN")
-                        .requestMatchers("/perfis/**").hasRole("ADMIN")
-                        // Qualquer outro endpoint precisa estar autenticado
+                        .requestMatchers("/auth/**").permitAll()
+                        .requestMatchers("/usuarios/admin").permitAll()
+                        .requestMatchers("/usuarios/**").hasRole("ADMIN")
                         .anyRequest().authenticated()
                 )
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(jwtAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class)
+                .exceptionHandling(ex -> ex.authenticationEntryPoint(new JwtAuthenticationEntryPoint()))
                 .build();
     }
 
@@ -62,7 +43,12 @@ public class SpringSecurityConfig {
     }
 
     @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration authConfig) throws Exception {
-        return authConfig.getAuthenticationManager();
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
+        return config.getAuthenticationManager();
+    }
+    @Bean
+    public JwtAuthorizationFilter jwtAuthorizationFilter() {
+
+        return new JwtAuthorizationFilter();
     }
 }

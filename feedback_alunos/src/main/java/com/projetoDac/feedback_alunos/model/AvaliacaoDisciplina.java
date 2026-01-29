@@ -9,7 +9,7 @@ import java.time.LocalDate;
 @Data
 @NoArgsConstructor
 @Entity
-@Table(name = "TB_avaliacao_disciplina")
+@Table(name = "tb_avaliacao_disciplina")
 public class AvaliacaoDisciplina {
 
     @Id
@@ -31,8 +31,13 @@ public class AvaliacaoDisciplina {
     @Column(name = "comentario", length = 500)
     private String comentario;
 
-    @Column(name = "data_avaliacao")
-    private LocalDate dataAvaliacao = LocalDate.now();
+    @Column(name = "data_avaliacao", nullable = false, updatable = false)
+    private LocalDate dataAvaliacao;
+
+    @PrePersist
+    public void prePersist() {
+        this.dataAvaliacao = LocalDate.now();
+    }
 
     @Column(name = "anonima")
     private boolean anonima;

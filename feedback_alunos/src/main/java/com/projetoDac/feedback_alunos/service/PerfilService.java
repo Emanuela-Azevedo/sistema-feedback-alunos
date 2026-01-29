@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.projetoDac.feedback_alunos.dto.PerfilCreateDTO;
-import com.projetoDac.feedback_alunos.dto.PerfilResponseDTO;
 import com.projetoDac.feedback_alunos.dto.mapper.PerfilMapper;
 import com.projetoDac.feedback_alunos.exception.PerfilNotFoundException;
 import com.projetoDac.feedback_alunos.model.Perfil;
@@ -18,19 +17,17 @@ public class PerfilService {
     @Autowired
     private PerfilRepository perfilRepository;
 
-    public PerfilResponseDTO cadastrarPerfil(PerfilCreateDTO perfilCreateDTO) {
+    public Perfil cadastrarPerfil(PerfilCreateDTO perfilCreateDTO) {
         Perfil perfil = PerfilMapper.toEntity(perfilCreateDTO);
-        Perfil salvo = perfilRepository.save(perfil);
-        return PerfilMapper.toDTO(salvo);
+        return perfilRepository.save(perfil);
     }
 
-    public PerfilResponseDTO editarPerfil(Long id, PerfilCreateDTO perfilCreateDTO) {
+    public Perfil editarPerfil(Long id, PerfilCreateDTO perfilCreateDTO) {
         Perfil perfil = perfilRepository.findById(id)
                 .orElseThrow(() -> new PerfilNotFoundException("Perfil não encontrado com ID: " + id));
 
         perfil.setNomePerfil(perfilCreateDTO.getNome());
-        Perfil atualizado = perfilRepository.save(perfil);
-        return PerfilMapper.toDTO(atualizado);
+        return perfilRepository.save(perfil);
     }
 
     public void excluirPerfil(Long id) {
@@ -40,20 +37,18 @@ public class PerfilService {
         perfilRepository.deleteById(id);
     }
 
-    public List<PerfilResponseDTO> listarPerfis() {
-        return perfilRepository.findAll().stream().map(PerfilMapper::toDTO).toList();
+    public List<Perfil> listarPerfis() {
+        return perfilRepository.findAll();
     }
 
-    public PerfilResponseDTO buscarPorId(Long id) {
-        Perfil perfil = perfilRepository.findById(id)
+    public Perfil buscarPorId(Long id) {
+        return perfilRepository.findById(id)
                 .orElseThrow(() -> new PerfilNotFoundException("Perfil não encontrado com ID: " + id));
-        return PerfilMapper.toDTO(perfil);
     }
 
-    public PerfilResponseDTO buscarPorNome(String nomePerfil) {
-        Perfil perfil = perfilRepository.findByNomePerfil(nomePerfil)
+    public Perfil buscarPorNome(String nomePerfil) {
+        return perfilRepository.findByNomePerfil(nomePerfil)
                 .orElseThrow(() -> new PerfilNotFoundException("Perfil não encontrado com nome: " + nomePerfil));
-        return PerfilMapper.toDTO(perfil);
     }
 
     public Perfil save(Perfil perfil) {

@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.projetoDac.feedback_alunos.dto.CursoCreateDTO;
-import com.projetoDac.feedback_alunos.dto.CursoResponseDTO;
 import com.projetoDac.feedback_alunos.dto.mapper.CursoMapper;
 import com.projetoDac.feedback_alunos.exception.CursoJaExisteException;
 import com.projetoDac.feedback_alunos.exception.CursoNotFoundException;
@@ -19,27 +18,25 @@ public class CursoService {
     @Autowired
     private CursoRepository cursoRepository;
 
-    public CursoResponseDTO cadastrarCurso(CursoCreateDTO cursoCreateDTO) {
+    public Curso cadastrarCurso(CursoCreateDTO cursoCreateDTO) {
         if (cursoRepository.existsByNome(cursoCreateDTO.getNome())) {
             throw new CursoJaExisteException("Já existe um curso com este nome. Por favor, escolha um nome diferente.");
         }
         Curso curso = CursoMapper.toEntity(cursoCreateDTO);
-        Curso cursoSalvo = cursoRepository.save(curso);
-        return CursoMapper.toDTO(cursoSalvo);
+        return cursoRepository.save(curso);
     }
 
-    public CursoResponseDTO editarCurso(Long id, CursoCreateDTO cursoCreateDTO) {
+    public Curso editarCurso(Long id, CursoCreateDTO cursoCreateDTO) {
         Curso curso = cursoRepository.findById(id)
                 .orElseThrow(() -> new CursoNotFoundException("Curso não encontrado com ID: " + id));
-        
-        if (!curso.getNome().equals(cursoCreateDTO.getNome()) && 
-            cursoRepository.existsByNome(cursoCreateDTO.getNome())) {
+
+        if (!curso.getNome().equals(cursoCreateDTO.getNome()) &&
+                cursoRepository.existsByNome(cursoCreateDTO.getNome())) {
             throw new CursoJaExisteException("Já existe um curso com este nome. Por favor, escolha um nome diferente.");
         }
-        
+
         curso.setNome(cursoCreateDTO.getNome());
-        Curso cursoAtualizado = cursoRepository.save(curso);
-        return CursoMapper.toDTO(cursoAtualizado);
+        return cursoRepository.save(curso);
     }
 
     public void excluirCurso(Long id) {
@@ -49,15 +46,12 @@ public class CursoService {
         cursoRepository.deleteById(id);
     }
 
-    public List<CursoResponseDTO> listarCursos() {
-        return cursoRepository.findAll().stream()
-                .map(CursoMapper::toDTO)
-                .toList();
+    public List<Curso> listarCursos() {
+        return cursoRepository.findAll();
     }
 
-    public CursoResponseDTO buscarPorId(Long id) {
-        Curso curso = cursoRepository.findById(id)
+    public Curso buscarPorId(Long id) {
+        return cursoRepository.findById(id)
                 .orElseThrow(() -> new CursoNotFoundException("Curso não encontrado com ID: " + id));
-        return CursoMapper.toDTO(curso);
     }
 }

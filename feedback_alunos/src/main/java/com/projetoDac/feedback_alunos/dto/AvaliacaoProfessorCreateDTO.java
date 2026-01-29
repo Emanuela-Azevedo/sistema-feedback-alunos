@@ -3,8 +3,10 @@ package com.projetoDac.feedback_alunos.dto;
 import jakarta.validation.constraints.*;
 import lombok.*;
 
-@Getter
-@Setter
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class AvaliacaoProfessorCreateDTO {
 
     @NotNull(message = "O ID do usuário é obrigatório")

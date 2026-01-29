@@ -1,4 +1,4 @@
-package com.projetoDac.feedback_alunos.unitarios.controllers;
+package com.projetoDac.feedback_alunos.integracao.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.projetoDac.feedback_alunos.dto.UsuarioLoginDTO;

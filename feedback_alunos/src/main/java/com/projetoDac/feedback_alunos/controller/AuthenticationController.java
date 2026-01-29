@@ -1,52 +1,55 @@
 package com.projetoDac.feedback_alunos.controller;
 
-import com.projetoDac.feedback_alunos.dto.TokenDTO;
-import com.projetoDac.feedback_alunos.dto.UsuarioCompletoResponseDTO;
+import com.projetoDac.feedback_alunos.controller.exception.ErrorMessage;
 import com.projetoDac.feedback_alunos.dto.UsuarioLoginDTO;
+import com.projetoDac.feedback_alunos.jwt.JwtToken;
 import com.projetoDac.feedback_alunos.jwt.JwtUserDetailsService;
-import com.projetoDac.feedback_alunos.service.UsuarioCompletoService;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
-@RestController
-@RequestMapping("/api/auth")
+@Slf4j
 @RequiredArgsConstructor
-public class AuthController {
+@RestController
+@RequestMapping("/auth")
+public class AuthenticationController {
 
     private final JwtUserDetailsService userDetailsService;
-
     private final AuthenticationManager authenticationManager;
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody UsuarioLoginDTO login){
-        try{
+    public ResponseEntity<?> login(@RequestBody @Valid UsuarioLoginDTO dto, HttpServletRequest request) {
+        log.info("Processo de login para matrícula {}", dto.getMatricula());
+
+        try {
             Authentication authentication = authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(login.getMatricula(), login.getPassword())
+                    new UsernamePasswordAuthenticationToken(dto.getMatricula(), dto.getPassword())
             );
+
             SecurityContextHolder.getContext().setAuthentication(authentication);
 
-            String token = jwtService.getTokenAuthenticated(authentication);
+            JwtToken token = userDetailsService.getTokenAuthenticated(dto.getMatricula());
+            return ResponseEntity.ok(token);
 
-            var userDetails = (org.springframework.security.core.userdetails.User) authentication.getPrincipal();
-            UsuarioCompletoResponseDTO userDTO = new UsuarioCompletoResponseDTO();
-            userDTO.setNome(userDetails.getUsername());
-
-            return ResponseEntity.ok(new TokenDTO(token, userDTO));
-
-        } catch(Exception e){
-            return ResponseEntity.badRequest().body("Credenciais inválidas");
+        } catch (AuthenticationException e) {
+            log.error("Credenciais inválidas para matrícula '{}'", dto.getMatricula());
+            return ResponseEntity.badRequest().body(new ErrorMessage(request, HttpStatus.BAD_REQUEST, "Credenciais inválidas"));
         }
     }
 
     @PostMapping("/logout")
     public ResponseEntity<String> logout(HttpServletRequest request) {
         SecurityContextHolder.clearContext();
+        log.info("Logout realizado com sucesso");
         return ResponseEntity.ok("Logout realizado com sucesso!");
     }
 }

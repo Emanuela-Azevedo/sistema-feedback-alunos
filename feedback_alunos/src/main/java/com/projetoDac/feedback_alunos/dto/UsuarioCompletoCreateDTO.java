@@ -1,11 +1,12 @@
 package com.projetoDac.feedback_alunos.dto;
 
 import jakarta.validation.constraints.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
-@Getter
-@Setter
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class UsuarioCompletoCreateDTO {
 
     @NotBlank(message = "O nome é obrigatório")

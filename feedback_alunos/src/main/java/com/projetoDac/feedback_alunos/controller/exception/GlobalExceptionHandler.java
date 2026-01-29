@@ -1,4 +1,4 @@
-package com.projetoDac.feedback_alunos.exception.handler;
+package com.projetoDac.feedback_alunos.controller.exception;
 
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;

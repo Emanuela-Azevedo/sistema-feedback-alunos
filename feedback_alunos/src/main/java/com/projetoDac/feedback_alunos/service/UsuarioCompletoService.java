@@ -6,7 +6,11 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import com.projetoDac.feedback_alunos.exception.UsuarioJaExisteException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -26,7 +30,7 @@ import com.projetoDac.feedback_alunos.repository.PerfilRepository;
 import com.projetoDac.feedback_alunos.repository.UsuarioRepository;
 
 @Service
-public class UsuarioCompletoService implements UserDetailsService {
+public class UsuarioCompletoService {
 
     @Autowired
     private UsuarioRepository usuarioRepository;
@@ -37,81 +41,65 @@ public class UsuarioCompletoService implements UserDetailsService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    @Override
-    public UserDetails loadUserByUsername(String matricula) throws UsernameNotFoundException {
-        return usuarioRepository.findByMatricula(matricula)
-                .orElseThrow(() -> new UsernameNotFoundException("Usuário não encontrado"));
-    }
-
-    public Usuario save(Usuario user) {
-        return usuarioRepository.save(user);
-    }
-
     @Transactional
-    public UsuarioCompletoResponseDTO criarUsuario(UsuarioCompletoCreateDTO dto) {
-        if (dto.getPerfilIds() == null || dto.getPerfilIds().length == 0) {
+    public Usuario save(Usuario usuario, List<Long> perfilIds) {
+        if (perfilIds == null || perfilIds.isEmpty()) {
             throw new PerfilNotFoundException("Pelo menos um perfil deve ser selecionado");
         }
-        
-        Usuario usuario = UsuarioCompletoMapper.toEntity(dto);
 
         Set<Perfil> perfis = new HashSet<>();
-        boolean isAdmin = false;
-        
-        for (Long perfilId : dto.getPerfilIds()) {
+        for (Long perfilId : perfilIds) {
             Perfil perfil = perfilRepository.findById(perfilId)
                     .orElseThrow(() -> new PerfilNotFoundException("Perfil não encontrado com ID: " + perfilId));
-            
-            if ("ADMIN".equals(perfil.getNomePerfil())) {
-                isAdmin = true;
-                if (usuarioRepository.existsByPerfisNomePerfil("ADMIN")) {
-                    throw new AdminJaExisteException("Já existe um administrador cadastrado no sistema. Apenas um administrador é permitido.");
-                }
+
+            // regra de negócio: só pode existir um admin
+            if ("ROLE_ADMIN".equals(perfil.getNomePerfil())
+                    && usuarioRepository.existsByPerfisNomePerfil("ROLE_ADMIN")) {
+                throw new AdminJaExisteException("Já existe um administrador cadastrado no sistema.");
             }
-            
+
             perfis.add(perfil);
         }
+
         usuario.setPerfis(new ArrayList<>(perfis));
+        usuario.setSenha(passwordEncoder.encode(usuario.getSenha()));
 
-        Usuario usuarioSalvo = usuarioRepository.save(usuario);
-        return UsuarioCompletoMapper.toDTO(usuarioSalvo);
+        return usuarioRepository.save(usuario);
     }
 
-    public List<UsuarioCompletoResponseDTO> listarUsuarios() {
-        return usuarioRepository.findAll().stream()
-                .map(UsuarioCompletoMapper::toDTO)
-                .collect(Collectors.toList());
+    public List<Usuario> listarUsuarios() {
+        return usuarioRepository.findAll();
     }
 
-    public UsuarioCompletoResponseDTO buscarPorId(Long id) {
-        Usuario usuario = usuarioRepository.findById(id)
+    @Transactional(readOnly = true)
+    public Usuario buscarPorId(Long id) {
+        return usuarioRepository.findById(id)
                 .orElseThrow(() -> new UsuarioNotFoundException("Usuário não encontrado com ID: " + id));
-        return UsuarioCompletoMapper.toDTO(usuario);
     }
 
     @Transactional
-    public UsuarioCompletoResponseDTO atualizarUsuario(Long id, UsuarioCompletoCreateDTO dto) {
+    public Usuario atualizarUsuario(Long id, Usuario usuarioAtualizado, List<Long> perfilIds) {
         Usuario usuario = usuarioRepository.findById(id)
                 .orElseThrow(() -> new UsuarioNotFoundException("Usuário não encontrado com ID: " + id));
 
-        usuario.setNome(dto.getNome());
-        usuario.setMatricula(dto.getMatricula());
-        usuario.setSenha(dto.getSenha());
-        usuario.setCurso(dto.getCurso());
-        usuario.setEspecialidade(dto.getEspecialidade());
+        usuario.setNome(usuarioAtualizado.getNome());
+        usuario.setMatricula(usuarioAtualizado.getMatricula());
+        usuario.setSenha(passwordEncoder.encode(usuarioAtualizado.getSenha()));
+        usuario.setCurso(usuarioAtualizado.getCurso());
+        usuario.setEspecialidade(usuarioAtualizado.getEspecialidade());
 
         Set<Perfil> perfis = new HashSet<>();
-        for (Long perfilId : dto.getPerfilIds()) {
+        for (Long perfilId : perfilIds) {
             Perfil perfil = perfilRepository.findById(perfilId)
                     .orElseThrow(() -> new PerfilNotFoundException("Perfil não encontrado com ID: " + perfilId));
             perfis.add(perfil);
         }
         usuario.setPerfis(new ArrayList<>(perfis));
 
-        Usuario usuarioAtualizado = usuarioRepository.save(usuario);
-        return UsuarioCompletoMapper.toDTO(usuarioAtualizado);
+        return usuarioRepository.save(usuario);
     }
 
+    @Transactional
     public void excluirUsuario(Long id) {
         if (!usuarioRepository.existsById(id)) {
             throw new UsuarioNotFoundException("Usuário não encontrado com ID: " + id);
@@ -119,61 +107,9 @@ public class UsuarioCompletoService implements UserDetailsService {
         usuarioRepository.deleteById(id);
     }
 
-    public UsuarioCompletoResponseDTO buscarPorMatricula(String matricula) {
-        Usuario usuario = usuarioRepository.findByMatricula(matricula)
+    @Transactional(readOnly = true)
+    public Usuario buscarPorMatricula(String matricula) {
+        return usuarioRepository.findByMatricula(matricula)
                 .orElseThrow(() -> new UsuarioNotFoundException("Usuário não encontrado com matrícula: " + matricula));
-        return UsuarioCompletoMapper.toDTO(usuario);
-    }
-
-    @Transactional
-    public UsuarioCompletoResponseDTO criarAluno(UsuarioCompletoCreateDTO dto) {
-        Perfil perfilAluno = perfilRepository.findByNomePerfil("ALUNO")
-                .orElseThrow(() -> new PerfilNotFoundException("Perfil ALUNO não encontrado"));
-        
-        Usuario usuario = new Usuario();
-        usuario.setNome(dto.getNome());
-        usuario.setMatricula(dto.getMatricula());
-        usuario.setSenha(dto.getSenha());
-        usuario.setCurso(dto.getCurso());
-        usuario.setEspecialidade(dto.getEspecialidade());
-        
-        List<Perfil> perfis = new ArrayList<>();
-        perfis.add(perfilAluno);
-        usuario.setPerfis(perfis);
-        
-        Usuario usuarioSalvo = usuarioRepository.save(usuario);
-        return UsuarioCompletoMapper.toDTO(usuarioSalvo);
-    }
-
-    @Transactional
-    public UsuarioCompletoResponseDTO criarProfessor(UsuarioCompletoCreateDTO dto) {
-        Perfil perfilProfessor = perfilRepository.findByNomePerfil("PROFESSOR")
-                .orElseThrow(() -> new PerfilNotFoundException("Perfil PROFESSOR não encontrado"));
-        
-        Usuario usuario = UsuarioCompletoMapper.toEntity(dto);
-        List<Perfil> perfis = new ArrayList<>();
-        perfis.add(perfilProfessor);
-        usuario.setPerfis(perfis);
-        
-        Usuario usuarioSalvo = usuarioRepository.save(usuario);
-        return UsuarioCompletoMapper.toDTO(usuarioSalvo);
-    }
-
-    @Transactional
-    public UsuarioCompletoResponseDTO criarAdmin(UsuarioCompletoCreateDTO dto) {
-        if (usuarioRepository.existsByPerfisNomePerfil("ADMIN")) {
-            throw new AdminJaExisteException("Já existe um administrador cadastrado no sistema. Apenas um administrador é permitido.");
-        }
-        
-        Perfil perfilAdmin = perfilRepository.findByNomePerfil("ADMIN")
-                .orElseThrow(() -> new PerfilNotFoundException("Perfil ADMIN não encontrado"));
-        
-        Usuario usuario = UsuarioCompletoMapper.toEntity(dto);
-        List<Perfil> perfis = new ArrayList<>();
-        perfis.add(perfilAdmin);
-        usuario.setPerfis(perfis);
-        
-        Usuario usuarioSalvo = usuarioRepository.save(usuario);
-        return UsuarioCompletoMapper.toDTO(usuarioSalvo);
     }
 }

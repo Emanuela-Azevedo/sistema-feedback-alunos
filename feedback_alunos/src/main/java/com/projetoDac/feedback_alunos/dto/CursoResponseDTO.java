@@ -2,8 +2,10 @@ package com.projetoDac.feedback_alunos.dto;
 
 import lombok.*;
 
-@Getter
-@Setter
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class CursoResponseDTO {
     private Long idCurso;
     private String nome;
