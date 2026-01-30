@@ -56,11 +56,26 @@ public class AvaliacaoProfessorService {
 
     public boolean isAutorDaAvaliacao(Long avaliacaoId) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        Usuario usuarioLogado = (Usuario) authentication.getPrincipal();
+        String matriculaLogada = authentication.getName(); // vem do JWT subject
 
         AvaliacaoProfessor avaliacao = avaliacaoProfessorRepository.findById(avaliacaoId)
                 .orElseThrow(() -> new AvaliacaoNotFoundException("Avaliação não encontrada com ID: " + avaliacaoId));
 
-        return avaliacao.getUsuario().getIdUsuario().equals(usuarioLogado.getIdUsuario());
+        return avaliacao.getUsuario().getMatricula().equals(matriculaLogada);
+    }
+
+    public AvaliacaoProfessor atualizarAvaliacao(Long id, AvaliacaoProfessorCreateDTO dto) {
+        AvaliacaoProfessor avaliacao = avaliacaoProfessorRepository.findById(id)
+                .orElseThrow(() -> new AvaliacaoNotFoundException("Avaliação não encontrada com ID: " + id));
+
+        Usuario professor = usuarioRepository.findById(dto.getProfessorId())
+                .orElseThrow(() -> new UsuarioNotFoundException("Professor não encontrado com ID: " + dto.getProfessorId()));
+
+        avaliacao.setProfessor(professor);
+        avaliacao.setNota(dto.getNota());
+        avaliacao.setComentario(dto.getComentario());
+        avaliacao.setAnonima(dto.isAnonima());
+
+        return avaliacaoProfessorRepository.save(avaliacao);
     }
 }

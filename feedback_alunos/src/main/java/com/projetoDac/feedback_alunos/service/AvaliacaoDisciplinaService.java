@@ -1,7 +1,6 @@
 package com.projetoDac.feedback_alunos.service;
 
 import com.projetoDac.feedback_alunos.dto.AvaliacaoDisciplinaCreateDTO;
-import com.projetoDac.feedback_alunos.dto.AvaliacaoDisciplinaResponseDTO;
 import com.projetoDac.feedback_alunos.dto.mapper.AvaliacaoDisciplinaMapper;
 import com.projetoDac.feedback_alunos.exception.AvaliacaoNotFoundException;
 import com.projetoDac.feedback_alunos.exception.DisciplinaNotFoundException;
@@ -12,12 +11,10 @@ import com.projetoDac.feedback_alunos.model.Usuario;
 import com.projetoDac.feedback_alunos.repository.AvaliacaoDisciplinaRepository;
 import com.projetoDac.feedback_alunos.repository.DisciplinaRepository;
 import com.projetoDac.feedback_alunos.repository.UsuarioRepository;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
 
 @Service
@@ -64,11 +61,45 @@ public class AvaliacaoDisciplinaService {
 
     public boolean isAutorDaAvaliacao(Long avaliacaoId) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        Usuario usuarioLogado = (Usuario) authentication.getPrincipal();
+
+        if (authentication == null || authentication.getPrincipal() == null) {
+            return false;
+        }
+
+        String matriculaLogada;
+        Object principal = authentication.getPrincipal();
+
+        if (principal instanceof Usuario usuarioLogado) {
+            matriculaLogada = usuarioLogado.getMatricula();
+        } else if (principal instanceof org.springframework.security.core.userdetails.UserDetails userDetails) {
+            matriculaLogada = userDetails.getUsername();
+        } else if (principal instanceof String s) {
+            matriculaLogada = s;
+        } else {
+            return false;
+        }
 
         AvaliacaoDisciplina avaliacao = avaliacaoDisciplinaRepository.findById(avaliacaoId)
                 .orElseThrow(() -> new AvaliacaoNotFoundException("Avaliação não encontrada com ID: " + avaliacaoId));
 
-        return avaliacao.getUsuario().getIdUsuario().equals(usuarioLogado.getIdUsuario());
+        if (avaliacao.getUsuario() == null) {
+            return false;
+        }
+        return avaliacao.getUsuario().getMatricula().equals(matriculaLogada);
+    }
+
+    public AvaliacaoDisciplina atualizarAvaliacao(Long id, AvaliacaoDisciplinaCreateDTO dto) {
+        AvaliacaoDisciplina avaliacao = avaliacaoDisciplinaRepository.findById(id)
+                .orElseThrow(() -> new AvaliacaoNotFoundException("Avaliação não encontrada com ID: " + id));
+
+        Disciplina disciplina = disciplinaRepository.findById(dto.getDisciplinaId())
+                .orElseThrow(() -> new DisciplinaNotFoundException("Disciplina não encontrada com ID: " + dto.getDisciplinaId()));
+
+        avaliacao.setDisciplina(disciplina);
+        avaliacao.setNota(dto.getNota());
+        avaliacao.setComentario(dto.getComentario());
+        avaliacao.setAnonima(dto.isAnonima());
+
+        return avaliacaoDisciplinaRepository.save(avaliacao);
     }
 }
