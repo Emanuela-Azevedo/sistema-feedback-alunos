@@ -25,7 +25,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 @SpringBootTest
 @AutoConfigureMockMvc
 @Transactional
-class UsuarioCompletoControllerIT {
+class UsuarioControllerIT {
 
     @Autowired
     private MockMvc mockMvc;
@@ -78,7 +78,6 @@ class UsuarioCompletoControllerIT {
                         .forEach(p -> System.out.println("Perfil: " + p.getNomePerfil())));
     }
 
-    // método utilitário para garantir que o perfil exista sem duplicar
     private Perfil ensurePerfil(String nomePerfil) {
         return perfilRepository.findByNomePerfil(nomePerfil)
                 .orElseGet(() -> {
@@ -88,7 +87,6 @@ class UsuarioCompletoControllerIT {
                 });
     }
 
-    // 🔑 método utilitário para login e captura do token
     private String loginComo(String matricula, String senha) throws Exception {
         String response = mockMvc.perform(post("/auth/login")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -152,20 +150,15 @@ class UsuarioCompletoControllerIT {
 
     @Test
     void criarPrimeiroAdmin_SemLogin_DeveRetornar201() throws Exception {
-        System.out.println("=== INÍCIO TESTE CRIAR PRIMEIRO ADMIN SEM LOGIN ===");
-
-        // limpa tudo para simular sistema sem admin
         usuarioRepository.deleteAll();
         perfilRepository.deleteAll();
         System.out.println("=== BANCO LIMPO ===");
         System.out.println("Perfis existentes: " + perfilRepository.findAll());
         System.out.println("Usuários existentes: " + usuarioRepository.findAll());
 
-        // garante que o perfil ROLE_ADMIN exista sem duplicar
         Perfil perfilAdmin = ensurePerfil("ROLE_ADMIN");
         System.out.println("=== PERFIL ADMIN GARANTIDO COM ID: " + perfilAdmin.getId() + " ===");
 
-        // monta DTO
         UsuarioCompletoCreateDTO dto = new UsuarioCompletoCreateDTO();
         dto.setNome("Primeiro Admin");
         dto.setMatricula("primeiroAdmin");
@@ -174,22 +167,10 @@ class UsuarioCompletoControllerIT {
         dto.setEspecialidade("Administração");
         dto.setPerfilIds(new Long[]{perfilAdmin.getId()});
 
-        System.out.println("=== DTO ENVIADO === " + objectMapper.writeValueAsString(dto));
-
-        // executa requisição sem login
         var result = mockMvc.perform(post("/usuarios/admin")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
                 .andReturn();
-
-        System.out.println("=== STATUS DA RESPOSTA === " + result.getResponse().getStatus());
-        System.out.println("=== BODY DA RESPOSTA === " + result.getResponse().getContentAsString());
-        System.out.println("=== HEADERS DA RESPOSTA === " + result.getResponse().getHeaderNames());
-
-        System.out.println("Perfis após tentativa: " + perfilRepository.findAll());
-        System.out.println("Usuários após tentativa: " + usuarioRepository.findAll());
-        System.out.println("=== FIM TESTE ===");
-
         assertEquals(201, result.getResponse().getStatus());
     }
 

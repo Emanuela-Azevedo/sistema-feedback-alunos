@@ -52,4 +52,13 @@ public class AvaliacaoDisciplinaController {
         avaliacaoDisciplinaService.excluirAvaliacao(id);
         return ResponseEntity.noContent().build();
     }
+    @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ALUNO') and @avaliacaoDisciplinaService.isAutorDaAvaliacao(#id)")
+    public ResponseEntity<AvaliacaoDisciplinaResponseDTO> atualizarAvaliacao(
+            @PathVariable Long id,
+            @Valid @RequestBody AvaliacaoDisciplinaCreateDTO dto) {
+        AvaliacaoDisciplina avaliacaoAtualizada = avaliacaoDisciplinaService.atualizarAvaliacao(id, dto);
+        return ResponseEntity.ok(AvaliacaoDisciplinaMapper.toDTO(avaliacaoAtualizada));
+    }
+
 }

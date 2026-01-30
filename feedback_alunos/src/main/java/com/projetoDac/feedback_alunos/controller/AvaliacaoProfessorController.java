@@ -52,4 +52,13 @@ public class AvaliacaoProfessorController {
         avaliacaoProfessorService.excluirAvaliacao(id);
         return ResponseEntity.noContent().build();
     }
+    @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ALUNO') and @avaliacaoProfessorService.isAutorDaAvaliacao(#id)")
+    public ResponseEntity<AvaliacaoProfessorResponseDTO> atualizarAvaliacao(
+            @PathVariable Long id,
+            @Valid @RequestBody AvaliacaoProfessorCreateDTO dto) {
+
+        AvaliacaoProfessor avaliacaoAtualizada = avaliacaoProfessorService.atualizarAvaliacao(id, dto);
+        return ResponseEntity.ok(AvaliacaoProfessorMapper.toDTO(avaliacaoAtualizada));
+    }
 }
