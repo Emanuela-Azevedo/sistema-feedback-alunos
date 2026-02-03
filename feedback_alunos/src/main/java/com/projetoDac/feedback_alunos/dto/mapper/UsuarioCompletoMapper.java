@@ -1,11 +1,10 @@
 package com.projetoDac.feedback_alunos.dto.mapper;
 
-import java.util.stream.Collectors;
-
 import com.projetoDac.feedback_alunos.dto.UsuarioCompletoCreateDTO;
 import com.projetoDac.feedback_alunos.dto.UsuarioCompletoResponseDTO;
-import com.projetoDac.feedback_alunos.model.Perfil;
 import com.projetoDac.feedback_alunos.model.Usuario;
+
+import java.util.Set;
 
 public class UsuarioCompletoMapper {
 
@@ -26,9 +25,13 @@ public class UsuarioCompletoMapper {
         dto.setMatricula(usuario.getMatricula());
         dto.setCurso(usuario.getCurso());
         dto.setEspecialidade(usuario.getEspecialidade());
-        dto.setPerfis(usuario.getPerfis().stream()
-                .map(Perfil::getNomePerfil)
-                .collect(Collectors.toSet()));
+
+        if (usuario.getPerfil() != null) {
+            dto.setPerfis(Set.of(usuario.getPerfil().getNomePerfil()));
+        } else {
+            dto.setPerfis(Set.of());
+        }
+
         return dto;
     }
 }

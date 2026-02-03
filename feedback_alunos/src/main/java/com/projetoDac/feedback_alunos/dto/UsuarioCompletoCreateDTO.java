@@ -1,6 +1,8 @@
 package com.projetoDac.feedback_alunos.dto;
 
-import jakarta.validation.constraints.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.*;
 
 @Data
@@ -17,7 +19,7 @@ public class UsuarioCompletoCreateDTO {
     private String matricula;
 
     @NotBlank(message = "A senha é obrigatória")
-    @Size(min = 6, message = "A senha deve ter pelo menos 6 caracteres")
+    @Size(min = 6, max = 20, message = "A senha deve ter entre 6 e 20 caracteres")
     private String senha;
 
     @Size(max = 100, message = "O curso deve ter no máximo 100 caracteres")
@@ -26,7 +28,8 @@ public class UsuarioCompletoCreateDTO {
     @Size(max = 100, message = "A especialidade deve ter no máximo 100 caracteres")
     private String especialidade;
 
-    private Long[] perfilIds;
+    @NotBlank(message = "O perfil é obrigatório")
+    private String perfil;
 
     private boolean superAdmin;
 

@@ -4,22 +4,19 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
 import org.springframework.security.core.GrantedAuthority;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
 @Entity
 @Table(name = "tb_usuario")
 @Inheritance(strategy = InheritanceType.JOINED)
-@ToString
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class Usuario implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -44,16 +41,12 @@ public class Usuario implements Serializable {
     @Column(name = "especialidade", length = 100)
     private String especialidade;
 
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(
-            name = "tb_user_role",
-            joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id_usuario"),
-            inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id_perfil")
-    )
-    private List<Perfil> perfis = new ArrayList<>();
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "perfil_id", referencedColumnName = "id_perfil")
+    private Perfil perfil;
 
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return getPerfis();
+        return List.of(perfil);
     }
 
     public String getPassword() {

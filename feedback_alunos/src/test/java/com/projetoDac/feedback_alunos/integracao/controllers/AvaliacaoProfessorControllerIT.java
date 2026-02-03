@@ -70,7 +70,7 @@ class AvaliacaoProfessorControllerIT {
         aluno.setSenha(passwordEncoder.encode("senhaAluno"));
         aluno.setCurso("Engenharia");
         aluno.setEspecialidade("Software");
-        aluno.setPerfis(List.of(perfilAluno));
+        aluno.setPerfil(perfilAluno);
         usuarioRepository.save(aluno);
 
         professor = new Usuario();
@@ -79,7 +79,7 @@ class AvaliacaoProfessorControllerIT {
         professor.setSenha(passwordEncoder.encode("senhaProf"));
         professor.setCurso("Matemática");
         professor.setEspecialidade("Álgebra");
-        professor.setPerfis(List.of(perfilProfessor));
+        professor.setPerfil(perfilProfessor);
         usuarioRepository.save(professor);
 
         Usuario admin = new Usuario();
@@ -88,7 +88,7 @@ class AvaliacaoProfessorControllerIT {
         admin.setSenha(passwordEncoder.encode("senhaAdmin"));
         admin.setCurso("Gestão");
         admin.setEspecialidade("Administração");
-        admin.setPerfis(List.of(perfilAdmin));
+        admin.setPerfil(perfilAdmin);
         usuarioRepository.save(admin);
 
         jwtAluno = loginComo("aluno123", "senhaAluno");
@@ -175,7 +175,7 @@ class AvaliacaoProfessorControllerIT {
         outroAluno.setSenha(passwordEncoder.encode("senhaOutro"));
         outroAluno.setCurso("Engenharia");
         outroAluno.setEspecialidade("Software");
-        outroAluno.setPerfis(List.of(ensurePerfil("ROLE_ALUNO")));
+        outroAluno.setPerfil(ensurePerfil("ROLE_ALUNO"));
         usuarioRepository.save(outroAluno);
 
         String jwtOutroAluno = loginComo("aluno456", "senhaOutro");
@@ -227,7 +227,7 @@ class AvaliacaoProfessorControllerIT {
         outroAluno.setSenha(passwordEncoder.encode("senhaOutro"));
         outroAluno.setCurso("Engenharia");
         outroAluno.setEspecialidade("Software");
-        outroAluno.setPerfis(List.of(ensurePerfil("ROLE_ALUNO")));
+        outroAluno.setPerfil(ensurePerfil("ROLE_ALUNO"));
         usuarioRepository.save(outroAluno);
 
         String jwtOutroAluno = loginComo("aluno456", "senhaOutro");

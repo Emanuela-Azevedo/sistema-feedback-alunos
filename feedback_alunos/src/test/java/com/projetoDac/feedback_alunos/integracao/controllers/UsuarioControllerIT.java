@@ -17,8 +17,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 
@@ -51,18 +49,19 @@ class UsuarioControllerIT {
         perfilRepository.deleteAll();
 
         // garante que os três perfis existam
-        Perfil perfilAdmin = ensurePerfil("ROLE_ADMIN");
-        Perfil perfilProfessor = ensurePerfil("ROLE_PROFESSOR");
-        Perfil perfilAluno = ensurePerfil("ROLE_ALUNO");
+        ensurePerfil("ROLE_ADMIN");
+        ensurePerfil("ROLE_PROFESSOR");
+        ensurePerfil("ROLE_ALUNO");
 
         // cria um admin inicial para autenticação
+        Perfil perfilAdmin = perfilRepository.findByNomePerfil("ROLE_ADMIN").orElseThrow();
         Usuario admin = new Usuario();
         admin.setNome("Administrador Teste");
         admin.setMatricula("admin123");
         admin.setSenha(passwordEncoder.encode("senha123"));
         admin.setCurso("Gestão");
         admin.setEspecialidade("Administração");
-        admin.setPerfis(List.of(perfilAdmin));
+        admin.setPerfil(perfilAdmin);
 
         usuarioRepository.save(admin);
 
@@ -72,10 +71,9 @@ class UsuarioControllerIT {
         System.out.println("=== TOKEN GERADO NO SETUP ===");
         System.out.println(jwtToken);
 
-        System.out.println("=== PERFIS DO USUÁRIO ADMIN ===");
+        System.out.println("=== PERFIL DO USUÁRIO ADMIN ===");
         usuarioRepository.findByMatricula("admin123")
-                .ifPresent(u -> u.getPerfis()
-                        .forEach(p -> System.out.println("Perfil: " + p.getNomePerfil())));
+                .ifPresent(u -> System.out.println("Perfil: " + u.getPerfil().getNomePerfil()));
     }
 
     private Perfil ensurePerfil(String nomePerfil) {
@@ -108,15 +106,13 @@ class UsuarioControllerIT {
 
     @Test
     void criarAluno_ComAdminLogado_DeveRetornar201() throws Exception {
-        Perfil perfilAluno = perfilRepository.findByNomePerfil("ROLE_ALUNO").orElseThrow();
-
         UsuarioCompletoCreateDTO dto = new UsuarioCompletoCreateDTO();
         dto.setNome("Aluno Teste");
         dto.setMatricula("aluno123");
         dto.setSenha("senhaAluno");
         dto.setCurso("Engenharia");
         dto.setEspecialidade("Software");
-        dto.setPerfilIds(new Long[]{perfilAluno.getId()});
+        dto.setPerfil("ROLE_ALUNO");
 
         var result = mockMvc.perform(post("/usuarios/aluno")
                         .header("Authorization", "Bearer " + jwtToken)
@@ -129,15 +125,13 @@ class UsuarioControllerIT {
 
     @Test
     void criarProfessor_ComAdminLogado_DeveRetornar201() throws Exception {
-        Perfil perfilProfessor = perfilRepository.findByNomePerfil("ROLE_PROFESSOR").orElseThrow();
-
         UsuarioCompletoCreateDTO dto = new UsuarioCompletoCreateDTO();
         dto.setNome("Professor Teste");
         dto.setMatricula("prof123");
         dto.setSenha("senhaProf");
         dto.setCurso("Matemática");
         dto.setEspecialidade("Álgebra");
-        dto.setPerfilIds(new Long[]{perfilProfessor.getId()});
+        dto.setPerfil("ROLE_PROFESSOR");
 
         var result = mockMvc.perform(post("/usuarios/professor")
                         .header("Authorization", "Bearer " + jwtToken)
@@ -152,12 +146,8 @@ class UsuarioControllerIT {
     void criarPrimeiroAdmin_SemLogin_DeveRetornar201() throws Exception {
         usuarioRepository.deleteAll();
         perfilRepository.deleteAll();
-        System.out.println("=== BANCO LIMPO ===");
-        System.out.println("Perfis existentes: " + perfilRepository.findAll());
-        System.out.println("Usuários existentes: " + usuarioRepository.findAll());
 
-        Perfil perfilAdmin = ensurePerfil("ROLE_ADMIN");
-        System.out.println("=== PERFIL ADMIN GARANTIDO COM ID: " + perfilAdmin.getId() + " ===");
+        ensurePerfil("ROLE_ADMIN");
 
         UsuarioCompletoCreateDTO dto = new UsuarioCompletoCreateDTO();
         dto.setNome("Primeiro Admin");
@@ -165,7 +155,7 @@ class UsuarioControllerIT {
         dto.setSenha("senhaAdmin");
         dto.setCurso("Gestão");
         dto.setEspecialidade("Administração");
-        dto.setPerfilIds(new Long[]{perfilAdmin.getId()});
+        dto.setPerfil("ROLE_ADMIN");
 
         var result = mockMvc.perform(post("/usuarios/admin")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -176,15 +166,13 @@ class UsuarioControllerIT {
 
     @Test
     void criarOutroAdmin_QuandoJaExiste_DeveRetornarErro() throws Exception {
-        Perfil perfilAdmin = perfilRepository.findByNomePerfil("ROLE_ADMIN").orElseThrow();
-
         UsuarioCompletoCreateDTO dto = new UsuarioCompletoCreateDTO();
         dto.setNome("Segundo Admin");
         dto.setMatricula("segundoAdmin");
         dto.setSenha("senhaAdmin2");
         dto.setCurso("Gestão");
         dto.setEspecialidade("Administração");
-        dto.setPerfilIds(new Long[]{perfilAdmin.getId()});
+        dto.setPerfil("ROLE_ADMIN");
 
         var result = mockMvc.perform(post("/usuarios/admin")
                         .contentType(MediaType.APPLICATION_JSON)
