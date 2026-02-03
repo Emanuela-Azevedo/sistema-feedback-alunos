@@ -3,7 +3,6 @@ package com.projetoDac.feedback_alunos.dto;
 import jakarta.validation.constraints.*;
 import lombok.*;
 
-
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -30,4 +29,5 @@ public class UsuarioCompletoCreateDTO {
     private Long[] perfilIds;
 
     private boolean superAdmin;
+
 }
