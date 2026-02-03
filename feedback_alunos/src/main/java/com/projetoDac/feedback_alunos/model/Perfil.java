@@ -18,7 +18,7 @@ public class Perfil implements GrantedAuthority {
     @Column(name = "id_perfil")
     private Long id;
 
-    @Column(unique = true, nullable = false)
+    @Column(name =  "nome_perfil", unique = true, nullable = false)
     private String nomePerfil;
 
     @Override

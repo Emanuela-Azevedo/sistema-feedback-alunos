@@ -1,26 +1,5 @@
 package com.projetoDac.feedback_alunos.service;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
-
-import com.projetoDac.feedback_alunos.exception.UsuarioJaExisteException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.AccessDeniedException;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import com.projetoDac.feedback_alunos.dto.UsuarioCompletoCreateDTO;
-import com.projetoDac.feedback_alunos.dto.UsuarioCompletoResponseDTO;
-import com.projetoDac.feedback_alunos.dto.mapper.UsuarioCompletoMapper;
 import com.projetoDac.feedback_alunos.exception.AdminJaExisteException;
 import com.projetoDac.feedback_alunos.exception.PerfilNotFoundException;
 import com.projetoDac.feedback_alunos.exception.UsuarioNotFoundException;
@@ -28,6 +7,12 @@ import com.projetoDac.feedback_alunos.model.Perfil;
 import com.projetoDac.feedback_alunos.model.Usuario;
 import com.projetoDac.feedback_alunos.repository.PerfilRepository;
 import com.projetoDac.feedback_alunos.repository.UsuarioRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 public class UsuarioCompletoService {
@@ -42,26 +27,21 @@ public class UsuarioCompletoService {
     private PasswordEncoder passwordEncoder;
 
     @Transactional
-    public Usuario save(Usuario usuario, List<Long> perfilIds) {
-        if (perfilIds == null || perfilIds.isEmpty()) {
-            throw new PerfilNotFoundException("Pelo menos um perfil deve ser selecionado");
+    public Usuario save(Usuario usuario, String perfilNome) {
+        if (perfilNome == null || perfilNome.isBlank()) {
+            throw new PerfilNotFoundException("Um perfil deve ser informado");
         }
 
-        Set<Perfil> perfis = new HashSet<>();
-        for (Long perfilId : perfilIds) {
-            Perfil perfil = perfilRepository.findById(perfilId)
-                    .orElseThrow(() -> new PerfilNotFoundException("Perfil não encontrado com ID: " + perfilId));
+        Perfil perfil = perfilRepository.findByNomePerfil(perfilNome)
+                .orElseThrow(() -> new PerfilNotFoundException("Perfil não encontrado: " + perfilNome));
 
-            // regra de negócio: só pode existir um admin
-            if ("ROLE_ADMIN".equals(perfil.getNomePerfil())
-                    && usuarioRepository.existsByPerfisNomePerfil("ROLE_ADMIN")) {
-                throw new AdminJaExisteException("Já existe um administrador cadastrado no sistema.");
-            }
-
-            perfis.add(perfil);
+        // regra de negócio: só pode existir um admin
+        if ("ROLE_ADMIN".equals(perfil.getNomePerfil())
+                && usuarioRepository.existsByPerfilNomePerfil("ROLE_ADMIN")) {
+            throw new AdminJaExisteException("Já existe um administrador cadastrado no sistema.");
         }
 
-        usuario.setPerfis(new ArrayList<>(perfis));
+        usuario.setPerfil(perfil);
         usuario.setSenha(passwordEncoder.encode(usuario.getSenha()));
 
         return usuarioRepository.save(usuario);
@@ -78,7 +58,7 @@ public class UsuarioCompletoService {
     }
 
     @Transactional
-    public Usuario atualizarUsuario(Long id, Usuario usuarioAtualizado, List<Long> perfilIds) {
+    public Usuario atualizarUsuario(Long id, Usuario usuarioAtualizado, String perfilNome) {
         Usuario usuario = usuarioRepository.findById(id)
                 .orElseThrow(() -> new UsuarioNotFoundException("Usuário não encontrado com ID: " + id));
 
@@ -88,13 +68,11 @@ public class UsuarioCompletoService {
         usuario.setCurso(usuarioAtualizado.getCurso());
         usuario.setEspecialidade(usuarioAtualizado.getEspecialidade());
 
-        Set<Perfil> perfis = new HashSet<>();
-        for (Long perfilId : perfilIds) {
-            Perfil perfil = perfilRepository.findById(perfilId)
-                    .orElseThrow(() -> new PerfilNotFoundException("Perfil não encontrado com ID: " + perfilId));
-            perfis.add(perfil);
+        if (perfilNome != null && !perfilNome.isBlank()) {
+            Perfil perfil = perfilRepository.findByNomePerfil(perfilNome)
+                    .orElseThrow(() -> new PerfilNotFoundException("Perfil não encontrado: " + perfilNome));
+            usuario.setPerfil(perfil);
         }
-        usuario.setPerfis(new ArrayList<>(perfis));
 
         return usuarioRepository.save(usuario);
     }

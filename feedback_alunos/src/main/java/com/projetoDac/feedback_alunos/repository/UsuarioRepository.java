@@ -10,5 +10,5 @@ import com.projetoDac.feedback_alunos.model.Usuario;
 @Repository
 public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
     Optional<Usuario> findByMatricula(String matricula);
-    boolean existsByPerfisNomePerfil(String nomePerfil);
+    boolean existsByPerfilNomePerfil(String nomePerfil);
 }
