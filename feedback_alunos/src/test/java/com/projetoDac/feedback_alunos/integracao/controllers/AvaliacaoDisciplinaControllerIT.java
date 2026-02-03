@@ -84,7 +84,7 @@ class AvaliacaoDisciplinaControllerIT {
         professor.setSenha(passwordEncoder.encode("senhaProf"));
         professor.setCurso("Matemática");
         professor.setEspecialidade("Álgebra");
-        professor.setPerfis(List.of(perfilProfessor));
+        professor.setPerfil(perfilProfessor);
         usuarioRepository.save(professor);
 
         disciplinaBase = new Disciplina();
@@ -106,7 +106,7 @@ class AvaliacaoDisciplinaControllerIT {
         aluno.setSenha(passwordEncoder.encode("senhaAluno"));
         aluno.setCurso("Engenharia");
         aluno.setEspecialidade("Software");
-        aluno.setPerfis(List.of(perfilAluno));
+        aluno.setPerfil(perfilAluno);
         usuarioRepository.save(aluno);
 
         Usuario admin = new Usuario();
@@ -115,7 +115,7 @@ class AvaliacaoDisciplinaControllerIT {
         admin.setSenha(passwordEncoder.encode("senhaAdmin"));
         admin.setCurso("Gestão");
         admin.setEspecialidade("Administração");
-        admin.setPerfis(List.of(perfilAdmin));
+        admin.setPerfil(perfilAdmin);
         usuarioRepository.save(admin);
 
         jwtAluno = loginComo("aluno123", "senhaAluno");

@@ -1,9 +1,9 @@
 package com.projetoDac.feedback_alunos.jwt;
 
-import com.projetoDac.feedback_alunos.model.Perfil;
 import com.projetoDac.feedback_alunos.model.Usuario;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import java.util.stream.Collectors;
+
+import java.util.List;
 
 public class JwtUserDetails extends org.springframework.security.core.userdetails.User {
 
@@ -11,12 +11,9 @@ public class JwtUserDetails extends org.springframework.security.core.userdetail
 
     public JwtUserDetails(Usuario usuario) {
         super(
-                usuario.getMatricula(), // ou getUsername(), se for a matrícula
+                usuario.getMatricula(),
                 usuario.getSenha(),
-                usuario.getPerfis().stream()
-                        .map(Perfil::getNomePerfil)
-                        .map(SimpleGrantedAuthority::new)
-                        .collect(Collectors.toList())
+                List.of(new SimpleGrantedAuthority(usuario.getPerfil().getNomePerfil()))
         );
         this.usuario = usuario;
     }
