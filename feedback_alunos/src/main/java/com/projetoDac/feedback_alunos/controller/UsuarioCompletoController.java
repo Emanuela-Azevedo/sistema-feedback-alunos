@@ -18,13 +18,14 @@ import java.util.List;
 @Slf4j
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/usuarios")
+@CrossOrigin(origins = "http://localhost:5173", allowedHeaders = "*", allowCredentials = "true")
+@RequestMapping("api/usuarios")
 public class UsuarioCompletoController {
 
     private final UsuarioCompletoService usuarioService;
 
     @GetMapping
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<UsuarioCompletoResponseDTO>> listarUsuarios() {
         List<Usuario> usuarios = usuarioService.listarUsuarios();
         List<UsuarioCompletoResponseDTO> response = usuarios.stream()
@@ -34,7 +35,7 @@ public class UsuarioCompletoController {
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> buscarPorId(@PathVariable Long id) {
         try {
             Usuario usuario = usuarioService.buscarPorId(id);
@@ -46,7 +47,7 @@ public class UsuarioCompletoController {
     }
 
     @GetMapping("/matricula/{matricula}")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> buscarPorMatricula(@PathVariable String matricula) {
         try {
             Usuario usuario = usuarioService.buscarPorMatricula(matricula);
@@ -58,12 +59,12 @@ public class UsuarioCompletoController {
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> atualizarUsuario(@PathVariable Long id,
                                               @Valid @RequestBody UsuarioCompletoCreateDTO dto) {
         try {
             Usuario usuarioEntity = UsuarioCompletoMapper.toEntity(dto);
-            Usuario usuarioAtualizado = usuarioService.atualizarUsuario(id, usuarioEntity, dto.getPerfil());
+            Usuario usuarioAtualizado = usuarioService.atualizarUsuario(id, usuarioEntity,(dto.getPerfil()));
             return ResponseEntity.ok(UsuarioCompletoMapper.toDTO(usuarioAtualizado));
         } catch (Exception e) {
             log.error("Erro ao atualizar usuário {}: {}", id, e.getMessage());
@@ -72,7 +73,7 @@ public class UsuarioCompletoController {
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> excluirUsuario(@PathVariable Long id) {
         try {
             usuarioService.excluirUsuario(id);
@@ -85,7 +86,7 @@ public class UsuarioCompletoController {
     }
 
     @PostMapping("/aluno")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> criarAluno(@Valid @RequestBody UsuarioCompletoCreateDTO dto) {
         try {
             Usuario usuarioEntity = UsuarioCompletoMapper.toEntity(dto);
@@ -100,7 +101,7 @@ public class UsuarioCompletoController {
     }
 
     @PostMapping("/professor")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> criarProfessor(@Valid @RequestBody UsuarioCompletoCreateDTO dto) {
         try {
             Usuario usuarioEntity = UsuarioCompletoMapper.toEntity(dto);
@@ -118,7 +119,7 @@ public class UsuarioCompletoController {
     public ResponseEntity<?> criarAdmin(@Valid @RequestBody UsuarioCompletoCreateDTO dto) {
         try {
             Usuario usuarioEntity = UsuarioCompletoMapper.toEntity(dto);
-            Usuario usuarioSalvo = usuarioService.save(usuarioEntity, dto.getPerfil());
+            Usuario usuarioSalvo = usuarioService.save(usuarioEntity,dto.getPerfil());
             UsuarioCompletoResponseDTO response = UsuarioCompletoMapper.toDTO(usuarioSalvo);
             log.info("Administrador criado: {}", response.getMatricula());
             return ResponseEntity.status(HttpStatus.CREATED).body(response);

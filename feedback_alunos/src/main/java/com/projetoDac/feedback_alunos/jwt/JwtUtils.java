@@ -41,13 +41,17 @@ public class JwtUtils {
     }
 
 
-    public static JwtToken createToken(String matricula) {
+    public static JwtToken createToken(String matricula, String role) {
         Date issuedAt = new Date();
         Date limit = toExpireDate(issuedAt);
 
+        // Aqui criamos os claims e incluímos o role
+        Claims claims = Jwts.claims().setSubject(matricula);
+        claims.put("roles", new String[]{role}); // ou List.of(role) se preferir
+
         String token = Jwts.builder()
                 .setHeaderParam("typ", "JWT")
-                .setSubject(matricula)
+                .setClaims(claims)
                 .setIssuedAt(issuedAt)
                 .setExpiration(limit)
                 .signWith(generatyKey(), SignatureAlgorithm.HS256)
@@ -55,6 +59,7 @@ public class JwtUtils {
 
         return new JwtToken(token);
     }
+
 
     private static Claims getClaimsFromToken(String token){
         try{

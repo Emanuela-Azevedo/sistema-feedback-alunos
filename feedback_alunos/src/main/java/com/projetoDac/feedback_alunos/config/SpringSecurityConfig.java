@@ -27,9 +27,9 @@ public class SpringSecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/auth/**").permitAll()
-                        .requestMatchers("/usuarios/admin").permitAll()
-                        .requestMatchers("/usuarios/**").hasRole("ADMIN")
+                        .requestMatchers("api/auth/**").permitAll()
+                        .requestMatchers("api/usuarios/admin").permitAll()
+                        .requestMatchers("api/usuarios/**").hasRole("ADMIN")
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class)
