@@ -21,7 +21,6 @@ import org.springframework.transaction.annotation.Transactional;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-
 @SpringBootTest
 @AutoConfigureMockMvc
 @Transactional
@@ -63,9 +62,9 @@ class DisciplinaControllerIT {
         professor = new Usuario();
         professor.setNome("Professor Teste");
         professor.setMatricula("prof123");
-        professor.setSenha("123456");
-        professor.setCurso("ADS");
+        professor.setSenha(passwordEncoder.encode("123456"));
         professor.setEspecialidade("Programação");
+        professor.setCurso(curso); // agora curso é entidade
 
         professor = usuarioRepository.save(professor);
     }
@@ -117,7 +116,7 @@ class DisciplinaControllerIT {
                 .andExpect(status().isNoContent());
     }
 
-  // ===============================
+    // ===============================
     // EDITAR
     // ===============================
     @Test
@@ -187,6 +186,4 @@ class DisciplinaControllerIT {
         mockMvc.perform(get("/disciplinas"))
                 .andExpect(status().isOk());
     }
-
-
 }

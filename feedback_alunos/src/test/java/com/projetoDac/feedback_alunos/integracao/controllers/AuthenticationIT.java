@@ -2,9 +2,11 @@ package com.projetoDac.feedback_alunos.integracao.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.projetoDac.feedback_alunos.dto.UsuarioLoginDTO;
+import com.projetoDac.feedback_alunos.model.Curso;
 import com.projetoDac.feedback_alunos.model.Usuario;
 import com.projetoDac.feedback_alunos.repository.AvaliacaoDisciplinaRepository;
 import com.projetoDac.feedback_alunos.repository.AvaliacaoProfessorRepository;
+import com.projetoDac.feedback_alunos.repository.CursoRepository;
 import com.projetoDac.feedback_alunos.repository.UsuarioRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -34,6 +36,9 @@ class AuthenticationIT {
     private UsuarioRepository usuarioRepository;
 
     @Autowired
+    private CursoRepository cursoRepository;
+
+    @Autowired
     private PasswordEncoder passwordEncoder;
 
     @Autowired
@@ -42,23 +47,30 @@ class AuthenticationIT {
     @Autowired
     private AvaliacaoProfessorRepository avaliacaoProfessorRepository;
 
+    private Curso cursoBase;
+
     @BeforeEach
     void setup() {
-        avaliacaoDisciplinaRepository.deleteAll();// primeiro remove dependências
+        avaliacaoDisciplinaRepository.deleteAll(); // primeiro remove dependências
         avaliacaoProfessorRepository.deleteAll();
         usuarioRepository.deleteAll();             // depois remove usuários
+        cursoRepository.deleteAll();
 
+        // cria curso base
+        cursoBase = new Curso();
+        cursoBase.setNome("Curso de Teste");
+        cursoRepository.save(cursoBase);
+
+        // cria usuário vinculado ao curso
         Usuario usuario = new Usuario();
         usuario.setNome("Usuário de Teste");
         usuario.setMatricula("usuarioTeste");
         usuario.setSenha(passwordEncoder.encode("senha123"));
-        usuario.setCurso("Curso de Teste");
+        usuario.setCurso(cursoBase); // agora curso é entidade
         usuario.setEspecialidade("Especialidade Teste");
 
         usuarioRepository.save(usuario);
     }
-
-
 
     @Test
     void login_ComCredenciaisValidas_DeveRetornarToken() throws Exception {

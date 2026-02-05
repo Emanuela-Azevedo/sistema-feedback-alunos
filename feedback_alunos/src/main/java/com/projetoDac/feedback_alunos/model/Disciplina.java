@@ -25,4 +25,12 @@ public class Disciplina {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_professor", nullable = false)
     private Usuario professor;
+
+    @Override
+    public String toString() {
+        return "Disciplina{" + "idDisciplina=" + idDisciplina + "," +
+                " nome='" + nome + '\'' + ", " +
+                "cursoId=" + (curso != null ? curso.getIdCurso() : null) + ", " +
+                "professorId=" + (professor != null ? professor.getIdUsuario() : null) + '}';
+    }
 }

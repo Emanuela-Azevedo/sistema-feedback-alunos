@@ -4,9 +4,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.projetoDac.feedback_alunos.dto.AvaliacaoProfessorCreateDTO;
 import com.projetoDac.feedback_alunos.dto.UsuarioLoginDTO;
 import com.projetoDac.feedback_alunos.model.AvaliacaoProfessor;
+import com.projetoDac.feedback_alunos.model.Curso;
 import com.projetoDac.feedback_alunos.model.Perfil;
 import com.projetoDac.feedback_alunos.model.Usuario;
 import com.projetoDac.feedback_alunos.repository.AvaliacaoProfessorRepository;
+import com.projetoDac.feedback_alunos.repository.CursoRepository;
 import com.projetoDac.feedback_alunos.repository.PerfilRepository;
 import com.projetoDac.feedback_alunos.repository.UsuarioRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -18,8 +20,6 @@ import org.springframework.http.MediaType;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -46,6 +46,9 @@ class AvaliacaoProfessorControllerIT {
     private PerfilRepository perfilRepository;
 
     @Autowired
+    private CursoRepository cursoRepository;
+
+    @Autowired
     private PasswordEncoder passwordEncoder;
 
     private String jwtAluno;
@@ -53,42 +56,49 @@ class AvaliacaoProfessorControllerIT {
 
     private Usuario aluno;
     private Usuario professor;
+    private Curso cursoBase;
 
     @BeforeEach
     void setup() throws Exception {
         avaliacaoProfessorRepository.deleteAll();
         usuarioRepository.deleteAll();
         perfilRepository.deleteAll();
+        cursoRepository.deleteAll();
 
         Perfil perfilAluno = ensurePerfil("ROLE_ALUNO");
         Perfil perfilAdmin = ensurePerfil("ROLE_ADMIN");
         Perfil perfilProfessor = ensurePerfil("ROLE_PROFESSOR");
 
+        // cria curso base
+        cursoBase = new Curso();
+        cursoBase.setNome("Engenharia de Software");
+        cursoRepository.save(cursoBase);
+
         aluno = new Usuario();
         aluno.setNome("Aluno Teste");
         aluno.setMatricula("aluno123");
         aluno.setSenha(passwordEncoder.encode("senhaAluno"));
-        aluno.setCurso("Engenharia");
         aluno.setEspecialidade("Software");
         aluno.setPerfil(perfilAluno);
+        aluno.setCurso(cursoBase); // vincula ao curso
         usuarioRepository.save(aluno);
 
         professor = new Usuario();
         professor.setNome("Professor Teste");
         professor.setMatricula("prof123");
         professor.setSenha(passwordEncoder.encode("senhaProf"));
-        professor.setCurso("Matemática");
         professor.setEspecialidade("Álgebra");
         professor.setPerfil(perfilProfessor);
+        professor.setCurso(cursoBase); // vincula ao curso
         usuarioRepository.save(professor);
 
         Usuario admin = new Usuario();
         admin.setNome("Admin Teste");
         admin.setMatricula("admin123");
         admin.setSenha(passwordEncoder.encode("senhaAdmin"));
-        admin.setCurso("Gestão");
         admin.setEspecialidade("Administração");
         admin.setPerfil(perfilAdmin);
+        admin.setCurso(cursoBase); // vincula ao curso
         usuarioRepository.save(admin);
 
         jwtAluno = loginComo("aluno123", "senhaAluno");
@@ -136,15 +146,12 @@ class AvaliacaoProfessorControllerIT {
 
     @Test
     void editarAvaliacaoProfessor_ComAlunoAutor_DeveRetornar200() throws Exception {
-
-
         AvaliacaoProfessor avaliacao = new AvaliacaoProfessor();
         avaliacao.setUsuario(aluno);
         avaliacao.setProfessor(professor);
         avaliacao.setNota(3);
         avaliacao.setComentario("Comentário inicial");
         avaliacaoProfessorRepository.save(avaliacao);
-
 
         AvaliacaoProfessorCreateDTO dto = new AvaliacaoProfessorCreateDTO();
         dto.setUsuarioId(aluno.getIdUsuario());
@@ -166,16 +173,15 @@ class AvaliacaoProfessorControllerIT {
                 .contains("Comentário atualizado"));
     }
 
-
     @Test
     void editarAvaliacaoProfessor_ComAlunoNaoAutor_DeveRetornar403() throws Exception {
         Usuario outroAluno = new Usuario();
         outroAluno.setNome("Outro Aluno");
         outroAluno.setMatricula("aluno456");
         outroAluno.setSenha(passwordEncoder.encode("senhaOutro"));
-        outroAluno.setCurso("Engenharia");
         outroAluno.setEspecialidade("Software");
         outroAluno.setPerfil(ensurePerfil("ROLE_ALUNO"));
+        outroAluno.setCurso(cursoBase); // vincula ao curso
         usuarioRepository.save(outroAluno);
 
         String jwtOutroAluno = loginComo("aluno456", "senhaOutro");
@@ -225,9 +231,9 @@ class AvaliacaoProfessorControllerIT {
         outroAluno.setNome("Outro Aluno");
         outroAluno.setMatricula("aluno456");
         outroAluno.setSenha(passwordEncoder.encode("senhaOutro"));
-        outroAluno.setCurso("Engenharia");
         outroAluno.setEspecialidade("Software");
         outroAluno.setPerfil(ensurePerfil("ROLE_ALUNO"));
+        outroAluno.setCurso(cursoBase); // vincula ao curso
         usuarioRepository.save(outroAluno);
 
         String jwtOutroAluno = loginComo("aluno456", "senhaOutro");
@@ -260,7 +266,6 @@ class AvaliacaoProfessorControllerIT {
                 .andReturn();
 
         assertEquals(204, result.getResponse().getStatus());
-        assertTrue(avaliacaoProfessorRepository
-                .findById(avaliacao.getId()).isEmpty());
+        assertTrue(avaliacaoProfessorRepository.findById(avaliacao.getId()).isEmpty());
     }
 }

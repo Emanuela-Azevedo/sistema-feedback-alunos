@@ -4,18 +4,15 @@ import lombok.*;
 
 import java.util.List;
 
-
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class UsuarioCompletoResponseDTO {
+public class UsuarioCompletoUpdateDTO {
 
-    private Long idUsuario;
     private String nome;
-    private String matricula;
-    private String curso;
+    private Long cursoId;
     private String especialidade;
     private String perfil;
-    private List<String> disciplinas;
-    private boolean superAdmin;
+    private String senha;
+    private List<Long> disciplinas;
 }

@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/auth")
+@RequestMapping("/api/auth")
 public class AuthenticationController {
 
     private final JwtUserDetailsService userDetailsService;
@@ -28,9 +28,11 @@ public class AuthenticationController {
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody @Valid UsuarioLoginDTO dto, HttpServletRequest request) {
-        log.info("Processo de login para matrícula {}", dto.getMatricula());
+        log.info("Iniciando login para matrícula {}", dto.getMatricula());
+        log.info("Senha recebida do front: {}", dto.getPassword()); // ⚠️ Apenas para debug, remover em produção
 
         try {
+            // tenta autenticar
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(dto.getMatricula(), dto.getPassword())
             );
@@ -38,11 +40,16 @@ public class AuthenticationController {
             SecurityContextHolder.getContext().setAuthentication(authentication);
 
             JwtToken token = userDetailsService.getTokenAuthenticated(dto.getMatricula());
+            log.info("Login bem-sucedido para matrícula {}", dto.getMatricula());
+            log.info("Token gerado: {}", token.getToken()); // log do token, apenas para debug
+
             return ResponseEntity.ok(token);
 
         } catch (AuthenticationException e) {
-            log.error("Credenciais inválidas para matrícula '{}'", dto.getMatricula());
-            return ResponseEntity.badRequest().body(new ErrorMessage(request, HttpStatus.BAD_REQUEST, "Credenciais inválidas"));
+            log.error("Falha de autenticação para matrícula '{}': {}", dto.getMatricula(), e.getMessage());
+            return ResponseEntity
+                    .badRequest()
+                    .body(new ErrorMessage(request, HttpStatus.BAD_REQUEST, "Credenciais inválidas"));
         }
     }
 
