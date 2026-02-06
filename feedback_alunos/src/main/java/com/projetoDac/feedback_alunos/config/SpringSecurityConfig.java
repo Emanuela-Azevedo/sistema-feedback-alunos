@@ -32,8 +32,7 @@ public class SpringSecurityConfig {
                         .requestMatchers("/api/usuarios/admin").permitAll()
                         .requestMatchers("/api/usuarios/aluno").hasRole("ADMIN")
                         .requestMatchers("/api/usuarios/professor").hasRole("ADMIN")
-                        .requestMatchers("/api/usuarios/professores/curso/**").hasRole("ADMIN") // 🔹 só ADMIN acessa
-                        .requestMatchers("/api/usuarios/**").hasRole("ADMIN")
+                        .requestMatchers("/api/usuarios/professores/curso/**").hasAnyRole("ADMIN", "ALUNO")                        .requestMatchers("/api/usuarios/**").hasRole("ADMIN")
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class)

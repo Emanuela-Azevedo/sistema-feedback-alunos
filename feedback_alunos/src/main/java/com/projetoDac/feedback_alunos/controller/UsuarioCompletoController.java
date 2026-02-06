@@ -144,7 +144,7 @@ public class UsuarioCompletoController {
     }
 
     @GetMapping("/professores/curso/{idCurso}")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN','ALUNO')")
     public ResponseEntity<List<UsuarioCompletoResponseDTO>> listarProfessoresPorCurso(@PathVariable Long idCurso) {
         List<Usuario> professores = usuarioService.listarProfessoresPorCurso(idCurso);
         List<UsuarioCompletoResponseDTO> response = professores.stream()
