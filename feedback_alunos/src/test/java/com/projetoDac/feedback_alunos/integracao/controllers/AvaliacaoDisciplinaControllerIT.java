@@ -23,8 +23,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 
@@ -61,6 +59,7 @@ class AvaliacaoDisciplinaControllerIT {
     private String jwtProfessor;
     private String jwtAdmin;
     private Disciplina disciplinaBase;
+    private Curso cursoBase;
 
     @BeforeEach
     void setup() throws Exception {
@@ -73,7 +72,7 @@ class AvaliacaoDisciplinaControllerIT {
         Perfil perfilProfessor = ensurePerfil("ROLE_PROFESSOR");
         Perfil perfilAdmin = ensurePerfil("ROLE_ADMIN");
 
-        Curso cursoBase = new Curso();
+        cursoBase = new Curso();
         cursoBase.setNome("Engenharia de Software");
         cursoRepository.save(cursoBase);
         System.out.println("=== CURSO CRIADO COM ID: " + cursoBase.getIdCurso() + " ===");
@@ -82,50 +81,38 @@ class AvaliacaoDisciplinaControllerIT {
         professor.setNome("Professor Teste");
         professor.setMatricula("prof123");
         professor.setSenha(passwordEncoder.encode("senhaProf"));
-        professor.setCurso("Matemática");
         professor.setEspecialidade("Álgebra");
         professor.setPerfil(perfilProfessor);
+        professor.setCurso(cursoBase); // agora curso é entidade
         usuarioRepository.save(professor);
 
         disciplinaBase = new Disciplina();
         disciplinaBase.setNome("Matemática");
         disciplinaBase.setCurso(cursoBase);
-        disciplinaBase.setProfessor(professor); // ✅ agora não fica null
+        disciplinaBase.setProfessor(professor);
         disciplinaRepository.save(disciplinaBase);
-
-        System.out.println("=== DISCIPLINA CRIADA ===");
-        System.out.println("ID: " + disciplinaBase.getIdDisciplina());
-        System.out.println("Nome: " + disciplinaBase.getNome());
-        System.out.println("Curso: " + disciplinaBase.getCurso().getNome());
-        System.out.println("Professor: " + disciplinaBase.getProfessor().getNome());
-
 
         Usuario aluno = new Usuario();
         aluno.setNome("Aluno Teste");
         aluno.setMatricula("aluno123");
         aluno.setSenha(passwordEncoder.encode("senhaAluno"));
-        aluno.setCurso("Engenharia");
         aluno.setEspecialidade("Software");
         aluno.setPerfil(perfilAluno);
+        aluno.setCurso(cursoBase); // vincula ao cursoBase
         usuarioRepository.save(aluno);
 
         Usuario admin = new Usuario();
         admin.setNome("Admin Teste");
         admin.setMatricula("admin123");
         admin.setSenha(passwordEncoder.encode("senhaAdmin"));
-        admin.setCurso("Gestão");
         admin.setEspecialidade("Administração");
         admin.setPerfil(perfilAdmin);
+        admin.setCurso(cursoBase); // vincula ao cursoBase
         usuarioRepository.save(admin);
 
         jwtAluno = loginComo("aluno123", "senhaAluno");
         jwtProfessor = loginComo("prof123", "senhaProf");
         jwtAdmin = loginComo("admin123", "senhaAdmin");
-
-        System.out.println("=== TOKENS GERADOS ===");
-        System.out.println("Aluno: " + jwtAluno);
-        System.out.println("Professor: " + jwtProfessor);
-        System.out.println("Admin: " + jwtAdmin);
     }
 
     private Perfil ensurePerfil(String nomePerfil) {
@@ -144,8 +131,6 @@ class AvaliacaoDisciplinaControllerIT {
                 .andReturn()
                 .getResponse()
                 .getContentAsString();
-
-        System.out.println("=== LOGIN RESPONSE PARA " + matricula + " === " + response);
 
         return objectMapper.readTree(response).get("token").asText();
     }
@@ -205,6 +190,7 @@ class AvaliacaoDisciplinaControllerIT {
                 .andReturn();
         assertEquals(204, result.getResponse().getStatus());
     }
+
     @Test
     void excluirAvaliacao_ComAlunoLogado_DeveRetornar204() throws Exception {
         Usuario aluno = usuarioRepository.findByMatricula("aluno123").orElseThrow();
@@ -247,9 +233,9 @@ class AvaliacaoDisciplinaControllerIT {
                 .andReturn();
         assertEquals(200, result.getResponse().getStatus());
     }
+
     @Test
     void criarAvaliacaoDisciplina_ComProfessorLogado_DeveRetornar403() throws Exception {
-
         Usuario professor = usuarioRepository.findByMatricula("prof123").orElseThrow();
 
         AvaliacaoDisciplinaCreateDTO dto = new AvaliacaoDisciplinaCreateDTO();

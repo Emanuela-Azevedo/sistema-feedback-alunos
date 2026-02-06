@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Data
 @NoArgsConstructor
 @Entity
@@ -17,4 +19,12 @@ public class Curso {
 
     @Column(name = "nome", nullable = false, length = 100)
     private String nome;
+
+    @OneToMany(mappedBy = "curso", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Disciplina> disciplinas;
+
+    @Override public String toString() {
+        return "Curso{" + "idCurso=" + idCurso + "," +
+                " nome='" + nome + '\'' + '}';
+    }
 }

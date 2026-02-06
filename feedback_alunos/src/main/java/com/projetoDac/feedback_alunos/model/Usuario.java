@@ -35,8 +35,9 @@ public class Usuario implements Serializable {
     @Column(name = "senha", nullable = false, length = 200)
     private String senha;
 
-    @Column(name = "curso", length = 100)
-    private String curso;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "curso_id", referencedColumnName = "id_curso")
+    private Curso curso;
 
     @Column(name = "especialidade", length = 100)
     private String especialidade;
@@ -44,6 +45,14 @@ public class Usuario implements Serializable {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "perfil_id", referencedColumnName = "id_perfil")
     private Perfil perfil;
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "tb_usuario_disciplina",
+            joinColumns = @JoinColumn(name = "id_usuario"),
+            inverseJoinColumns = @JoinColumn(name = "id_disciplina")
+    )
+    private List<Disciplina> disciplinas;
 
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(perfil);

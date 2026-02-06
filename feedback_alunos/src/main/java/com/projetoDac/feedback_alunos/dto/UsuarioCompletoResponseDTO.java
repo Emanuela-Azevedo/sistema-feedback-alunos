@@ -2,7 +2,7 @@ package com.projetoDac.feedback_alunos.dto;
 
 import lombok.*;
 
-import java.util.Set;
+import java.util.List;
 
 
 @Data
@@ -15,6 +15,7 @@ public class UsuarioCompletoResponseDTO {
     private String matricula;
     private String curso;
     private String especialidade;
-    private Set<String> perfis;
+    private String perfil;
+    private List<String> disciplinas;
     private boolean superAdmin;
 }

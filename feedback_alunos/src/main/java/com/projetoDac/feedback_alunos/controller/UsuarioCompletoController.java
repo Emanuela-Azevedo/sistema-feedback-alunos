@@ -2,6 +2,7 @@ package com.projetoDac.feedback_alunos.controller;
 
 import com.projetoDac.feedback_alunos.dto.UsuarioCompletoCreateDTO;
 import com.projetoDac.feedback_alunos.dto.UsuarioCompletoResponseDTO;
+import com.projetoDac.feedback_alunos.dto.UsuarioCompletoUpdateDTO;
 import com.projetoDac.feedback_alunos.dto.mapper.UsuarioCompletoMapper;
 import com.projetoDac.feedback_alunos.model.Usuario;
 import com.projetoDac.feedback_alunos.service.UsuarioCompletoService;
@@ -18,7 +19,6 @@ import java.util.List;
 @Slf4j
 @RequiredArgsConstructor
 @RestController
-@CrossOrigin(origins = "http://localhost:5173", allowedHeaders = "*", allowCredentials = "true")
 @RequestMapping("api/usuarios")
 public class UsuarioCompletoController {
 
@@ -61,16 +61,21 @@ public class UsuarioCompletoController {
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> atualizarUsuario(@PathVariable Long id,
-                                              @Valid @RequestBody UsuarioCompletoCreateDTO dto) {
+                                              @RequestBody UsuarioCompletoUpdateDTO dto) {
         try {
-            Usuario usuarioEntity = UsuarioCompletoMapper.toEntity(dto);
-            Usuario usuarioAtualizado = usuarioService.atualizarUsuario(id, usuarioEntity,(dto.getPerfil()));
+            Usuario usuarioExistente = usuarioService.buscarPorId(id);
+
+            Usuario usuarioEntity = UsuarioCompletoMapper.toEntityUpdate(dto, usuarioExistente);
+
+            Usuario usuarioAtualizado = usuarioService.atualizarUsuario(id, usuarioEntity, dto.getPerfil());
+
             return ResponseEntity.ok(UsuarioCompletoMapper.toDTO(usuarioAtualizado));
         } catch (Exception e) {
             log.error("Erro ao atualizar usuário {}: {}", id, e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
+
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
@@ -127,5 +132,24 @@ public class UsuarioCompletoController {
             log.error("Erro ao criar administrador: {}", e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
+    }
+    @GetMapping("/professores")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<List<UsuarioCompletoResponseDTO>> listarProfessores() {
+        List<Usuario> professores = usuarioService.listarUsuariosPorPerfil("ROLE_PROFESSOR");
+        List<UsuarioCompletoResponseDTO> response = professores.stream()
+                .map(UsuarioCompletoMapper::toDTO)
+                .toList();
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/professores/curso/{idCurso}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<List<UsuarioCompletoResponseDTO>> listarProfessoresPorCurso(@PathVariable Long idCurso) {
+        List<Usuario> professores = usuarioService.listarProfessoresPorCurso(idCurso);
+        List<UsuarioCompletoResponseDTO> response = professores.stream()
+                .map(UsuarioCompletoMapper::toDTO)
+                .toList();
+        return ResponseEntity.ok(response);
     }
 }

@@ -30,19 +30,24 @@ public class DisciplinaService {
     @Autowired
     private UsuarioRepository usuarioRepository;
 
-    public Disciplina cadastrarDisciplina(DisciplinaCreateDTO disciplinaCreateDTO) {
-        Curso curso = cursoRepository.findById(disciplinaCreateDTO.getCursoId())
-                .orElseThrow(() -> new CursoNotFoundException("Curso não encontrado com ID: " + disciplinaCreateDTO.getCursoId()));
+    public Disciplina cadastrarDisciplina(DisciplinaCreateDTO dto) {
+        System.out.println("DTO recebido: " + dto);
 
-        Usuario professor = usuarioRepository.findById(disciplinaCreateDTO.getProfessorId())
-                .orElseThrow(() -> new UsuarioNotFoundException("Professor não encontrado com ID: " + disciplinaCreateDTO.getProfessorId()));
+        Curso curso = cursoRepository.findById(dto.getCursoId())
+                .orElseThrow(() -> new CursoNotFoundException("Curso não encontrado com ID: " + dto.getCursoId()));
 
-        Disciplina disciplina = DisciplinaMapper.toEntity(disciplinaCreateDTO);
+        Usuario professor = usuarioRepository.findById(dto.getProfessorId())
+                .orElseThrow(() -> new UsuarioNotFoundException("Professor não encontrado com ID: " + dto.getProfessorId()));
+
+        Disciplina disciplina = DisciplinaMapper.toEntity(dto);
         disciplina.setCurso(curso);
         disciplina.setProfessor(professor);
 
+        System.out.println("Disciplina antes do save: curso=" + disciplina.getCurso() + ", professor=" + disciplina.getProfessor());
+
         return disciplinaRepository.save(disciplina);
     }
+
 
     public Disciplina editarDisciplina(Long id, DisciplinaCreateDTO disciplinaCreateDTO) {
         Disciplina disciplina = disciplinaRepository.findById(id)

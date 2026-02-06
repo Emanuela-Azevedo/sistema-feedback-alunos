@@ -25,11 +25,15 @@ public class SpringSecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
                 .csrf(csrf -> csrf.disable())
+                .cors(cors -> {}) // 🔹 habilita CORS no Spring Security
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("api/auth/**").permitAll()
-                        .requestMatchers("api/usuarios/admin").permitAll()
-                        .requestMatchers("api/usuarios/**").hasRole("ADMIN")
+                        .requestMatchers("/api/auth/**").permitAll()
+                        .requestMatchers("/api/usuarios/admin").permitAll()
+                        .requestMatchers("/api/usuarios/aluno").hasRole("ADMIN")
+                        .requestMatchers("/api/usuarios/professor").hasRole("ADMIN")
+                        .requestMatchers("/api/usuarios/professores/curso/**").hasRole("ADMIN") // 🔹 só ADMIN acessa
+                        .requestMatchers("/api/usuarios/**").hasRole("ADMIN")
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class)

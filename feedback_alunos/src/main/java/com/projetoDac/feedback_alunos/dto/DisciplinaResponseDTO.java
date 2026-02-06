@@ -2,7 +2,6 @@ package com.projetoDac.feedback_alunos.dto;
 
 import lombok.*;
 
-
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -10,6 +9,8 @@ public class DisciplinaResponseDTO {
     private Long idDisciplina;
     private String nome;
     private Long cursoId;
+    private String cursoNome;
     private Long professorId;
-
+    private String professorNome;
 }
+

@@ -3,8 +3,10 @@ package com.projetoDac.feedback_alunos.integracao.controllers;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.projetoDac.feedback_alunos.dto.UsuarioCompletoCreateDTO;
 import com.projetoDac.feedback_alunos.dto.UsuarioLoginDTO;
+import com.projetoDac.feedback_alunos.model.Curso;
 import com.projetoDac.feedback_alunos.model.Perfil;
 import com.projetoDac.feedback_alunos.model.Usuario;
+import com.projetoDac.feedback_alunos.repository.CursoRepository;
 import com.projetoDac.feedback_alunos.repository.PerfilRepository;
 import com.projetoDac.feedback_alunos.repository.UsuarioRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -38,20 +40,30 @@ class UsuarioControllerIT {
     private PerfilRepository perfilRepository;
 
     @Autowired
+    private CursoRepository cursoRepository;
+
+    @Autowired
     private PasswordEncoder passwordEncoder;
 
     private String jwtToken;
+    private Curso cursoBase;
 
     @BeforeEach
     void setup() throws Exception {
         // limpa o banco antes de cada teste
         usuarioRepository.deleteAll();
         perfilRepository.deleteAll();
+        cursoRepository.deleteAll();
 
         // garante que os três perfis existam
         ensurePerfil("ROLE_ADMIN");
         ensurePerfil("ROLE_PROFESSOR");
         ensurePerfil("ROLE_ALUNO");
+
+        // cria um curso base
+        cursoBase = new Curso();
+        cursoBase.setNome("Gestão");
+        cursoRepository.save(cursoBase);
 
         // cria um admin inicial para autenticação
         Perfil perfilAdmin = perfilRepository.findByNomePerfil("ROLE_ADMIN").orElseThrow();
@@ -59,21 +71,14 @@ class UsuarioControllerIT {
         admin.setNome("Administrador Teste");
         admin.setMatricula("admin123");
         admin.setSenha(passwordEncoder.encode("senha123"));
-        admin.setCurso("Gestão");
         admin.setEspecialidade("Administração");
         admin.setPerfil(perfilAdmin);
+        admin.setCurso(cursoBase); // agora curso é entidade
 
         usuarioRepository.save(admin);
 
         // login para capturar token
         jwtToken = loginComo("admin123", "senha123");
-
-        System.out.println("=== TOKEN GERADO NO SETUP ===");
-        System.out.println(jwtToken);
-
-        System.out.println("=== PERFIL DO USUÁRIO ADMIN ===");
-        usuarioRepository.findByMatricula("admin123")
-                .ifPresent(u -> System.out.println("Perfil: " + u.getPerfil().getNomePerfil()));
     }
 
     private Perfil ensurePerfil(String nomePerfil) {
@@ -110,9 +115,9 @@ class UsuarioControllerIT {
         dto.setNome("Aluno Teste");
         dto.setMatricula("aluno123");
         dto.setSenha("senhaAluno");
-        dto.setCurso("Engenharia");
         dto.setEspecialidade("Software");
         dto.setPerfil("ROLE_ALUNO");
+        dto.setCursoId(cursoBase.getIdCurso()); // agora usamos o id do curso
 
         var result = mockMvc.perform(post("/usuarios/aluno")
                         .header("Authorization", "Bearer " + jwtToken)
@@ -129,9 +134,9 @@ class UsuarioControllerIT {
         dto.setNome("Professor Teste");
         dto.setMatricula("prof123");
         dto.setSenha("senhaProf");
-        dto.setCurso("Matemática");
         dto.setEspecialidade("Álgebra");
         dto.setPerfil("ROLE_PROFESSOR");
+        dto.setCursoId(cursoBase.getIdCurso()); // usa cursoBase
 
         var result = mockMvc.perform(post("/usuarios/professor")
                         .header("Authorization", "Bearer " + jwtToken)
@@ -146,16 +151,21 @@ class UsuarioControllerIT {
     void criarPrimeiroAdmin_SemLogin_DeveRetornar201() throws Exception {
         usuarioRepository.deleteAll();
         perfilRepository.deleteAll();
+        cursoRepository.deleteAll();
 
         ensurePerfil("ROLE_ADMIN");
+
+        Curso cursoNovo = new Curso();
+        cursoNovo.setNome("Gestão");
+        cursoRepository.save(cursoNovo);
 
         UsuarioCompletoCreateDTO dto = new UsuarioCompletoCreateDTO();
         dto.setNome("Primeiro Admin");
         dto.setMatricula("primeiroAdmin");
         dto.setSenha("senhaAdmin");
-        dto.setCurso("Gestão");
         dto.setEspecialidade("Administração");
         dto.setPerfil("ROLE_ADMIN");
+        dto.setCursoId(cursoNovo.getIdCurso());
 
         var result = mockMvc.perform(post("/usuarios/admin")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -170,9 +180,9 @@ class UsuarioControllerIT {
         dto.setNome("Segundo Admin");
         dto.setMatricula("segundoAdmin");
         dto.setSenha("senhaAdmin2");
-        dto.setCurso("Gestão");
         dto.setEspecialidade("Administração");
         dto.setPerfil("ROLE_ADMIN");
+        dto.setCursoId(cursoBase.getIdCurso());
 
         var result = mockMvc.perform(post("/usuarios/admin")
                         .contentType(MediaType.APPLICATION_JSON)

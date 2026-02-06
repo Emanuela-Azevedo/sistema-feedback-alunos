@@ -3,8 +3,10 @@ package com.projetoDac.feedback_alunos.service;
 import com.projetoDac.feedback_alunos.exception.AdminJaExisteException;
 import com.projetoDac.feedback_alunos.exception.PerfilNotFoundException;
 import com.projetoDac.feedback_alunos.exception.UsuarioNotFoundException;
+import com.projetoDac.feedback_alunos.model.Curso;
 import com.projetoDac.feedback_alunos.model.Perfil;
 import com.projetoDac.feedback_alunos.model.Usuario;
+import com.projetoDac.feedback_alunos.repository.CursoRepository;
 import com.projetoDac.feedback_alunos.repository.PerfilRepository;
 import com.projetoDac.feedback_alunos.repository.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,23 +28,28 @@ public class UsuarioCompletoService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    @Autowired
+    private CursoRepository cursoRepository;
+
     @Transactional
     public Usuario save(Usuario usuario, String perfilNome) {
-        if (perfilNome == null || perfilNome.isBlank()) {
-            throw new PerfilNotFoundException("Um perfil deve ser informado");
-        }
-
         Perfil perfil = perfilRepository.findByNomePerfil(perfilNome)
                 .orElseThrow(() -> new PerfilNotFoundException("Perfil não encontrado: " + perfilNome));
 
-        // regra de negócio: só pode existir um admin
-        if ("ROLE_ADMIN".equals(perfil.getNomePerfil())
-                && usuarioRepository.existsByPerfilNomePerfil("ROLE_ADMIN")) {
-            throw new AdminJaExisteException("Já existe um administrador cadastrado no sistema.");
-        }
-
         usuario.setPerfil(perfil);
         usuario.setSenha(passwordEncoder.encode(usuario.getSenha()));
+
+        if (!"ROLE_ADMIN".equals(perfil.getNomePerfil())) {
+            if (usuario.getCurso() != null && usuario.getCurso().getIdCurso() != null) {
+                Curso curso = cursoRepository.findById(usuario.getCurso().getIdCurso())
+                        .orElseThrow(() -> new RuntimeException("Curso não encontrado"));
+                usuario.setCurso(curso);
+            }
+            usuario.setEspecialidade(usuario.getEspecialidade());
+        } else {
+            usuario.setCurso(null);
+            usuario.setEspecialidade(null);
+        }
 
         return usuarioRepository.save(usuario);
     }
@@ -90,4 +97,12 @@ public class UsuarioCompletoService {
         return usuarioRepository.findByMatricula(matricula)
                 .orElseThrow(() -> new UsuarioNotFoundException("Usuário não encontrado com matrícula: " + matricula));
     }
+
+    public List<Usuario> listarUsuariosPorPerfil(String perfilNome) {
+        return usuarioRepository.findByPerfil_NomePerfil(perfilNome);
+    }
+
+
+    public List<Usuario> listarProfessoresPorCurso(Long cursoId) {
+        return usuarioRepository.findProfessoresByCursoId(cursoId); }
 }
