@@ -1,8 +1,10 @@
 package com.projetoDac.feedback_alunos.controller;
 
 import com.projetoDac.feedback_alunos.controller.exception.ErrorMessage;
+import com.projetoDac.feedback_alunos.dto.LoginResponseDTO;
 import com.projetoDac.feedback_alunos.dto.UsuarioLoginDTO;
 import com.projetoDac.feedback_alunos.jwt.JwtToken;
+import com.projetoDac.feedback_alunos.jwt.JwtUserDetails;
 import com.projetoDac.feedback_alunos.jwt.JwtUserDetailsService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
@@ -28,11 +30,7 @@ public class AuthenticationController {
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody @Valid UsuarioLoginDTO dto, HttpServletRequest request) {
-        log.info("Iniciando login para matrícula {}", dto.getMatricula());
-        log.info("Senha recebida do front: {}", dto.getPassword()); // ⚠️ Apenas para debug, remover em produção
-
         try {
-            // tenta autenticar
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(dto.getMatricula(), dto.getPassword())
             );
@@ -40,13 +38,20 @@ public class AuthenticationController {
             SecurityContextHolder.getContext().setAuthentication(authentication);
 
             JwtToken token = userDetailsService.getTokenAuthenticated(dto.getMatricula());
-            log.info("Login bem-sucedido para matrícula {}", dto.getMatricula());
-            log.info("Token gerado: {}", token.getToken()); // log do token, apenas para debug
 
-            return ResponseEntity.ok(token);
+            JwtUserDetails userDetails = (JwtUserDetails) authentication.getPrincipal();
+
+            LoginResponseDTO response = new LoginResponseDTO(
+                    token.getToken(),
+                    userDetails.getId(),
+                    userDetails.getUsername(),
+                    userDetails.getNome(),
+                    userDetails.getAuthorities().iterator().next().getAuthority()
+            );
+
+            return ResponseEntity.ok(response);
 
         } catch (AuthenticationException e) {
-            log.error("Falha de autenticação para matrícula '{}': {}", dto.getMatricula(), e.getMessage());
             return ResponseEntity
                     .badRequest()
                     .body(new ErrorMessage(request, HttpStatus.BAD_REQUEST, "Credenciais inválidas"));

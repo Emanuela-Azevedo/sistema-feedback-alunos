@@ -33,9 +33,10 @@ public class AvaliacaoDisciplinaController {
     @GetMapping
     @PreAuthorize("hasRole('ADMIN') or hasRole('PROFESSOR') or hasRole('ALUNO')")
     public ResponseEntity<List<AvaliacaoDisciplinaResponseDTO>> listarAvaliacoes() {
-        List<AvaliacaoDisciplinaResponseDTO> response = avaliacaoDisciplinaService.listarAvaliacoes().stream()
-                .map(AvaliacaoDisciplinaMapper::toDTO)
-                .toList();
+
+        List<AvaliacaoDisciplinaResponseDTO> response =
+                avaliacaoDisciplinaService.listarAvaliacoesDisciplina();
+
         return ResponseEntity.ok(response);
     }
 

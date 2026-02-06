@@ -1,6 +1,7 @@
 package com.projetoDac.feedback_alunos.service;
 
 import com.projetoDac.feedback_alunos.dto.AvaliacaoProfessorCreateDTO;
+import com.projetoDac.feedback_alunos.dto.AvaliacaoProfessorResponseDTO;
 import com.projetoDac.feedback_alunos.dto.mapper.AvaliacaoProfessorMapper;
 import com.projetoDac.feedback_alunos.exception.AvaliacaoNotFoundException;
 import com.projetoDac.feedback_alunos.exception.UsuarioNotFoundException;
@@ -38,9 +39,28 @@ public class AvaliacaoProfessorService {
         return avaliacaoProfessorRepository.save(avaliacao);
     }
 
-    public List<AvaliacaoProfessor> listarAvaliacoes() {
-        return avaliacaoProfessorRepository.findAll();
+    public List<AvaliacaoProfessorResponseDTO> listarAvaliacoesProfessor() {
+
+        List<AvaliacaoProfessor> avaliacoes = avaliacaoProfessorRepository.findAll();
+
+        return avaliacoes.stream()
+                .map(avaliacao -> new AvaliacaoProfessorResponseDTO(
+                        avaliacao.getId(),
+
+                        avaliacao.getUsuario().getIdUsuario(),
+                        avaliacao.isAnonima() ? null : avaliacao.getUsuario().getNome(),
+
+                        avaliacao.getProfessor().getIdUsuario(),
+                        avaliacao.getProfessor().getNome(),
+
+                        avaliacao.getNota(),
+                        avaliacao.getComentario(),
+                        avaliacao.getDataAvaliacao(),
+                        avaliacao.isAnonima()
+                ))
+                .toList();
     }
+
 
     public AvaliacaoProfessor buscarPorId(Long id) {
         return avaliacaoProfessorRepository.findById(id)
@@ -68,10 +88,6 @@ public class AvaliacaoProfessorService {
         AvaliacaoProfessor avaliacao = avaliacaoProfessorRepository.findById(id)
                 .orElseThrow(() -> new AvaliacaoNotFoundException("Avaliação não encontrada com ID: " + id));
 
-        Usuario professor = usuarioRepository.findById(dto.getProfessorId())
-                .orElseThrow(() -> new UsuarioNotFoundException("Professor não encontrado com ID: " + dto.getProfessorId()));
-
-        avaliacao.setProfessor(professor);
         avaliacao.setNota(dto.getNota());
         avaliacao.setComentario(dto.getComentario());
         avaliacao.setAnonima(dto.isAnonima());

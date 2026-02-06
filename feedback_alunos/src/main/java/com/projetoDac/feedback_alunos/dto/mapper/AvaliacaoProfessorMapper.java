@@ -9,23 +9,33 @@ public class AvaliacaoProfessorMapper {
 
     private static final ModelMapper mapper = new ModelMapper();
 
-    public static AvaliacaoProfessor toEntity(AvaliacaoProfessorCreateDTO dto){
+    public static AvaliacaoProfessor toEntity(AvaliacaoProfessorCreateDTO dto) {
         AvaliacaoProfessor avaliacao = new AvaliacaoProfessor();
         avaliacao.setNota(dto.getNota());
         avaliacao.setComentario(dto.getComentario());
         avaliacao.setAnonima(dto.isAnonima());
         return avaliacao;
     }
-    public static AvaliacaoProfessorResponseDTO toDTO(AvaliacaoProfessor avaliacao){
-        AvaliacaoProfessorResponseDTO dto = mapper.map(avaliacao, AvaliacaoProfessorResponseDTO.class);
+
+    public static AvaliacaoProfessorResponseDTO toDTO(AvaliacaoProfessor avaliacao) {
+        AvaliacaoProfessorResponseDTO dto =
+                mapper.map(avaliacao, AvaliacaoProfessorResponseDTO.class);
+
+        // Usuário (respeitando anonimato)
         if (avaliacao.getUsuario() != null && !avaliacao.isAnonima()) {
             dto.setUsuarioId(avaliacao.getUsuario().getIdUsuario());
+            dto.setUsuarioNome(avaliacao.getUsuario().getNome());
         } else {
             dto.setUsuarioId(null);
+            dto.setUsuarioNome("Anônimo");
         }
+
+        // Professor avaliado
         if (avaliacao.getProfessor() != null) {
             dto.setProfessorId(avaliacao.getProfessor().getIdUsuario());
+            dto.setProfessorNome(avaliacao.getProfessor().getNome());
         }
+
         return dto;
     }
 }

@@ -1,6 +1,7 @@
 package com.projetoDac.feedback_alunos.service;
 
 import com.projetoDac.feedback_alunos.dto.AvaliacaoDisciplinaCreateDTO;
+import com.projetoDac.feedback_alunos.dto.AvaliacaoDisciplinaResponseDTO;
 import com.projetoDac.feedback_alunos.dto.mapper.AvaliacaoDisciplinaMapper;
 import com.projetoDac.feedback_alunos.exception.AvaliacaoNotFoundException;
 import com.projetoDac.feedback_alunos.exception.DisciplinaNotFoundException;
@@ -43,8 +44,26 @@ public class AvaliacaoDisciplinaService {
         return avaliacaoDisciplinaRepository.save(avaliacao);
     }
 
-    public List<AvaliacaoDisciplina> listarAvaliacoes() {
-        return avaliacaoDisciplinaRepository.findAll();
+    public List<AvaliacaoDisciplinaResponseDTO> listarAvaliacoesDisciplina() {
+
+        List<AvaliacaoDisciplina> avaliacoes = avaliacaoDisciplinaRepository.findAll();
+
+        return avaliacoes.stream()
+                .map(avaliacao -> new AvaliacaoDisciplinaResponseDTO(
+                        avaliacao.getId(),
+
+                        avaliacao.getUsuario().getIdUsuario(),
+                        avaliacao.isAnonima() ? null : avaliacao.getUsuario().getNome(),
+
+                        avaliacao.getDisciplina().getIdDisciplina(),
+                        avaliacao.getDisciplina().getNome(),
+
+                        avaliacao.getNota(),
+                        avaliacao.getComentario(),
+                        avaliacao.getDataAvaliacao(),
+                        avaliacao.isAnonima()
+                ))
+                .toList();
     }
 
     public AvaliacaoDisciplina buscarPorId(Long id) {
@@ -92,10 +111,6 @@ public class AvaliacaoDisciplinaService {
         AvaliacaoDisciplina avaliacao = avaliacaoDisciplinaRepository.findById(id)
                 .orElseThrow(() -> new AvaliacaoNotFoundException("Avaliação não encontrada com ID: " + id));
 
-        Disciplina disciplina = disciplinaRepository.findById(dto.getDisciplinaId())
-                .orElseThrow(() -> new DisciplinaNotFoundException("Disciplina não encontrada com ID: " + dto.getDisciplinaId()));
-
-        avaliacao.setDisciplina(disciplina);
         avaliacao.setNota(dto.getNota());
         avaliacao.setComentario(dto.getComentario());
         avaliacao.setAnonima(dto.isAnonima());

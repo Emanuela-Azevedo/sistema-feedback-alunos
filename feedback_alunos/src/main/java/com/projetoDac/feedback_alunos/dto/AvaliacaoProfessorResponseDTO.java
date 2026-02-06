@@ -11,11 +11,16 @@ import java.time.LocalDate;
 public class AvaliacaoProfessorResponseDTO {
 
     private Long id;
+
     private Long usuarioId;
+    private String usuarioNome;
+
     private Long professorId;
+    private String professorNome;
+
     private Integer nota;
     private String comentario;
     private LocalDate dataAvaliacao;
     private boolean anonima;
-
 }
+

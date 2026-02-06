@@ -33,11 +33,11 @@ public class AvaliacaoProfessorController {
     @GetMapping
     @PreAuthorize("hasRole('ADMIN') or hasRole('PROFESSOR') or hasRole('ALUNO')")
     public ResponseEntity<List<AvaliacaoProfessorResponseDTO>> listarAvaliacoes() {
-        List<AvaliacaoProfessorResponseDTO> response = avaliacaoProfessorService.listarAvaliacoes().stream()
-                .map(AvaliacaoProfessorMapper::toDTO)
-                .toList();
+        List<AvaliacaoProfessorResponseDTO> response =
+                avaliacaoProfessorService.listarAvaliacoesProfessor();
         return ResponseEntity.ok(response);
     }
+
 
     @GetMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN') or hasRole('PROFESSOR') or hasRole('ALUNO')")
